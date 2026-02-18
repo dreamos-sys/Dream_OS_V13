@@ -24,6 +24,16 @@
         .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: #eab308; }
         input:checked + .slider:before { transform: translateX(20px); }
+        .slide {
+    color: #000;
+    background: rgba(255,255,255,0.7);
+    padding: 8px;
+    border-radius: 8px;
+}
+.dark .slide {
+    color: #fff;
+    background: rgba(0,0,0,0.7);
+}
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center justify-center p-4">
