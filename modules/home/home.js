@@ -1,5 +1,6 @@
+alert('HOME.JS LOADED!'); // <-- untuk test apakah script dieksekusi
+
 (function() {
-    // ========== SUPER DEBUG VERSION ==========
     const debugDiv = document.getElementById('debug-info');
     const checkpoint = (num, msg) => {
         const status = '✅';
@@ -45,7 +46,6 @@
         }
         checkpoint(6, 'Menu rendered');
 
-        // Logout
         const logoutBtn = document.getElementById('logout');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', (e) => {
