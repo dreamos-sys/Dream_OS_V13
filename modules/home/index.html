@@ -1,10 +1,45 @@
 <div class="max-w-2xl mx-auto p-4">
     <div class="text-center mb-6">
-        <h2 class="text-xl font-semibold text-yellow-600">Dashboard (Debug Mode)</h2>
+        <h2 class="text-xl font-semibold text-yellow-600">Dashboard (Inline Test)</h2>
     </div>
-    <div id="debug-info" style="background:#111; color:#0f0; padding:12px; border-radius:8px; margin-bottom:16px; font-family:monospace; font-size:12px; white-space:pre-wrap;">
-        ⏳ Menunggu script...
-    </div>
+    <div id="debug-info" style="background:#111;color:#0f0;padding:8px;border-radius:8px;margin-bottom:16px;">⏳ Menunggu script...</div>
     <div id="menu-grid" class="grid grid-cols-2 gap-3 md:grid-cols-3"></div>
     <button id="logout" class="mt-6 w-full bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl">Logout</button>
 </div>
+
+<script>
+(function() {
+    const debugDiv = document.getElementById('debug-info');
+    debugDiv.innerHTML = '✅ Script inline dijalankan!';
+    const allowed = JSON.parse(sessionStorage.getItem('allowed_modules') || '[]');
+    debugDiv.innerHTML += `<br>Modul: ${allowed.join(', ') || 'kosong'}`;
+    const menuMap = {
+        booking: { name: 'Booking Sarana', icon: '📅', color: 'bg-blue-500' },
+        k3: { name: 'Laporan K3', icon: '⚠️', color: 'bg-orange-500' },
+        security: { name: 'Laporan Sekuriti', icon: '🛡️', color: 'bg-green-600' },
+        cs: { name: 'Ceklis Janitor', icon: '🧹', color: 'bg-teal-600' },
+        alat: { name: 'Alat & Stok', icon: '📦', color: 'bg-purple-600' },
+        maintenance: { name: 'Maintenance', icon: '🔧', color: 'bg-yellow-600' },
+        asset: { name: 'Asset', icon: '🏢', color: 'bg-indigo-600' },
+        report: { name: 'Laporan Bulanan', icon: '📊', color: 'bg-pink-600' },
+        admin: { name: 'Admin Panel', icon: '⚙️', color: 'bg-gray-700' }
+    };
+    const visible = allowed.filter(id => menuMap[id]);
+    const grid = document.getElementById('menu-grid');
+    if (visible.length === 0) {
+        grid.innerHTML = '<p>Tidak ada modul</p>';
+    } else {
+        grid.innerHTML = visible.map(id => `
+            <a href="#${id}" class="${menuMap[id].color} text-white p-4 rounded-xl text-center">
+                <span class="block text-2xl">${menuMap[id].icon}</span>
+                ${menuMap[id].name}
+            </a>
+        `).join('');
+    }
+    document.getElementById('logout').addEventListener('click', (e) => {
+        e.preventDefault();
+        sessionStorage.removeItem('allowed_modules');
+        window.location.reload();
+    });
+})();
+</script>
