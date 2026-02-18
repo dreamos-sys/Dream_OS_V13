@@ -1,3 +1,4 @@
+Modul home.js :
 // modules/home/home.js
 (function() {
     const allowed = JSON.parse(sessionStorage.getItem('allowed_modules') || '[]');
@@ -34,7 +35,7 @@
         const res = await fetch(path);
         const html = await res.text();
         document.getElementById('main-content').innerHTML = html;
-        
+
         // Load JavaScript untuk modul (termasuk home)
         const script = document.createElement('script');
         script.type = 'module';
