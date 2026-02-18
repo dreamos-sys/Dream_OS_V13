@@ -1,4 +1,6 @@
 import { supabase } from '../../lib/supabaseClient.js';
+import { CONFIG } from '../../config.js';
+import { log } from '../../lib/logger.js';
 
 // ========== LOAD DROPDOWN OPTIONS ==========
 function loadDropdowns() {
@@ -21,6 +23,48 @@ function loadDropdowns() {
         opt.textContent = value;
         alatSelect.appendChild(opt);
     });
+}
+
+// ========== FUNGSI VALIDASI BOOKING ==========
+function isValidBooking(tanggal, jamMulai, jamSelesai, sarana) {
+    const tgl = new Date(tanggal);
+    const hari = tgl.getDay(); // 0=Minggu, 1=Senin, ...
+
+    // Cek hari kerja (Senin-Jumat)
+    if (!CONFIG.workDays.includes(hari)) {
+        return { valid: false, reason: 'Hari libur, tidak bisa booking' };
+    }
+
+    // Cek apakah jam mulai dan selesai diisi
+    if (!jamMulai || !jamSelesai) {
+        return { valid: false, reason: 'Jam mulai dan selesai harus diisi' };
+    }
+
+    // Konversi jam ke format desimal (misal "07:30" -> 7.5)
+    const mulai = parseFloat(jamMulai.replace(':', '.'));
+    const selesai = parseFloat(jamSelesai.replace(':', '.'));
+
+    // Cek jam kerja (07:30 - 16:00)
+    if (mulai < CONFIG.workHours.start || selesai > CONFIG.workHours.end) {
+        return { valid: false, reason: 'Di luar jam kerja (07:30 - 16:00)' };
+    }
+
+    // Aturan khusus Jumat untuk aula dan serbaguna
+    if (hari === 5 && (sarana.includes('Aula') || sarana.includes('serbaguna'))) {
+        if (mulai < CONFIG.fridayRules.aula.start || selesai > CONFIG.fridayRules.aula.end) {
+            return { valid: false, reason: 'Khusus Jumat, aula/serbaguna hanya bisa 10:30 - 13:00 (persiapan shalat)' };
+        }
+    }
+
+    // Cek durasi maksimal (jam)
+    const durasi = selesai - mulai;
+    if (durasi > CONFIG.maxBookingDuration) {
+        return { valid: false, reason: `Maksimal booking ${CONFIG.maxBookingDuration} jam` };
+    }
+
+    // Log sukses validasi
+    log.info('Booking valid', { tanggal, jamMulai, jamSelesai, sarana });
+    return { valid: true };
 }
 
 // ========== LOAD RIWAYAT HARI INI ==========
@@ -60,7 +104,7 @@ async function loadTodayHistory() {
         });
         tbody.innerHTML = html;
     } catch (err) {
-        console.error('Gagal memuat riwayat:', err);
+        log.error('Gagal memuat riwayat', err);
         tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-red-500">Gagal memuat data</td></tr>';
     }
 }
@@ -82,9 +126,16 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
     const alat_tambahan = Array.from(alatSelect.selectedOptions).map(opt => opt.value).join(', ');
     const catatan = document.getElementById('catatan').value.trim();
 
-    // Validasi
+    // Validasi field wajib
     if (!nama || !sarana || !keperluan || !tgl_mulai) {
         document.getElementById('form-result').innerHTML = '<span class="text-red-500">Nama, Sarana, Keperluan, dan Tanggal Mulai harus diisi!</span>';
+        return;
+    }
+
+    // Validasi aturan booking (jam kerja, hari, durasi)
+    const valid = isValidBooking(tgl_mulai, jam_mulai, jam_selesai, sarana);
+    if (!valid.valid) {
+        document.getElementById('form-result').innerHTML = `<span class="text-red-500">${valid.reason}</span>`;
         return;
     }
 
@@ -107,8 +158,10 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
     const resultDiv = document.getElementById('form-result');
 
     if (error) {
+        log.error('Gagal insert booking', error);
         resultDiv.innerHTML = `<span class="text-red-500">Gagal: ${error.message}</span>`;
     } else {
+        log.info('Booking berhasil', formData);
         resultDiv.innerHTML = '<span class="text-green-500">Booking berhasil! ✅</span>';
         e.target.reset();
         await loadTodayHistory();
