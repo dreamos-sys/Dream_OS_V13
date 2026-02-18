@@ -1,0 +1,10 @@
+{
+    "id": "booking",
+    "name": "Booking Sarana",
+    "icon": "📅",
+    "color": "bg-blue-500",
+    "route": "#booking",
+    "access": ["user", "admin"],
+    "description": "Modul peminjaman sarana",
+    "version": "1.0.0"
+}
