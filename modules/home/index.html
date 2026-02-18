@@ -7,10 +7,11 @@
 </div>
 
 <script type="module">
-    // TIDAK PERLU IMPORT SUPABASE DI SINI
-
+    // ========== RENDER MENU ==========
     function renderMenu() {
         const allowed = JSON.parse(sessionStorage.getItem('allowed_modules') || '[]');
+        console.log('📋 Modul yang diizinkan:', allowed);
+
         const menuMap = {
             booking: { name: 'Booking Sarana', icon: '📅', color: 'bg-blue-500' },
             k3: { name: 'Laporan K3', icon: '⚠️', color: 'bg-orange-500' },
@@ -21,8 +22,10 @@
             asset: { name: 'Asset', icon: '🏢', color: 'bg-indigo-600' },
             commandcenter: { name: 'Command Center', icon: '📊', color: 'bg-pink-600' }
         };
+
         const grid = document.getElementById('menu-grid');
         const visible = allowed.filter(id => menuMap[id]);
+
         if (visible.length === 0) {
             grid.innerHTML = '<p class="col-span-full text-center">Tidak ada modul tersedia.</p>';
         } else {
@@ -37,16 +40,34 @@
 
     renderMenu();
 
-    document.addEventListener('DOMContentLoaded', function() {
+    // ========== HANDLER LOGOUT (DUA JALUR) ==========
+    function setupLogout() {
         const logoutBtn = document.getElementById('logout');
         if (logoutBtn) {
-            logoutBtn.addEventListener('click', function(e) {
+            // Hapus event listener lama (jika ada)
+            logoutBtn.replaceWith(logoutBtn.cloneNode(true));
+            const newLogoutBtn = document.getElementById('logout');
+            
+            newLogoutBtn.addEventListener('click', function(e) {
                 e.preventDefault();
+                console.log('🔴 Tombol logout diklik');
                 sessionStorage.removeItem('allowed_modules');
+                console.log('✅ Session dihapus, reload...');
                 window.location.reload();
             });
+            console.log('✅ Event listener logout dipasang');
         } else {
-            console.error('Tombol logout tidak ditemukan!');
+            console.error('❌ Tombol logout tidak ditemukan!');
         }
-    });
+    }
+
+    // Coba dengan DOMContentLoaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupLogout);
+    } else {
+        setupLogout(); // DOM sudah siap
+    }
+
+    // Fallback: coba lagi setelah 1 detik (untuk jaga-jaga)
+    setTimeout(setupLogout, 1000);
 </script>
