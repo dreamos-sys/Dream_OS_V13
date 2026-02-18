@@ -3,9 +3,8 @@
         <h2 class="text-xl font-semibold text-yellow-600">Dashboard</h2>
     </div>
 
-    <!-- DEBUG INFO -->
-    <div id="debug-info" style="background: #333; color: #ff0; padding: 8px; border-radius: 8px; margin-bottom: 16px; font-size: 12px;">
-        Memuat debug...
+    <div id="debug-info" style="background: #333; color: #ff0; padding: 8px; border-radius: 8px; margin-bottom: 16px;">
+        Memuat...
     </div>
 
     <div id="menu-grid" class="grid grid-cols-2 gap-3 md:grid-cols-3"></div>
@@ -13,41 +12,34 @@
 </div>
 
 <script>
-    (function() {
-        const allowed = JSON.parse(sessionStorage.getItem('allowed_modules') || '[]');
-        const debugDiv = document.getElementById('debug-info');
-        debugDiv.innerHTML = '📦 Modul diizinkan: ' + (allowed.join(', ') || 'tidak ada');
+    // Tampilkan alert untuk test
+    alert('Script home.js berjalan!');
 
-        const menuMap = {
-            booking: { name: 'Booking Sarana', icon: '📅', color: 'bg-blue-500' },
-            k3: { name: 'Laporan K3', icon: '⚠️', color: 'bg-orange-500' },
-            sekuriti: { name: 'Laporan Sekuriti', icon: '🔒', color: 'bg-green-600' },
-            'janitor-indoor': { name: 'Ceklis Janitor Indoor', icon: '🧹', color: 'bg-teal-600' },
-            'janitor-outdoor': { name: 'Ceklis Janitor Outdoor', icon: '🧤', color: 'bg-cyan-600' },
-            stok: { name: 'Alat & Stok', icon: '📦', color: 'bg-purple-600' },
-            maintenance: { name: 'Maintenance', icon: '🔧', color: 'bg-yellow-600' },
-            asset: { name: 'Asset', icon: '🏢', color: 'bg-indigo-600' },
-            commandcenter: { name: 'Command Center', icon: '📊', color: 'bg-pink-600' }
-        };
+    const allowed = JSON.parse(sessionStorage.getItem('allowed_modules') || '[]');
+    document.getElementById('debug-info').innerText = 'Modul: ' + (allowed.join(', ') || 'kosong');
 
-        const grid = document.getElementById('menu-grid');
-        const visible = allowed.filter(id => menuMap[id]);
+    // MenuMap sederhana (hanya booking untuk test)
+    const menuMap = {
+        booking: { name: 'Booking Sarana', icon: '📅', color: 'bg-blue-500' }
+    };
 
-        if (visible.length === 0) {
-            grid.innerHTML = '<p class="col-span-full text-center">Tidak ada modul tersedia.</p>';
-        } else {
-            grid.innerHTML = visible.map(id => `
-                <a href="#${id}" class="${menuMap[id].color} text-white p-4 rounded-xl text-center font-semibold shadow hover:opacity-90 transition">
-                    <span class="block text-2xl mb-1">${menuMap[id].icon}</span>
-                    ${menuMap[id].name}
-                </a>
-            `).join('');
-        }
+    const grid = document.getElementById('menu-grid');
+    const visible = allowed.filter(id => menuMap[id]);
 
-        document.getElementById('logout').addEventListener('click', function(e) {
-            e.preventDefault();
-            sessionStorage.removeItem('allowed_modules');
-            window.location.reload();
-        });
-    })();
+    if (visible.length === 0) {
+        grid.innerHTML = '<p>Tidak ada modul</p>';
+    } else {
+        grid.innerHTML = visible.map(id => `
+            <a href="#${id}" class="${menuMap[id].color} text-white p-4 rounded-xl text-center">
+                <span class="block text-2xl">${menuMap[id].icon}</span>
+                ${menuMap[id].name}
+            </a>
+        `).join('');
+    }
+
+    document.getElementById('logout').onclick = (e) => {
+        e.preventDefault();
+        sessionStorage.removeItem('allowed_modules');
+        window.location.reload();
+    };
 </script>
