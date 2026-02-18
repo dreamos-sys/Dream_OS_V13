@@ -28,3 +28,17 @@
         window.location.reload();
     });
 })();
+     async function loadModule() {
+    // ... (kode sebelumnya)
+    try {
+        const res = await fetch(path);
+        const html = await res.text();
+        document.getElementById('main-content').innerHTML = html;
+        
+        // Load JavaScript untuk modul (termasuk home)
+        const script = document.createElement('script');
+        script.type = 'module';
+        script.src = `./modules/${moduleId}/${moduleId}.js`;
+        document.body.appendChild(script);
+    } catch (err) { ... }
+     }
