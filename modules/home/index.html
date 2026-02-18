@@ -7,10 +7,9 @@
 </div>
 
 <script type="module">
-    import { supabase } from '../../lib/supabaseClient.js';
+    // TIDAK PERLU IMPORT SUPABASE DI SINI
 
-    // Fungsi untuk memuat menu
-    function loadMenu() {
+    function renderMenu() {
         const allowed = JSON.parse(sessionStorage.getItem('allowed_modules') || '[]');
         const menuMap = {
             booking: { name: 'Booking Sarana', icon: '📅', color: 'bg-blue-500' },
@@ -36,20 +35,18 @@
         }
     }
 
-    // Panggil fungsi menu
-    loadMenu();
+    renderMenu();
 
-    // Handler logout dengan logging
-    const logoutBtn = document.getElementById('logout');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log('🔄 Logout clicked');
-            sessionStorage.removeItem('allowed_modules');
-            console.log('Session cleared, reloading...');
-            window.location.reload();
-        });
-    } else {
-        console.error('❌ Tombol logout tidak ditemukan!');
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const logoutBtn = document.getElementById('logout');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                sessionStorage.removeItem('allowed_modules');
+                window.location.reload();
+            });
+        } else {
+            console.error('Tombol logout tidak ditemukan!');
+        }
+    });
 </script>
