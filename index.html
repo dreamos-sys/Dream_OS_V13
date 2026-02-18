@@ -1,0 +1,61 @@
+<div class="max-w-2xl mx-auto p-4">
+    <div class="text-center mb-6">
+        <h2 class="text-xl font-semibold text-yellow-600">Dashboard</h2>
+    </div>
+    <div id="menu-grid" class="grid grid-cols-2 gap-3 md:grid-cols-3"></div>
+    <button id="logout" class="mt-6 w-full bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl">Logout</button>
+</div>
+
+<script type="module">
+    import { loadAllManifests, getAccessibleModules } from '../../lib/pluginLoader.js';
+    import { log } from '../../lib/logger.js';
+
+    async function renderMenu() {
+        const allowed = JSON.parse(sessionStorage.getItem('allowed_modules') || '[]');
+        log.info('Allowed modules from session:', allowed);
+
+        try {
+            const manifests = await loadAllManifests();
+            const accessible = getAccessibleModules(manifests, allowed);
+
+            const grid = document.getElementById('menu-grid');
+            if (accessible.length === 0) {
+                grid.innerHTML = '<p class="col-span-full text-center">Tidak ada modul tersedia.</p>';
+                return;
+            }
+
+            grid.innerHTML = accessible.map(mod => `
+                <a href="${mod.route}" class="${mod.color} text-white p-4 rounded-xl text-center font-semibold shadow hover:opacity-90 transition">
+                    <span class="block text-2xl mb-1">${mod.icon}</span>
+                    ${mod.name}
+                </a>
+            `).join('');
+        } catch (err) {
+            log.error('Gagal memuat menu', err);
+            document.getElementById('menu-grid').innerHTML = '<p class="col-span-full text-center text-red-500">Gagal memuat modul</p>';
+        }
+    }
+
+    renderMenu();
+
+    // Logout (sama seperti sebelumnya)
+    function setupLogout() {
+        const logoutBtn = document.getElementById('logout');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                sessionStorage.removeItem('allowed_modules');
+                window.location.reload();
+            });
+            log.info('Logout handler dipasang');
+        } else {
+            log.error('Tombol logout tidak ditemukan!');
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupLogout);
+    } else {
+        setupLogout();
+    }
+</script>
