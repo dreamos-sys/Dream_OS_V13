@@ -2,21 +2,28 @@
     <div class="text-center mb-6">
         <h2 class="text-xl font-semibold text-yellow-600">Dashboard</h2>
     </div>
+
+    <!-- DEBUG INFO -->
+    <div id="debug-info" style="background: #333; color: #ff0; padding: 8px; border-radius: 8px; margin-bottom: 16px; font-size: 12px;">
+        Memuat debug...
+    </div>
+
     <div id="menu-grid" class="grid grid-cols-2 gap-3 md:grid-cols-3"></div>
     <button id="logout" class="mt-6 w-full bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl">Logout</button>
 </div>
 
-<script type="module">
-    // ========== RENDER MENU ==========
-    function renderMenu() {
+<script>
+    (function() {
         const allowed = JSON.parse(sessionStorage.getItem('allowed_modules') || '[]');
-        console.log('📋 Modul yang diizinkan:', allowed);
+        const debugDiv = document.getElementById('debug-info');
+        debugDiv.innerHTML = '📦 Modul diizinkan: ' + (allowed.join(', ') || 'tidak ada');
 
         const menuMap = {
             booking: { name: 'Booking Sarana', icon: '📅', color: 'bg-blue-500' },
             k3: { name: 'Laporan K3', icon: '⚠️', color: 'bg-orange-500' },
             sekuriti: { name: 'Laporan Sekuriti', icon: '🔒', color: 'bg-green-600' },
-            janitor: { name: 'Ceklis Janitor', icon: '🧹', color: 'bg-teal-600' },
+            'janitor-indoor': { name: 'Ceklis Janitor Indoor', icon: '🧹', color: 'bg-teal-600' },
+            'janitor-outdoor': { name: 'Ceklis Janitor Outdoor', icon: '🧤', color: 'bg-cyan-600' },
             stok: { name: 'Alat & Stok', icon: '📦', color: 'bg-purple-600' },
             maintenance: { name: 'Maintenance', icon: '🔧', color: 'bg-yellow-600' },
             asset: { name: 'Asset', icon: '🏢', color: 'bg-indigo-600' },
@@ -36,38 +43,11 @@
                 </a>
             `).join('');
         }
-    }
 
-    renderMenu();
-
-    // ========== HANDLER LOGOUT (DUA JALUR) ==========
-    function setupLogout() {
-        const logoutBtn = document.getElementById('logout');
-        if (logoutBtn) {
-            // Hapus event listener lama (jika ada)
-            logoutBtn.replaceWith(logoutBtn.cloneNode(true));
-            const newLogoutBtn = document.getElementById('logout');
-            
-            newLogoutBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                console.log('🔴 Tombol logout diklik');
-                sessionStorage.removeItem('allowed_modules');
-                console.log('✅ Session dihapus, reload...');
-                window.location.reload();
-            });
-            console.log('✅ Event listener logout dipasang');
-        } else {
-            console.error('❌ Tombol logout tidak ditemukan!');
-        }
-    }
-
-    // Coba dengan DOMContentLoaded
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', setupLogout);
-    } else {
-        setupLogout(); // DOM sudah siap
-    }
-
-    // Fallback: coba lagi setelah 1 detik (untuk jaga-jaga)
-    setTimeout(setupLogout, 1000);
+        document.getElementById('logout').addEventListener('click', function(e) {
+            e.preventDefault();
+            sessionStorage.removeItem('allowed_modules');
+            window.location.reload();
+        });
+    })();
 </script>
