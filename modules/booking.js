@@ -1,3 +1,4 @@
+alert('booking.js loaded!');
 import { supabase } from '../../lib/supabaseClient.js';
 
 (function() {
