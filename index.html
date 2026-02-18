@@ -18,6 +18,23 @@
         .slide { transition: opacity 1s ease-in-out; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
         #slideshow-container { position: relative; height: 8rem; overflow: hidden; border-radius: 0.75rem; background: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
         .dark #slideshow-container { background: #1f2937; }
+         .slide {
+    color: #1e293b; /* Warna gelap untuk latar terang */
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(255,255,255,0.5);
+    z-index: 10;
+}
+.dark .slide {
+    color: #fbbf24; /* Emas untuk dark mode */
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+#slideshow-container {
+    background: white; /* Pastikan background kontras */
+    min-height: 6rem; /* Biar ga kecil */
+}
+.dark #slideshow-container {
+    background: #1e293b;
+}
         /* Slideshow disembunyikan sebelum login */
         #slideshow-container { display: none; }
     </style>
