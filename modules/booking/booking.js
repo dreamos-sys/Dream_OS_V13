@@ -2,176 +2,69 @@ import { supabase } from '../../lib/supabaseClient.js';
 import { CONFIG } from '../../config.js';
 import { log } from '../../lib/logger.js';
 
-// ========== LOAD DROPDOWN OPTIONS ==========
 function loadDropdowns() {
-    // Sarana
     const saranaSelect = document.getElementById('sarana');
-    const saranaOptions = ['Aula SMP', 'Aula SMA', 'Sound Portable 1', 'Sound Portable 2', 'Proyektor', 'Laptop'];
-    saranaOptions.forEach(value => {
+    ['Aula SMP','Aula SMA','Sound Portable','Proyektor','Laptop'].forEach(v => {
         const opt = document.createElement('option');
-        opt.value = value;
-        opt.textContent = value;
-        saranaSelect.appendChild(opt);
-    });
-
-    // Alat tambahan
-    const alatSelect = document.getElementById('alat_tambahan');
-    const alatOptions = ['Mic Wireless', 'Kabel Roll', 'Kursi Tambahan', 'Meja Lipat', 'Whiteboard'];
-    alatOptions.forEach(value => {
-        const opt = document.createElement('option');
-        opt.value = value;
-        opt.textContent = value;
-        alatSelect.appendChild(opt);
+        opt.value = v; opt.textContent = v; saranaSelect.appendChild(opt);
     });
 }
 
-// ========== FUNGSI VALIDASI BOOKING ==========
 function isValidBooking(tanggal, jamMulai, jamSelesai, sarana) {
     const tgl = new Date(tanggal);
-    const hari = tgl.getDay(); // 0=Minggu, 1=Senin, ...
-
-    // Cek hari kerja (Senin-Jumat)
-    if (!CONFIG.workDays.includes(hari)) {
-        return { valid: false, reason: 'Hari libur, tidak bisa booking' };
-    }
-
-    // Cek apakah jam mulai dan selesai diisi
-    if (!jamMulai || !jamSelesai) {
-        return { valid: false, reason: 'Jam mulai dan selesai harus diisi' };
-    }
-
-    // Konversi jam ke format desimal (misal "07:30" -> 7.5)
+    const hari = tgl.getDay();
+    if (!CONFIG.workDays.includes(hari)) return { valid: false, reason: 'Hari libur' };
+    if (!jamMulai || !jamSelesai) return { valid: false, reason: 'Jam harus diisi' };
     const mulai = parseFloat(jamMulai.replace(':', '.'));
     const selesai = parseFloat(jamSelesai.replace(':', '.'));
-
-    // Cek jam kerja (07:30 - 16:00)
-    if (mulai < CONFIG.workHours.start || selesai > CONFIG.workHours.end) {
-        return { valid: false, reason: 'Di luar jam kerja (07:30 - 16:00)' };
+    if (mulai < CONFIG.workHours.start || selesai > CONFIG.workHours.end) 
+        return { valid: false, reason: 'Di luar jam kerja' };
+    if (hari === 5 && sarana.includes('Aula')) {
+        if (mulai < CONFIG.fridayRules.aula.start || selesai > CONFIG.fridayRules.aula.end)
+            return { valid: false, reason: 'Khusus Jumat, aula 10:30-13:00' };
     }
-
-    // Aturan khusus Jumat untuk aula dan serbaguna
-    if (hari === 5 && (sarana.includes('Aula') || sarana.includes('serbaguna'))) {
-        if (mulai < CONFIG.fridayRules.aula.start || selesai > CONFIG.fridayRules.aula.end) {
-            return { valid: false, reason: 'Khusus Jumat, aula/serbaguna hanya bisa 10:30 - 13:00 (persiapan shalat)' };
-        }
-    }
-
-    // Cek durasi maksimal (jam)
-    const durasi = selesai - mulai;
-    if (durasi > CONFIG.maxBookingDuration) {
-        return { valid: false, reason: `Maksimal booking ${CONFIG.maxBookingDuration} jam` };
-    }
-
-    // Log sukses validasi
-    log.info('Booking valid', { tanggal, jamMulai, jamSelesai, sarana });
     return { valid: true };
 }
 
-// ========== LOAD RIWAYAT HARI INI ==========
 async function loadTodayHistory() {
     const tbody = document.getElementById('history-table-body');
+    if (!tbody) return;
     const today = new Date().toISOString().split('T')[0];
-
-    try {
-        const { data, error } = await supabase
-            .from('bookings')
-            .select('nama, sarana, jam_mulai, jam_selesai, status')
-            .eq('tanggal_mulai', today)
-            .order('jam_mulai', { ascending: true });
-
-        if (error) throw error;
-
-        if (!data || data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 opacity-60">Belum ada booking hari ini</td></tr>';
-            return;
-        }
-
+    const { data } = await supabase.from('bookings').select('nama,sarana,jam_mulai,jam_selesai,status').eq('tanggal_mulai', today);
+    if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5">Belum ada booking</td></tr>';
+    } else {
         let html = '';
-        data.forEach((item, index) => {
-            const jam = item.jam_mulai 
-                ? item.jam_mulai.slice(0,5) + (item.jam_selesai ? ' - ' + item.jam_selesai.slice(0,5) : '') 
-                : '-';
-            const statusClass = item.status === 'pending' ? 'text-yellow-600' : 'text-green-600';
-            html += `
-                <tr class="border-b dark:border-gray-700">
-                    <td class="px-2 py-2">${index + 1}</td>
-                    <td class="px-2 py-2">${item.nama || '-'}</td>
-                    <td class="px-2 py-2">${item.sarana || '-'}</td>
-                    <td class="px-2 py-2">${jam}</td>
-                    <td class="px-2 py-2 ${statusClass}">${item.status || 'pending'}</td>
-                </tr>
-            `;
+        data.forEach((item, i) => {
+            const jam = item.jam_mulai ? item.jam_mulai.slice(0,5) + (item.jam_selesai ? ' - ' + item.jam_selesai.slice(0,5) : '') : '-';
+            html += `<tr><td>${i+1}</td><td>${item.nama}</td><td>${item.sarana}</td><td>${jam}</td><td>${item.status}</td></tr>`;
         });
         tbody.innerHTML = html;
-    } catch (err) {
-        log.error('Gagal memuat riwayat', err);
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-red-500">Gagal memuat data</td></tr>';
     }
 }
 
-// ========== HANDLE SUBMIT FORM ==========
 document.getElementById('bookingForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-
     const nama = document.getElementById('nama').value.trim();
-    const no_hp = document.getElementById('no_hp').value.trim();
-    const unit_kerja = document.getElementById('unit_kerja').value.trim();
     const sarana = document.getElementById('sarana').value;
-    const keperluan = document.getElementById('keperluan').value.trim();
     const tgl_mulai = document.getElementById('tgl_mulai').value;
-    const tgl_selesai = document.getElementById('tgl_selesai').value;
     const jam_mulai = document.getElementById('jam_mulai').value;
     const jam_selesai = document.getElementById('jam_selesai').value;
-    const alatSelect = document.getElementById('alat_tambahan');
-    const alat_tambahan = Array.from(alatSelect.selectedOptions).map(opt => opt.value).join(', ');
-    const catatan = document.getElementById('catatan').value.trim();
-
-    // Validasi field wajib
-    if (!nama || !sarana || !keperluan || !tgl_mulai) {
-        document.getElementById('form-result').innerHTML = '<span class="text-red-500">Nama, Sarana, Keperluan, dan Tanggal Mulai harus diisi!</span>';
-        return;
-    }
-
-    // Validasi aturan booking (jam kerja, hari, durasi)
     const valid = isValidBooking(tgl_mulai, jam_mulai, jam_selesai, sarana);
     if (!valid.valid) {
         document.getElementById('form-result').innerHTML = `<span class="text-red-500">${valid.reason}</span>`;
         return;
     }
-
-    const formData = {
-        nama,
-        no_hp: no_hp || null,
-        unit_kerja: unit_kerja || null,
-        sarana,
-        keperluan,
-        tanggal_mulai: tgl_mulai,
-        tanggal_selesai: tgl_selesai || null,
-        jam_mulai: jam_mulai || null,
-        jam_selesai: jam_selesai || null,
-        alat_tambahan: alat_tambahan || null,
-        catatan: catatan || null,
-        status: 'pending'
-    };
-
+    const formData = { nama, sarana, tanggal_mulai: tgl_mulai, jam_mulai, jam_selesai, status: 'pending' };
     const { error } = await supabase.from('bookings').insert([formData]);
-    const resultDiv = document.getElementById('form-result');
-
     if (error) {
-        log.error('Gagal insert booking', error);
-        resultDiv.innerHTML = `<span class="text-red-500">Gagal: ${error.message}</span>`;
+        document.getElementById('form-result').innerHTML = `<span class="text-red-500">Gagal: ${error.message}</span>`;
     } else {
-        log.info('Booking berhasil', formData);
-        resultDiv.innerHTML = '<span class="text-green-500">Booking berhasil! ✅</span>';
+        document.getElementById('form-result').innerHTML = '<span class="text-green-500">Booking berhasil!</span>';
         e.target.reset();
-        await loadTodayHistory();
-        setTimeout(() => resultDiv.innerHTML = '', 3000);
+        loadTodayHistory();
     }
 });
 
-// ========== REFRESH RIWAYAT ==========
-document.getElementById('refresh-history').addEventListener('click', loadTodayHistory);
-
-// ========== INIT ==========
 loadDropdowns();
 loadTodayHistory();
