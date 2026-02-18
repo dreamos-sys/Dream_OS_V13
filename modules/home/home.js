@@ -1,5 +1,3 @@
-alert('HOME.JS LOADED!'); // <-- untuk test apakah script dieksekusi
-
 (function() {
     const debugDiv = document.getElementById('debug-info');
     const checkpoint = (num, msg) => {
