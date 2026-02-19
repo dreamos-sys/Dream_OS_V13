@@ -1,115 +1,62 @@
-<div class="max-w-6xl mx-auto p-4 md:p-6 fade-in">
-    <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-gradient-to-r from-yellow-600 to-orange-600 p-6 rounded-2xl shadow-xl text-white">
-        <div>
-            <h2 class="text-3xl font-black tracking-tighter">BOOKING SYSTEM</h2>
-            <p class="text-xs opacity-90 uppercase tracking-widest font-bold italic">ISO 9001: Quality Management</p>
-        </div>
-        <div class="text-right hidden md:block font-mono text-[10px] opacity-80">
-            Approver: Hanung Budianto S. E<br>
-            Applicant: Erwinsyah
-        </div>
+<div class="max-w-2xl mx-auto p-4">
+    <div class="text-center mb-6">
+        <h2 class="text-xl font-semibold text-yellow-600">Dashboard</h2>
     </div>
 
-    <div class="mb-6 p-4 bg-blue-50 dark:bg-gray-900 border-l-4 border-blue-500 rounded-r-xl text-xs md:text-sm">
-        <h4 class="font-bold text-blue-700 dark:text-blue-400">🛡️ Aturan Booking Dream OS:</h4>
-        <ul class="grid grid-cols-1 md:grid-cols-2 gap-1 mt-2 opacity-80 font-semibold">
-            <li>• Jam Kerja: 07:30 s/d 16:00 (Senin - Jumat)</li>
-            <li>• Minimal Booking H-1 (Hanya bisa Senin-Jumat)</li>
-<li>• Sabtu/Minggu/Libur: Langsung ke Pak Erwinsyah/Pak Hanung</li>
-            <li>• Jumat: Aula/Serbaguna WAJIB Shalat Jumat (10:30-13:00)</li>
-            <li>• Masjid dalam maintenance (tidak bisa dibooking)</li>
-        </ul>
+    <!-- Debug box (bisa dihapus nanti) -->
+    <div id="debug-info" class="text-xs text-left mb-2 p-2 bg-gray-800 text-green-400 rounded overflow-auto max-h-32" style="font-family: monospace;">
+        Memuat debug...
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700">
-            <h3 class="text-lg font-bold mb-4 border-b pb-2 flex items-center">
-                <span class="mr-2">📝</span> Form Reservasi Baru
-            </h3>
-            <form id="bookingForm" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="md:col-span-2">
-                        <label class="block mb-1 text-xs font-bold text-gray-500">PILIH SARANA *</label>
-                        <select id="sarana" required class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl font-bold text-blue-600"></select>
-                    </div>
-                    <div>
-                        <label class="block mb-1 text-xs font-bold text-gray-500">NAMA PEMINJAM *</label>
-                        <input type="text" id="nama" required class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block mb-1 text-xs font-bold text-gray-500">UNIT KERJA</label>
-                        <input type="text" id="unit_kerja" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block mb-1 text-xs font-bold text-gray-500">TANGGAL MULAI *</label>
-                        <input type="date" id="tgl_mulai" required class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block mb-1 text-xs font-bold text-gray-500">JAM MULAI *</label>
-                        <input type="time" id="jam_mulai" required class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block mb-1 text-xs font-bold text-gray-500">JAM SELESAI *</label>
-                        <input type="time" id="jam_selesai" required class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl">
-                    </div>
-                    <div>
-                        <label class="block mb-1 text-xs font-bold text-gray-500">NO HP</label>
-                        <input type="tel" id="no_hp" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block mb-1 text-xs font-bold text-gray-500">KEPERLUAN *</label>
-                    <textarea id="keperluan" required rows="2" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl"></textarea>
-                </div>
-
-                <!-- Alat Tambahan (multi-select) -->
-                <div>
-                    <label class="block mb-1 text-xs font-bold text-gray-500">ALAT TAMBAHAN (OPSIONAL)</label>
-                    <select id="alat_tambahan" multiple size="4" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl">
-                        <!-- akan diisi JavaScript -->
-                    </select>
-                    <p class="text-xs mt-1 opacity-60">Tekan Ctrl/Cmd untuk memilih lebih dari satu</p>
-                </div>
-
-                <!-- Catatan Tambahan -->
-                <div>
-                    <label class="block mb-1 text-xs font-bold text-gray-500">CATATAN TAMBAHAN</label>
-                    <textarea id="catatan" rows="2" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl" placeholder="Catatan tambahan jika ada..."></textarea>
-                </div>
-
-                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white p-4 rounded-2xl font-black shadow-lg transform active:scale-95 transition-all">
-                    🚀 AJUKAN BOOKING SEKARANG
-                </button>
-                <div id="form-result" class="text-center font-bold"></div>
-            </form>
-        </div>
-
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
-            <h3 class="text-lg font-bold mb-4 border-b pb-2 flex justify-between items-center">
-                <span>📅 Jadwal Hari Ini</span>
-                <button id="refresh-history" class="text-[10px] bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full font-black">REFRESH</button>
-            </h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-gray-50 dark:bg-gray-900 uppercase text-[10px] font-black tracking-widest text-gray-500">
-                        <tr>
-                            <th class="p-3">Peminjam</th>
-                            <th class="p-3">Sarana</th>
-                            <th class="p-3">Jam</th>
-                            <th class="p-3">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="history-table-body" class="divide-y divide-gray-100 dark:divide-gray-700 font-medium italic text-xs"></tbody>
-                </table>
-            </div>
-        </div>
+    <!-- Grid 9 IKON dengan HOVER EFFECT -->
+    <div id="menu-grid" class="grid grid-cols-3 gap-3">
+        <!-- Akan diisi oleh JavaScript -->
     </div>
 
-    <!-- Tombol Kembali -->
-    <div class="mt-8 text-center">
-        <a href="#home" class="inline-block bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white px-8 py-3 rounded-xl font-bold shadow-md transition-all transform hover:scale-105">
-            ← KEMBALI KE DASHBOARD
-        </a>
-    </div>
+    <button id="logout" class="mt-6 w-full bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl hover-lift">Logout</button>
 </div>
+
+<script type="module">
+    import { supabase } from '../../lib/supabaseClient.js';
+
+    const allowed = JSON.parse(sessionStorage.getItem('allowed_modules') || '[]');
+    const debugDiv = document.getElementById('debug-info');
+    debugDiv.innerHTML = `📦 Raw allowed: ${allowed.join(', ') || 'kosong'}<br>`;
+
+    const menuMap = {
+        'booking': { name: 'Booking Sarana', icon: '📅', color: 'bg-blue-500' },
+        'k3': { name: 'Laporan K3', icon: '⚠️', color: 'bg-orange-500' },
+        'sekuriti': { name: 'Laporan Sekuriti', icon: '🛡️', color: 'bg-green-600' },
+        'janitor-indoor': { name: 'Janitor Indoor', icon: '🧹', color: 'bg-teal-600' },
+        'janitor-outdoor': { name: 'Janitor Outdoor', icon: '🌿', color: 'bg-cyan-600' },
+        'stok': { name: 'Alat & Stok', icon: '📦', color: 'bg-purple-600' },
+        'maintenance': { name: 'Maintenance', icon: '🔧', color: 'bg-yellow-600' },
+        'asset': { name: 'Asset', icon: '🏢', color: 'bg-indigo-600' },
+        'commandcenter': { name: 'Command Center', icon: '📊', color: 'bg-pink-600' }
+    };
+
+    debugDiv.innerHTML += `📋 MenuMap keys: ${Object.keys(menuMap).join(', ')}<br>`;
+
+    const visible = allowed.filter(id => menuMap[id]);
+    debugDiv.innerHTML += `✅ Visible modules: ${visible.join(', ') || 'tidak ada'}<br>`;
+
+    const grid = document.getElementById('menu-grid');
+    if (visible.length === 0) {
+        grid.innerHTML = '<p class="col-span-3 text-center">Tidak ada modul tersedia.</p>';
+    } else {
+        grid.innerHTML = visible.map(id => `
+            <a href="#${id}" class="${menuMap[id].color} text-white p-3 rounded-xl text-center font-semibold shadow transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex flex-col items-center justify-center">
+                <span class="text-3xl mb-1">${menuMap[id].icon}</span>
+                <span class="text-xs">${menuMap[id].name}</span>
+            </a>
+        `).join('');
+    }
+
+    debugDiv.innerHTML += `🎨 Jumlah ikon dirender: ${visible.length}<br>`;
+
+    document.getElementById('logout').addEventListener('click', (e) => {
+        e.preventDefault();
+        sessionStorage.removeItem('allowed_modules');
+        window.location.href = '/Dream_OS_V13/';
+    });
+</script>
