@@ -2,7 +2,61 @@
     <div class="text-center mb-6">
         <h2 class="text-xl font-semibold text-yellow-600">Dashboard</h2>
     </div>
-    <div id="debug-info" style="background:#111;color:#0f0;padding:8px;border-radius:8px;margin-bottom:16px;">⏳ Menunggu script...</div>
-    <div id="menu-grid" class="grid grid-cols-2 gap-3 md:grid-cols-3"></div>
+
+    <!-- Debug info (bisa dihapus nanti) -->
+    <div id="debug-info" class="text-xs text-center mb-2 p-2 bg-gray-200 dark:bg-gray-700 rounded">
+        Memuat modul...
+    </div>
+
+    <!-- Grid 9 IKON (3 baris x 3 kolom) -->
+    <div id="menu-grid" class="grid grid-cols-3 gap-3">
+        <!-- Akan diisi oleh JavaScript -->
+    </div>
+
+    <!-- Logout Button -->
     <button id="logout" class="mt-6 w-full bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl">Logout</button>
 </div>
+
+<script type="module">
+    import { supabase } from '../../lib/supabaseClient.js';
+
+    // ========== AMBIL ALLOWED MODULES ==========
+    const allowed = JSON.parse(sessionStorage.getItem('allowed_modules') || '[]');
+    const debugDiv = document.getElementById('debug-info');
+    debugDiv.innerHTML = `📦 Modul diizinkan: ${allowed.join(', ') || 'tidak ada'}`;
+
+    // ========== DEFINISI SEMUA IKON (9 MODUL) ==========
+    const menuMap = {
+        'booking': { name: 'Booking Sarana', icon: '📅', color: 'bg-blue-500' },
+        'k3': { name: 'Laporan K3', icon: '⚠️', color: 'bg-orange-500' },
+        'sekuriti': { name: 'Laporan Sekuriti', icon: '🛡️', color: 'bg-green-600' },
+        'janitor-indoor': { name: 'Janitor Indoor', icon: '🧹', color: 'bg-teal-600' },
+        'janitor-outdoor': { name: 'Janitor Outdoor', icon: '🌿', color: 'bg-cyan-600' },
+        'stok': { name: 'Alat & Stok', icon: '📦', color: 'bg-purple-600' },
+        'maintenance': { name: 'Maintenance', icon: '🔧', color: 'bg-yellow-600' },
+        'asset': { name: 'Asset', icon: '🏢', color: 'bg-indigo-600' },
+        'commandcenter': { name: 'Command Center', icon: '📊', color: 'bg-pink-600' }
+    };
+
+    // ========== RENDER MENU ==========
+    const grid = document.getElementById('menu-grid');
+    const visible = allowed.filter(id => menuMap[id]);
+
+    if (visible.length === 0) {
+        grid.innerHTML = '<p class="col-span-3 text-center">Tidak ada modul tersedia.</p>';
+    } else {
+        grid.innerHTML = visible.map(id => `
+            <a href="#${id}" class="${menuMap[id].color} text-white p-3 rounded-xl text-center font-semibold shadow hover:opacity-90 transition flex flex-col items-center justify-center">
+                <span class="text-3xl mb-1">${menuMap[id].icon}</span>
+                <span class="text-xs">${menuMap[id].name}</span>
+            </a>
+        `).join('');
+    }
+
+    // ========== LOGOUT ==========
+    document.getElementById('logout').addEventListener('click', (e) => {
+        e.preventDefault();
+        sessionStorage.removeItem('allowed_modules');
+        window.location.reload();
+    });
+</script>
