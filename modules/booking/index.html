@@ -1,124 +1,92 @@
-<div class="max-w-6xl mx-auto p-4">
-    <!-- Header modul -->
-    <div class="text-center mb-6">
-        <h2 class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">Booking Sarana Umum</h2>
-        <p class="text-sm opacity-70">Isi form di bawah untuk meminjam sarana</p>
+<div class="max-w-6xl mx-auto p-4 md:p-6 fade-in">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-gradient-to-r from-yellow-600 to-orange-600 p-6 rounded-2xl shadow-xl text-white">
+        <div>
+            <h2 class="text-3xl font-black tracking-tighter">BOOKING SYSTEM</h2>
+            <p class="text-xs opacity-90 uppercase tracking-widest font-bold italic">ISO 9001: Quality Management</p>
+        </div>
+        <div class="text-right hidden md:block font-mono text-[10px] opacity-80">
+            Approver: Hanung Budianto S. E<br>
+            Applicant: Erwinsyah
+        </div>
     </div>
 
-    <!-- Grid 2 kolom: kiri form, kanan riwayat -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Kolom Kiri: Form Booking -->
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-            <h3 class="text-lg font-semibold mb-4 border-b pb-2">Form Baru</h3>
+    <div class="mb-6 p-4 bg-blue-50 dark:bg-gray-900 border-l-4 border-blue-500 rounded-r-xl text-xs md:text-sm">
+        <h4 class="font-bold text-blue-700 dark:text-blue-400">🛡️ Aturan Booking Dream OS:</h4>
+        <ul class="grid grid-cols-1 md:grid-cols-2 gap-1 mt-2 opacity-80 font-semibold">
+            <li>• Jam Kerja: 07:30 s/d 16:00 (Senin - Jumat)</li>
+            <li>• Minimal Booking H-1 (Hanya bisa Senin-Jumat)</li>
+            <li>• Sabtu/Minggu/Libur: Langsung ke Pak Erwinsyah/Pak Hanung</li>
+            <li>• Jumat: Aula/Serbaguna WAJIB Shalat Jumat (10:30-13:00)</li>
+        </ul>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700">
+            <h3 class="text-lg font-bold mb-4 border-b pb-2 flex items-center">
+                <span class="mr-2">📝</span> Form Reservasi Baru
+            </h3>
             <form id="bookingForm" class="space-y-4">
-                <div>
-                    <label class="block mb-1 text-sm font-medium">Pilih Sarana *</label>
-                    <select id="sarana" required 
-                            class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
-                        <option value="">Pilih Sarana</option>
-                        <!-- Akan diisi oleh JavaScript -->
-                    </select>
-                </div>
-                <div>
-                    <label class="block mb-1 text-sm font-medium">Nama Peminjam *</label>
-                    <input type="text" id="nama" required 
-                           placeholder="Masukkan nama lengkap"
-                           class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
-                </div>
-                <div>
-                    <label class="block mb-1 text-sm font-medium">Unit Kerja</label>
-                    <input type="text" id="unit_kerja" 
-                           placeholder="Contoh: HRD, Marketing, dll"
-                           class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
-                </div>
-                <div>
-                    <label class="block mb-1 text-sm font-medium">No. HP</label>
-                    <input type="tel" id="no_hp" 
-                           placeholder="08xxxxxxxxxx"
-                           class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
-                </div>
-                <div>
-                    <label class="block mb-1 text-sm font-medium">Keperluan *</label>
-                    <input type="text" id="keperluan" required 
-                           placeholder="Jelaskan keperluan peminjaman"
-                           class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block mb-1 text-sm font-medium">Tanggal Mulai *</label>
-                        <input type="date" id="tgl_mulai" required 
-                               class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block mb-1 text-xs font-bold text-gray-500">PILIH SARANA *</label>
+                        <select id="sarana" required class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl font-bold text-blue-600"></select>
                     </div>
                     <div>
-                        <label class="block mb-1 text-sm font-medium">Tanggal Selesai</label>
-                        <input type="date" id="tgl_selesai" 
-                               class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block mb-1 text-sm font-medium">Jam Mulai</label>
-                        <input type="time" id="jam_mulai" 
-                               class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+                        <label class="block mb-1 text-xs font-bold text-gray-500">NAMA PEMINJAM *</label>
+                        <input type="text" id="nama" required class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl">
                     </div>
                     <div>
-                        <label class="block mb-1 text-sm font-medium">Jam Selesai</label>
-                        <input type="time" id="jam_selesai" 
-                               class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+                        <label class="block mb-1 text-xs font-bold text-gray-500">UNIT KERJA</label>
+                        <input type="text" id="unit_kerja" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-xs font-bold text-gray-500">TANGGAL MULAI *</label>
+                        <input type="date" id="tgl_mulai" required class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-xs font-bold text-gray-500">JAM MULAI *</label>
+                        <input type="time" id="jam_mulai" required class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-xs font-bold text-gray-500">JAM SELESAI *</label>
+                        <input type="time" id="jam_selesai" required class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-xs font-bold text-gray-500">NO HP</label>
+                        <input type="tel" id="no_hp" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl">
                     </div>
                 </div>
+
                 <div>
-                    <label class="block mb-1 text-sm font-medium">Alat Tambahan (Opsional)</label>
-                    <select id="alat_tambahan" multiple size="3" 
-                            class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
-                        <!-- Akan diisi JavaScript -->
-                    </select>
-                    <p class="text-xs mt-1 opacity-60">Tekan Ctrl/Cmd untuk memilih lebih dari satu</p>
+                    <label class="block mb-1 text-xs font-bold text-gray-500">KEPERLUAN *</label>
+                    <textarea id="keperluan" required rows="2" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl"></textarea>
                 </div>
-                <div>
-                    <label class="block mb-1 text-sm font-medium">Catatan Tambahan</label>
-                    <textarea id="catatan" rows="2" 
-                              placeholder="Catatan tambahan jika ada"
-                              class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"></textarea>
-                </div>
-                <button type="submit" 
-                        class="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-xl font-semibold transition">
-                    Ajukan Booking
+
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white p-4 rounded-2xl font-black shadow-lg transform active:scale-95 transition-all">
+                    🚀 AJUKAN BOOKING SEKARANG
                 </button>
-                <div id="form-result" class="text-center text-sm"></div>
+                <div id="form-result" class="text-center font-bold"></div>
             </form>
         </div>
 
-        <!-- Kolom Kanan: Riwayat Booking Hari Ini -->
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-            <h3 class="text-lg font-semibold mb-4 border-b pb-2 flex justify-between items-center">
-                <span>Riwayat Booking Hari Ini</span>
-                <button id="refresh-history" class="text-sm bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded">
-                    🔄 Refresh
-                </button>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+            <h3 class="text-lg font-bold mb-4 border-b pb-2 flex justify-between items-center">
+                <span>📅 Jadwal Hari Ini</span>
+                <button id="refresh-history" class="text-[10px] bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full font-black">REFRESH</button>
             </h3>
             <div class="overflow-x-auto">
-                <table class="min-w-full table-auto text-sm">
-                    <thead class="bg-gray-100 dark:bg-gray-700">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-gray-50 dark:bg-gray-900 uppercase text-[10px] font-black tracking-widest text-gray-500">
                         <tr>
-                            <th class="px-2 py-2 text-left">No</th>
-                            <th class="px-2 py-2 text-left">Nama</th>
-                            <th class="px-2 py-2 text-left">Sarana</th>
-                            <th class="px-2 py-2 text-left">Jam</th>
-                            <th class="px-2 py-2 text-left">Status</th>
+                            <th class="p-3">Peminjam</th>
+                            <th class="p-3">Sarana</th>
+                            <th class="p-3">Jam</th>
+                            <th class="p-3">Status</th>
                         </tr>
                     </thead>
-                    <tbody id="history-table-body">
-                        <tr><td colspan="5" class="text-center py-4 opacity-60">Memuat data...</td></tr>
-                    </tbody>
+                    <tbody id="history-table-body" class="divide-y divide-gray-100 dark:divide-gray-700 font-medium italic text-xs"></tbody>
                 </table>
             </div>
-            <p class="text-xs mt-2 opacity-60">Menampilkan booking dengan tanggal mulai hari ini</p>
         </div>
-    </div>
-
-    <!-- Tombol Kembali -->
-    <div class="mt-6 text-center">
-        <a href="#home" class="text-blue-500 hover:underline">← Kembali ke Dashboard</a>
     </div>
 </div>
