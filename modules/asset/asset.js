@@ -170,5 +170,50 @@ alert('🚀 High-End Asset System Activated!');
 
     // --- INIT ---
     loadAssets();
+    
+    // --- 🖨️ PRINT ALL QR LABELS (Gudang Mode) ---
+document.getElementById('btn-print-all-qr').onclick = () => {
+    const assets = window.currentAssets;
+    if (!assets || assets.length === 0) return alert('Data asset kosong!');
+
+    const printWin = window.open('', '_blank');
+    printWin.document.write(`
+        <html>
+        <head>
+            <title>Cetak Label Asset - Dream OS</title>
+            <style>
+                body { font-family: 'Courier New', Courier, monospace; display: flex; flex-wrap: wrap; gap: 20px; padding: 20px; }
+                .label-card { border: 2px solid #000; padding: 10px; width: 200px; text-align: center; border-radius: 8px; }
+                .qr-img { width: 100px; height: 100px; margin-bottom: 5px; }
+                .asset-name { font-size: 12px; font-weight: bold; text-transform: uppercase; }
+                .asset-id { font-size: 8px; color: #666; }
+                @media print { .no-print { display: none; } }
+            </style>
+        </head>
+        <body>
+            <div class="no-print" style="width:100%; margin-bottom:20px;">
+                <button onclick="window.print()">🖨️ Konfirmasi Print</button>
+                <hr>
+            </div>
+    `);
+
+    assets.forEach(item => {
+        // Generate link QR menggunakan API eksternal agar ringan
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=ALFIKRI-ASSET-${item.id}`;
+        
+        printWin.document.write(`
+            <div class="label-card">
+                <div class="asset-id">ID: ${item.id}</div>
+                <img src="${qrUrl}" class="qr-img">
+                <div class="asset-name">${item.nama_asset}</div>
+                <div style="font-size: 10px;">${item.lokasi}</div>
+                <div style="font-size: 9px; margin-top:5px; border-top:1px solid #ddd;">Dream OS v13.3</div>
+            </div>
+        `);
+    });
+
+    printWin.document.write(`</body></html>`);
+    printWin.document.close();
+};
 
 })();
