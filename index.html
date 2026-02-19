@@ -35,7 +35,6 @@
         .dark #slideshow-container {
             background: #1e293b;
         }
-        /* Slideshow disembunyikan sebelum login */
         #slideshow-container { display: none; }
     </style>
 </head>
@@ -48,7 +47,7 @@
             <h1 class="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mt-2">Dream OS v13.3</h1>
         </div>
 
-        <!-- Slideshow 7 Slide (disembunyikan sampai login) -->
+        <!-- Slideshow -->
         <div id="slideshow-container" class="mb-4">
             <div class="slide slide-1">✨ Selamat Datang, Keluarga SIF Al-Fikri ✨</div>
             <div class="slide slide-2 opacity-0">📅 Booking Hari Ini: <span id="slide2-count">0</span> pending</div>
@@ -94,6 +93,26 @@
             togglePassword.textContent = type === 'password' ? '👁️' : '🙈';
         });
 
+        // Fungsi untuk menampilkan/menyembunyikan komponen berdasarkan session
+        function checkAuth() {
+            const allowed = sessionStorage.getItem('allowed_modules');
+            const authContainer = document.getElementById('auth-container');
+            const mainContent = document.getElementById('main-content');
+            const slideshow = document.getElementById('slideshow-container');
+
+            if (allowed) {
+                authContainer.style.display = 'none';
+                mainContent.style.display = 'block';
+                slideshow.style.display = 'block';
+                if (!window.location.hash) window.location.hash = '#home';
+            } else {
+                authContainer.style.display = 'block';
+                mainContent.style.display = 'none';
+                slideshow.style.display = 'none';
+                window.location.hash = ''; // bersihkan hash
+            }
+        }
+
         // Login
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -108,20 +127,11 @@
                 return;
             }
             sessionStorage.setItem('allowed_modules', JSON.stringify(data.allowed_modules));
-            document.getElementById('auth-container').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-            document.getElementById('slideshow-container').style.display = 'block';
-            window.location.hash = '#home';
+            checkAuth();
+            loadModule();
         });
 
-        if (sessionStorage.getItem('allowed_modules')) {
-            document.getElementById('auth-container').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-            document.getElementById('slideshow-container').style.display = 'block';
-            window.location.hash = '#home';
-        }
-
-        // ========== ROUTER LENGKAP 9 MODUL ==========
+        // Router
         const routes = {
             '#home': './modules/home/index.html',
             '#booking': './modules/booking/index.html',
@@ -169,7 +179,7 @@
         }
 
         window.addEventListener('hashchange', loadModule);
-        window.addEventListener('load', loadModule);
+        window.addEventListener('load', () => { checkAuth(); loadModule(); });
 
         // ========== SLIDESHOW ENGINE ==========
         let currentSlide = 0;
@@ -204,12 +214,11 @@
 
         // ========== SLIDE 4: CUACA & LALIN ==========
         async function updateSlide4() {
-            // Placeholder - nanti bisa diisi API BMKG + Google Maps Traffic
             document.getElementById('weather-info').textContent = 'Cerah, 26°C';
             document.getElementById('traffic-info').textContent = 'Lancar';
         }
         updateSlide4();
-        setInterval(updateSlide4, 60000); // update tiap 1 jam
+        setInterval(updateSlide4, 60000);
 
         // ========== SLIDE 5-7: INFO DARI ADMIN ==========
         async function updateAdminSlides() {
@@ -218,7 +227,6 @@
                 .select('slide_number, content')
                 .order('created_at', { ascending: false })
                 .limit(3);
-
             if (data && data.length > 0) {
                 data.forEach(item => {
                     if (item.slide_number === 5) document.getElementById('admin-info-1').textContent = item.content;
@@ -230,7 +238,7 @@
             }
         }
         updateAdminSlides();
-        setInterval(updateAdminSlides, 5000); // update cepat untuk info admin
+        setInterval(updateAdminSlides, 5000);
 
         // ========== SPIRITUAL SYNC ==========
         (async function initSpiritual() {
