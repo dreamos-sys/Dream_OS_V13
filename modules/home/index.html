@@ -1,20 +1,18 @@
-
 <div class="max-w-2xl mx-auto p-4">
     <div class="text-center mb-6">
         <h2 class="text-xl font-semibold text-yellow-600">Dashboard</h2>
     </div>
 
-    <!-- Debug info (opsional) -->
-    <div id="debug-info" class="text-xs text-center mb-2 p-2 bg-gray-200 dark:bg-gray-700 rounded">
-        Memuat modul...
+    <!-- Debug box besar -->
+    <div id="debug-info" class="text-xs text-left mb-2 p-2 bg-gray-800 text-green-400 rounded overflow-auto max-h-32" style="font-family: monospace;">
+        Memuat debug...
     </div>
 
-    <!-- Grid 9 IKON (3 baris x 3 kolom) -->
+    <!-- Grid 9 IKON -->
     <div id="menu-grid" class="grid grid-cols-3 gap-3">
         <!-- Akan diisi oleh JavaScript -->
     </div>
 
-    <!-- Logout Button -->
     <button id="logout" class="mt-6 w-full bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl">Logout</button>
 </div>
 
@@ -24,7 +22,7 @@
     // ========== AMBIL ALLOWED MODULES ==========
     const allowed = JSON.parse(sessionStorage.getItem('allowed_modules') || '[]');
     const debugDiv = document.getElementById('debug-info');
-    if (debugDiv) debugDiv.innerHTML = `📦 Modul diizinkan: ${allowed.join(', ') || 'tidak ada'}`;
+    debugDiv.innerHTML = `📦 Raw allowed: ${allowed.join(', ') || 'kosong'}<br>`;
 
     // ========== DEFINISI SEMUA IKON (9 MODUL) ==========
     const menuMap = {
@@ -39,10 +37,14 @@
         'commandcenter': { name: 'Command Center', icon: '📊', color: 'bg-pink-600' }
     };
 
+    debugDiv.innerHTML += `📋 MenuMap keys: ${Object.keys(menuMap).join(', ')}<br>`;
+
+    // ========== FILTER MODUL YANG DIIZINKAN ==========
+    const visible = allowed.filter(id => menuMap[id]);
+    debugDiv.innerHTML += `✅ Visible modules: ${visible.join(', ') || 'tidak ada'}<br>`;
+
     // ========== RENDER MENU ==========
     const grid = document.getElementById('menu-grid');
-    const visible = allowed.filter(id => menuMap[id]);
-
     if (visible.length === 0) {
         grid.innerHTML = '<p class="col-span-3 text-center">Tidak ada modul tersedia.</p>';
     } else {
@@ -54,12 +56,13 @@
         `).join('');
     }
 
-    // ========== LOGOUT (PASTI JALAN) ==========
+    debugDiv.innerHTML += `🎨 Jumlah ikon dirender: ${visible.length}<br>`;
+
+    // ========== LOGOUT ==========
     document.getElementById('logout').addEventListener('click', (e) => {
         e.preventDefault();
         console.log('🔴 Logout diklik');
         sessionStorage.removeItem('allowed_modules');
-        // Redirect ke halaman utama (root repo)
-        window.location.href = '/Dream_OS_V13/';  // ganti '/' kalau root
+        window.location.href = '/Dream_OS_V13/'; // sesuaikan jika perlu
     });
 </script>
