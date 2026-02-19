@@ -3,11 +3,6 @@
         <h2 class="text-xl font-semibold text-yellow-600">Dashboard</h2>
     </div>
 
-    <!-- Debug box besar -->
-    <div id="debug-info" class="text-xs text-left mb-2 p-2 bg-gray-800 text-green-400 rounded overflow-auto max-h-32" style="font-family: monospace;">
-        Memuat debug...
-    </div>
-
     <!-- Grid 9 IKON -->
     <div id="menu-grid" class="grid grid-cols-3 gap-3">
         <!-- Akan diisi oleh JavaScript -->
@@ -16,15 +11,12 @@
     <button id="logout" class="mt-6 w-full bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl">Logout</button>
 </div>
 
-<script type="module">
-    import { supabase } from '../../lib/supabaseClient.js';
-
-    // ========== AMBIL ALLOWED MODULES ==========
+<script>
+(function() {
+    // Ambil allowed modules dari sessionStorage
     const allowed = JSON.parse(sessionStorage.getItem('allowed_modules') || '[]');
-    const debugDiv = document.getElementById('debug-info');
-    debugDiv.innerHTML = `📦 Raw allowed: ${allowed.join(', ') || 'kosong'}<br>`;
-
-    // ========== DEFINISI SEMUA IKON (9 MODUL) ==========
+    
+    // Definisi menu (9 ikon)
     const menuMap = {
         'booking': { name: 'Booking Sarana', icon: '📅', color: 'bg-blue-500' },
         'k3': { name: 'Laporan K3', icon: '⚠️', color: 'bg-orange-500' },
@@ -37,32 +29,26 @@
         'commandcenter': { name: 'Command Center', icon: '📊', color: 'bg-pink-600' }
     };
 
-    debugDiv.innerHTML += `📋 MenuMap keys: ${Object.keys(menuMap).join(', ')}<br>`;
-
-    // ========== FILTER MODUL YANG DIIZINKAN ==========
+    // Filter modul yang diizinkan
     const visible = allowed.filter(id => menuMap[id]);
-    debugDiv.innerHTML += `✅ Visible modules: ${visible.join(', ') || 'tidak ada'}<br>`;
-
-    // ========== RENDER MENU ==========
     const grid = document.getElementById('menu-grid');
+
     if (visible.length === 0) {
         grid.innerHTML = '<p class="col-span-3 text-center">Tidak ada modul tersedia.</p>';
     } else {
         grid.innerHTML = visible.map(id => `
-            <a href="#${id}" class="${menuMap[id].color} text-white p-3 rounded-xl text-center font-semibold shadow hover:opacity-90 transition flex flex-col items-center justify-center">
+            <a href="#${id}" class="${menuMap[id].color} text-white p-3 rounded-xl text-center font-semibold shadow transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex flex-col items-center justify-center">
                 <span class="text-3xl mb-1">${menuMap[id].icon}</span>
                 <span class="text-xs">${menuMap[id].name}</span>
             </a>
         `).join('');
     }
 
-    debugDiv.innerHTML += `🎨 Jumlah ikon dirender: ${visible.length}<br>`;
-
-    // ========== LOGOUT ==========
+    // Logout
     document.getElementById('logout').addEventListener('click', (e) => {
         e.preventDefault();
-        console.log('🔴 Logout diklik');
         sessionStorage.removeItem('allowed_modules');
         window.location.href = '/Dream_OS_V13/'; // sesuaikan jika perlu
     });
+})();
 </script>
