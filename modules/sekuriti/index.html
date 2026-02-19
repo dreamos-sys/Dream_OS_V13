@@ -1,0 +1,133 @@
+<div class="max-w-6xl mx-auto p-4">
+    <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold text-green-600 dark:text-green-400">Laporan Sekuriti</h2>
+        <p class="text-sm opacity-70">Laporan patroli & kejadian keamanan</p>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="flex space-x-2 mb-4 border-b">
+        <button class="tab-btn active px-4 py-2 font-semibold text-green-600 border-b-2 border-green-600" data-tab="laporan">📋 Laporan Shift</button>
+        <button class="tab-btn px-4 py-2 text-gray-600 dark:text-gray-300" data-tab="jadwal">📅 Jadwal</button>
+    </div>
+
+    <!-- Tab: Laporan Shift -->
+    <div id="tab-laporan" class="tab-content">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Form Laporan -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                <h3 class="text-lg font-semibold mb-4 border-b pb-2">Laporan Baru</h3>
+                <form id="sekuritiForm" class="space-y-4">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">Tanggal *</label>
+                        <input type="date" id="tanggal" required class="w-full p-2 border rounded dark:bg-gray-700">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">Shift *</label>
+                        <select id="shift" required class="w-full p-2 border rounded dark:bg-gray-700">
+                            <option value="">Pilih Shift</option>
+                            <option value="siang">Siang (07:00-19:00)</option>
+                            <option value="malam">Malam (19:00-07:00)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">Petugas (pisahkan dengan koma) *</label>
+                        <input type="text" id="petugas" placeholder="Nama1, Nama2, Nama3" required class="w-full p-2 border rounded dark:bg-gray-700">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">Jenis Laporan</label>
+                        <select id="jenis_laporan" class="w-full p-2 border rounded dark:bg-gray-700">
+                            <option value="">Pilih Jenis</option>
+                            <option value="patroli">Patroli Rutin</option>
+                            <option value="kejadian">Kejadian Khusus</option>
+                            <option value="serah_terima">Serah Terima</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">Lokasi</label>
+                        <input type="text" id="lokasi" placeholder="Area patroli" class="w-full p-2 border rounded dark:bg-gray-700">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">Deskripsi *</label>
+                        <textarea id="deskripsi" required rows="3" placeholder="Detail laporan" class="w-full p-2 border rounded dark:bg-gray-700"></textarea>
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">Tindakan</label>
+                        <textarea id="tindakan" rows="2" placeholder="Tindakan yang diambil" class="w-full p-2 border rounded dark:bg-gray-700"></textarea>
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">Serah Terima</label>
+                        <textarea id="serah_terima" rows="2" placeholder="Catatan serah terima antar shift" class="w-full p-2 border rounded dark:bg-gray-700"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-xl font-semibold">
+                        Kirim Laporan
+                    </button>
+                    <div id="form-result" class="text-center text-sm"></div>
+                </form>
+            </div>
+
+            <!-- Riwayat Laporan -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+                <h3 class="text-lg font-semibold mb-4 border-b pb-2 flex justify-between items-center">
+                    <span>Riwayat Laporan</span>
+                    <button id="refresh-history" class="text-sm bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded">
+                        🔄 Refresh
+                    </button>
+                </h3>
+                <div id="history-table" class="overflow-x-auto">
+                    <table class="min-w-full table-auto text-sm">
+                        <thead class="bg-gray-100 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-2 py-2">Tanggal</th>
+                                <th class="px-2 py-2">Shift</th>
+                                <th class="px-2 py-2">Petugas</th>
+                                <th class="px-2 py-2">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-body">
+                            <tr><td colspan="4" class="text-center py-4">Memuat...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Jadwal (khusus Danru) -->
+    <div id="tab-jadwal" class="tab-content hidden">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+            <h3 class="text-lg font-semibold mb-4 border-b pb-2">Input Jadwal Bulanan</h3>
+            <form id="jadwalForm" class="space-y-4 max-w-md mx-auto">
+                <div>
+                    <label class="block mb-1 text-sm font-medium">Tanggal</label>
+                    <input type="date" id="jadwal_tanggal" required class="w-full p-2 border rounded dark:bg-gray-700">
+                </div>
+                <div>
+                    <label class="block mb-1 text-sm font-medium">Shift</label>
+                    <select id="jadwal_shift" required class="w-full p-2 border rounded dark:bg-gray-700">
+                        <option value="siang">Siang</option>
+                        <option value="malam">Malam</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-1 text-sm font-medium">Petugas 1</label>
+                    <input type="text" id="petugas1" class="w-full p-2 border rounded dark:bg-gray-700">
+                </div>
+                <div>
+                    <label class="block mb-1 text-sm font-medium">Petugas 2</label>
+                    <input type="text" id="petugas2" class="w-full p-2 border rounded dark:bg-gray-700">
+                </div>
+                <div>
+                    <label class="block mb-1 text-sm font-medium">Petugas 3 (opsional, siang saja)</label>
+                    <input type="text" id="petugas3" class="w-full p-2 border rounded dark:bg-gray-700">
+                </div>
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                    Simpan Jadwal
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-6 text-center">
+        <a href="#home" class="text-blue-500 hover:underline">← Kembali ke Dashboard</a>
+    </div>
+</div>
