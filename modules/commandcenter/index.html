@@ -1,61 +1,154 @@
-<div class="max-w-6xl mx-auto p-4">
-    <div class="text-center mb-6">
-        <h2 class="text-2xl font-bold text-purple-600 dark:text-purple-400">Command Center v13.3</h2>
-        <p class="text-sm opacity-70 italic">The Power Soul of Shalawat — SIF Al-Fikri</p>
+
+<div class="max-w-6xl mx-auto p-4 md:p-6 fade-in">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-gradient-to-r from-purple-800 to-indigo-900 p-6 rounded-2xl shadow-xl text-white">
+        <div>
+            <h2 class="text-3xl font-extrabold tracking-tight">Command Center 🚀</h2>
+            <p class="text-sm opacity-80 mt-1 font-medium">Dream OS v13.3 • The Power Soul of Shalawat</p>
+        </div>
+        <div class="mt-4 md:mt-0 text-right">
+            <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm border border-white/30">ISO 9001 & 27001 Ready</span>
+            <p class="text-xs mt-2 opacity-75">Admin Panel - SIF Al-Fikri</p>
+        </div>
     </div>
 
-    <div class="flex space-x-2 mb-6 border-b overflow-x-auto pb-2">
-        <button class="tab-btn active px-4 py-2 font-semibold text-purple-600 border-b-2 border-purple-600" data-tab="dashboard">📊 Stats</button>
-        <button class="tab-btn px-4 py-2 text-gray-500" data-tab="approval">✅ Approval</button>
-        <button class="tab-btn px-4 py-2 text-gray-500" data-tab="spj">📄 SPJ + QR</button>
-        <button class="tab-btn px-4 py-2 text-gray-500" data-tab="slides">🖼️ Slides</button>
+    <div class="flex space-x-2 mb-6 border-b border-gray-200 dark:border-gray-700 overflow-x-auto pb-2 scrollbar-hide">
+        <button class="tab-btn active px-5 py-2.5 font-bold text-purple-600 border-b-4 border-purple-600 transition-all" data-tab="dashboard">📊 Dashboard</button>
+        <button class="tab-btn px-5 py-2.5 text-gray-500 hover:text-purple-500 font-semibold transition-all" data-tab="approval">✅ Approval</button>
+        <button class="tab-btn px-5 py-2.5 text-gray-500 hover:text-purple-500 font-semibold transition-all" data-tab="pengajuan">📄 SPJ & Booking</button>
+        <button class="tab-btn px-5 py-2.5 text-gray-500 hover:text-purple-500 font-semibold transition-all" data-tab="slides">🖼️ Kelola Slide</button>
     </div>
 
-    <div id="tab-dashboard" class="tab-section">
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow border-l-4 border-blue-500">
-                <div class="text-2xl font-bold" id="stat-booking">0</div>
-                <div class="text-xs uppercase opacity-60">Booking Pending</div>
+    <div id="tab-dashboard" class="tab-content block">
+        <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">Ringkasan Sistem Real-time</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border-t-4 border-blue-500 relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 text-blue-500 opacity-10 text-7xl">📅</div>
+                <div class="text-4xl font-black text-blue-600 dark:text-blue-400 mb-1" id="stat-booking">0</div>
+                <div class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Booking Pending</div>
             </div>
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow border-l-4 border-orange-500">
-                <div class="text-2xl font-bold" id="stat-k3">0</div>
-                <div class="text-xs uppercase opacity-60">K3 Pending</div>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border-t-4 border-orange-500 relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 text-orange-500 opacity-10 text-7xl">⚠️</div>
+                <div class="text-4xl font-black text-orange-600 dark:text-orange-400 mb-1" id="stat-k3">0</div>
+                <div class="text-sm font-semibold text-gray-500 uppercase tracking-wide">K3 Pending</div>
             </div>
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow border-l-4 border-green-500">
-                <div class="text-2xl font-bold" id="stat-spj">0</div>
-                <div class="text-xs uppercase opacity-60">SPJ Terbit</div>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border-t-4 border-green-500 relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 text-green-500 opacity-10 text-7xl">🔧</div>
+                <div class="text-4xl font-black text-green-600 dark:text-green-400 mb-1" id="stat-maintenance">0</div>
+                <div class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Maint. Pending</div>
             </div>
         </div>
     </div>
 
-    <div id="tab-spj" class="tab-section hidden">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-            <h3 class="font-bold mb-4">Pengajuan SPJ + Bukti Kamera</h3>
-            <form id="spjForm" class="space-y-4">
-                <input type="text" id="spj_judul" placeholder="Tujuan / Judul SPJ" class="w-full p-2 border rounded dark:bg-gray-700" required>
-                <input type="number" id="spj_nominal" placeholder="Nominal Rp" class="w-full p-2 border rounded dark:bg-gray-700" required>
-                
-                <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                    <video id="camera-stream" autoplay playsinline class="w-full max-h-48 rounded mb-2 hidden"></video>
-                    <canvas id="photo-canvas" class="hidden"></canvas>
-                    <img id="photo-preview" class="max-h-48 mx-auto rounded hidden">
-                    <div class="flex justify-center gap-2">
-                        <button type="button" id="btn-start-cam" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">📸 Buka Kamera</button>
-                        <button type="button" id="btn-snap" class="bg-green-600 text-white px-3 py-1 rounded text-sm hidden">Ambil Foto</button>
-                    </div>
+    <div id="tab-approval" class="tab-content hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
+                <h4 class="font-extrabold text-blue-600 mb-4 flex items-center"><span>📅 Antrean Booking</span></h4>
+                <div id="approval-booking" class="text-sm space-y-3">
+                    <div class="animate-pulse flex space-x-4"><div class="flex-1 space-y-4 py-1"><div class="h-4 bg-gray-200 rounded w-3/4"></div></div></div>
                 </div>
-                
-                <button type="submit" class="w-full bg-purple-600 text-white p-3 rounded-xl font-bold">AJUKAN SPJ</button>
-            </form>
-        </div>
-        
-        <div class="mt-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow overflow-x-auto">
-            <h3 class="font-bold mb-4">Riwayat SPJ (Siap Cetak)</h3>
-            <div id="list-spj" class="space-y-3"></div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
+                <h4 class="font-extrabold text-orange-600 mb-4 flex items-center"><span>⚠️ Antrean K3</span></h4>
+                <div id="approval-k3" class="text-sm space-y-3">
+                    <div class="animate-pulse flex space-x-4"><div class="flex-1 space-y-4 py-1"><div class="h-4 bg-gray-200 rounded w-3/4"></div></div></div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="mt-8 text-center">
-        <a href="#home" class="text-blue-500 font-semibold hover:underline">← Back to Dashboard</a>
+    <div id="tab-pengajuan" class="tab-content hidden space-y-6">
+        
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
+            <h4 class="font-extrabold text-indigo-600 mb-4">👑 Pengajuan Booking (Perlu Persetujuan Khusus)</h4>
+            <div id="pengajuan-booking" class="text-sm space-y-3 bg-gray-50 dark:bg-gray-900 p-4 rounded-xl"></div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
+                <h4 class="font-extrabold text-purple-600 mb-4 border-b pb-2">📄 Form Pengajuan SPJ</h4>
+                <form id="spjForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Judul Keperluan</label>
+                        <input type="text" id="spj_judul" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition" placeholder="Contoh: Beli Sapu & Pel" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Nominal (Rp)</label>
+                        <input type="number" id="spj_nominal" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition" placeholder="50000" required>
+                    </div>
+
+                    <div class="bg-blue-50 dark:bg-gray-900 p-4 rounded-xl border border-blue-100 dark:border-gray-600">
+                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-2">📸 Kamera Pemindai Bukti</label>
+                        <div class="border-2 border-dashed border-blue-300 dark:border-gray-500 rounded-lg p-3 text-center bg-white dark:bg-gray-800">
+                            <video id="camera-preview" autoplay playsinline class="w-full max-h-48 object-cover rounded-md bg-black mb-2"></video>
+                            <canvas id="camera-canvas" class="hidden"></canvas>
+                            
+                            <div class="flex justify-center flex-wrap gap-2">
+                                <button type="button" id="start-camera" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm font-bold transition shadow">Nyalakan</button>
+                                <button type="button" id="capture-photo" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-sm font-bold transition shadow">Jepret 📸</button>
+                                <button type="button" id="stop-camera" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm font-bold transition shadow">Matikan</button>
+                            </div>
+                            <div id="camera-result" class="mt-3 text-xs font-semibold text-green-600 flex flex-col items-center"></div>
+                            <input type="hidden" id="spj_photo_data" value="">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Upload File Tambahan (PDF/Img)</label>
+                        <input type="file" id="spj_file" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 cursor-pointer">
+                    </div>
+
+                    <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white p-3 rounded-xl font-bold shadow-lg transform active:scale-95 transition">🚀 Ajukan SPJ & Generate QR</button>
+                </form>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
+                <h4 class="font-extrabold text-teal-600 mb-4 border-b pb-2">🖨️ Riwayat & Cetak SPJ</h4>
+                <div id="riwayat-spj" class="text-sm space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                    <div class="animate-pulse"><div class="h-20 bg-gray-100 dark:bg-gray-700 rounded-xl w-full"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-slides" class="tab-content hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
+                <h4 class="font-extrabold text-pink-600 mb-4">📺 Update Teks Slide</h4>
+                <form id="slideForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">Pilih Target Slide</label>
+                        <select id="slide_number" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl font-semibold">
+                            <option value="5">Slide 5 - Info Admin</option>
+                            <option value="6">Slide 6 - Info Keamanan</option>
+                            <option value="7">Slide 7 - Pesan Spiritual/Maghrib</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">Pesan Broadcast</label>
+                        <textarea id="slide_content" rows="4" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition" placeholder="Tulis instruksi atau pesan ISO di sini..."></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white p-3 rounded-xl font-bold shadow-md">Kirim ke Layar Utama 📡</button>
+                </form>
+            </div>
+            
+            <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-4 border-gray-800 relative">
+                <div class="absolute top-3 right-4 flex space-x-1">
+                    <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                    <span class="text-[10px] uppercase font-bold text-red-400">Live Preview</span>
+                </div>
+                <h4 class="font-extrabold text-white mb-4">Monitor Slide Saat Ini</h4>
+                <div class="space-y-4 text-sm font-mono bg-black/50 p-4 rounded-xl border border-gray-700">
+                    <div><span class="text-pink-400 font-bold">[S5]</span> <span id="preview-slide5" class="text-gray-300">Loading...</span></div>
+                    <div class="border-t border-gray-700 pt-2"><span class="text-blue-400 font-bold">[S6]</span> <span id="preview-slide6" class="text-gray-300">Loading...</span></div>
+                    <div class="border-t border-gray-700 pt-2"><span class="text-orange-400 font-bold">[S7]</span> <span id="preview-slide7" class="text-gray-300">Loading...</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-8 text-center pb-10">
+        <a href="#home" class="inline-block bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white px-6 py-2 rounded-full font-bold transition shadow">
+            ⬅️ Kembali ke 9 Ikon
+        </a>
     </div>
 </div>
