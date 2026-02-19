@@ -1,23 +1,60 @@
 <div class="max-w-2xl mx-auto p-4">
     <div class="text-center mb-6">
-        <h2 class="text-xl font-semibold text-yellow-600">Dashboard</h2>
+        <h2 class="text-xl font-semibold text-yellow-600 dark:text-yellow-400">Dashboard Dream OS</h2>
+        <p class="text-xs opacity-60">Pilih modul layanan untuk melanjutkan</p>
     </div>
+
     <div class="grid grid-cols-3 gap-3">
-        <a href="#booking" class="bg-blue-500 text-white p-3 rounded-xl text-center">📅 Booking</a>
-        <a href="#k3" class="bg-orange-500 text-white p-3 rounded-xl text-center">⚠️ K3</a>
-        <a href="#sekuriti" class="bg-green-600 text-white p-3 rounded-xl text-center">🛡️ Sekuriti</a>
-        <a href="#janitor-indoor" class="bg-teal-600 text-white p-3 rounded-xl text-center">🧹 Janitor In</a>
-        <a href="#janitor-outdoor" class="bg-cyan-600 text-white p-3 rounded-xl text-center">🌿 Janitor Out</a>
-        <a href="#stok" class="bg-purple-600 text-white p-3 rounded-xl text-center">📦 Stok</a>
-        <a href="#maintenance" class="bg-yellow-600 text-white p-3 rounded-xl text-center">🔧 Maintenance</a>
-        <a href="#asset" class="bg-indigo-600 text-white p-3 rounded-xl text-center">🏢 Asset</a>
-        <a href="#commandcenter" class="bg-pink-600 text-white p-3 rounded-xl text-center">📊 Command</a>
+        <a href="#booking" class="bg-blue-500 hover:opacity-90 text-white p-3 rounded-xl text-center shadow-md transition flex flex-col items-center">
+            <span class="text-2xl mb-1">📅</span>
+            <span class="text-xs font-semibold">Booking</span>
+        </a>
+        <a href="#k3" class="bg-orange-500 hover:opacity-90 text-white p-3 rounded-xl text-center shadow-md transition flex flex-col items-center">
+            <span class="text-2xl mb-1">⚠️</span>
+            <span class="text-xs font-semibold">K3</span>
+        </a>
+        <a href="#sekuriti" class="bg-green-600 hover:opacity-90 text-white p-3 rounded-xl text-center shadow-md transition flex flex-col items-center">
+            <span class="text-2xl mb-1">🛡️</span>
+            <span class="text-xs font-semibold">Sekuriti</span>
+        </a>
+        <a href="#janitor-indoor" class="bg-teal-600 hover:opacity-90 text-white p-3 rounded-xl text-center shadow-md transition flex flex-col items-center">
+            <span class="text-2xl mb-1">🧹</span>
+            <span class="text-xs font-semibold">Janitor In</span>
+        </a>
+        <a href="#janitor-outdoor" class="bg-cyan-600 hover:opacity-90 text-white p-3 rounded-xl text-center shadow-md transition flex flex-col items-center">
+            <span class="text-2xl mb-1">🌿</span>
+            <span class="text-xs font-semibold">Janitor Out</span>
+        </a>
+        <a href="#stok" class="bg-purple-600 hover:opacity-90 text-white p-3 rounded-xl text-center shadow-md transition flex flex-col items-center">
+            <span class="text-2xl mb-1">📦</span>
+            <span class="text-xs font-semibold">Stok</span>
+        </a>
+        <a href="#maintenance" class="bg-yellow-600 hover:opacity-90 text-white p-3 rounded-xl text-center shadow-md transition flex flex-col items-center">
+            <span class="text-2xl mb-1">🔧</span>
+            <span class="text-xs font-semibold">Maint.</span>
+        </a>
+        <a href="#asset" class="bg-indigo-600 hover:opacity-90 text-white p-3 rounded-xl text-center shadow-md transition flex flex-col items-center">
+            <span class="text-2xl mb-1">🏢</span>
+            <span class="text-xs font-semibold">Asset</span>
+        </a>
+        <a href="#commandcenter" class="bg-pink-600 hover:opacity-90 text-white p-3 rounded-xl text-center shadow-md transition flex flex-col items-center">
+            <span class="text-2xl mb-1">📊</span>
+            <span class="text-xs font-semibold">Command</span>
+        </a>
     </div>
-    <button id="logout" class="mt-6 w-full bg-red-500 text-white p-3 rounded-xl">Logout</button>
+
+    <button id="logout" class="mt-8 w-full bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl font-bold shadow-lg transition duration-200">
+        🚪 LOGOUT SISTEM
+    </button>
 </div>
+
 <script>
-document.getElementById('logout').onclick = () => {
-    sessionStorage.removeItem('allowed_modules');
-    window.location.reload();
-};
+    // FUNGSI LOGOUT YANG BENERAN KERJA
+    document.getElementById('logout').onclick = (e) => {
+        e.preventDefault();
+        // 1. Hapus kunci akses
+        sessionStorage.removeItem('allowed_modules');
+        // 2. Tendang balik ke halaman login utama (tanpa hash #home)
+        window.location.href = window.location.origin + window.location.pathname;
+    };
 </script>
