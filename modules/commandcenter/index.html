@@ -1,0 +1,145 @@
+<div class="max-w-6xl mx-auto p-4">
+    <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold text-purple-600 dark:text-purple-400">Command Center</h2>
+        <p class="text-sm opacity-70">Panel Admin – Monitoring, Pengajuan & Cetak</p>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="flex space-x-2 mb-4 border-b flex-wrap">
+        <button class="tab-btn active px-4 py-2 font-semibold text-purple-600 border-b-2 border-purple-600" data-tab="dashboard">📊 Dashboard</button>
+        <button class="tab-btn px-4 py-2 text-gray-600 dark:text-gray-300" data-tab="approval">✅ Approval</button>
+        <button class="tab-btn px-4 py-2 text-gray-600 dark:text-gray-300" data-tab="pengajuan">📋 Pengajuan + SPJ</button>
+        <button class="tab-btn px-4 py-2 text-gray-600 dark:text-gray-300" data-tab="slides">🖼️ Kelola Slide</button>
+        <button class="tab-btn px-4 py-2 text-gray-600 dark:text-gray-300" data-tab="users">👥 Users</button>
+    </div>
+
+    <!-- Tab Content -->
+    <div id="tab-dashboard" class="tab-content">
+        <h3 class="text-lg font-semibold mb-4">Ringkasan Sistem</h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+                <div class="text-2xl font-bold text-blue-600" id="stat-booking">0</div>
+                <div class="text-sm">Booking Pending</div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+                <div class="text-2xl font-bold text-orange-600" id="stat-k3">0</div>
+                <div class="text-sm">K3 Pending</div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+                <div class="text-2xl font-bold text-green-600" id="stat-maintenance">0</div>
+                <div class="text-sm">Maintenance Pending</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-approval" class="tab-content hidden">
+        <h3 class="text-lg font-semibold mb-4">Pending Approvals</h3>
+        <div class="space-y-4">
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
+                <h4 class="font-semibold mb-2">📅 Booking</h4>
+                <div id="approval-booking" class="text-sm">Memuat...</div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
+                <h4 class="font-semibold mb-2">⚠️ K3</h4>
+                <div id="approval-k3" class="text-sm">Memuat...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-pengajuan" class="tab-content hidden">
+        <h3 class="text-lg font-semibold mb-4">Pengajuan Booking & SPJ + QR + Kamera</h3>
+        <div class="space-y-6">
+            <!-- Daftar Booking yang Perlu Approval Khusus -->
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
+                <h4 class="font-semibold mb-2">📅 Booking Perlu Persetujuan</h4>
+                <div id="pengajuan-booking" class="text-sm">Memuat...</div>
+            </div>
+            
+            <!-- Form Pengajuan SPJ dengan Kamera -->
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
+                <h4 class="font-semibold mb-2">📄 Pengajuan SPJ + QR</h4>
+                <form id="spjForm" class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium">Judul SPJ</label>
+                        <input type="text" id="spj_judul" class="w-full p-2 border rounded dark:bg-gray-700" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Nominal</label>
+                        <input type="number" id="spj_nominal" class="w-full p-2 border rounded dark:bg-gray-700" required>
+                    </div>
+                    
+                    <!-- Fitur Kamera -->
+                    <div>
+                        <label class="block text-sm font-medium">Ambil Foto Bukti (Kamera)</label>
+                        <div class="border rounded p-2">
+                            <video id="camera-preview" autoplay playsinline class="w-full h-48 object-cover rounded"></video>
+                            <canvas id="camera-canvas" class="hidden"></canvas>
+                            <div class="flex space-x-2 mt-2">
+                                <button type="button" id="start-camera" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Mulai Kamera</button>
+                                <button type="button" id="capture-photo" class="bg-green-600 text-white px-3 py-1 rounded text-sm">Ambil Foto</button>
+                                <button type="button" id="stop-camera" class="bg-red-600 text-white px-3 py-1 rounded text-sm">Matikan</button>
+                            </div>
+                            <div id="camera-result" class="mt-2 text-xs">Belum ada foto</div>
+                            <input type="hidden" id="spj_photo_data" value="">
+                        </div>
+                    </div>
+                    
+                    <!-- Upload file (opsional) -->
+                    <div>
+                        <label class="block text-sm font-medium">Upload File SPJ (PDF)</label>
+                        <input type="file" id="spj_file" accept=".pdf" class="w-full p-2 border rounded dark:bg-gray-700">
+                    </div>
+                    
+                    <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded">
+                        Ajukan SPJ
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Daftar SPJ dengan QR Code dan Tombol Cetak -->
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
+                <h4 class="font-semibold mb-2">📋 Riwayat Pengajuan SPJ + QR</h4>
+                <div id="riwayat-spj" class="text-sm space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-slides" class="tab-content hidden">
+        <h3 class="text-lg font-semibold mb-4">Kelola Slide 5-7</h3>
+        <form id="slideForm" class="space-y-4 bg-white dark:bg-gray-800 p-4 rounded-lg">
+            <div>
+                <label class="block mb-1 text-sm font-medium">Pilih Slide</label>
+                <select id="slide_number" class="w-full p-2 border rounded dark:bg-gray-700">
+                    <option value="5">Slide 5 - Info Admin</option>
+                    <option value="6">Slide 6 - Info Tambahan 1</option>
+                    <option value="7">Slide 7 - Info Tambahan 2</option>
+                </select>
+            </div>
+            <div>
+                <label class="block mb-1 text-sm font-medium">Konten</label>
+                <textarea id="slide_content" rows="3" class="w-full p-2 border rounded dark:bg-gray-700" placeholder="Tulis info yang ingin ditampilkan..."></textarea>
+            </div>
+            <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded">
+                Update Slide
+            </button>
+        </form>
+        <div class="mt-4">
+            <h4 class="font-semibold mb-2">Info Terkini di Slide</h4>
+            <div id="current-slides-info" class="space-y-2 text-sm">
+                <div><strong>Slide 5:</strong> <span id="preview-slide5">-</span></div>
+                <div><strong>Slide 6:</strong> <span id="preview-slide6">-</span></div>
+                <div><strong>Slide 7:</strong> <span id="preview-slide7">-</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-users" class="tab-content hidden">
+        <h3 class="text-lg font-semibold mb-4">Manajemen User (Coming Soon)</h3>
+        <p class="text-center opacity-60">Fitur manajemen user akan sehadir</p>
+    </div>
+
+    <!-- Tombol Kembali -->
+    <div class="mt-6 text-center">
+        <a href="#home" class="text-blue-500 hover:underline">← Kembali ke Dashboard</a>
+    </div>
+</div>
