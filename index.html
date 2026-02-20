@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Dream OS v13.3 - Future Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome untuk ikon modern -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            overscroll-behavior: none;
+            transition: background 0.5s ease;
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        .dark body {
+            background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+        }
+        .arabic { font-family: 'Amiri', serif; }
+
+        /* Liquid Glass Effect */
+        .glass-deep {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3),
+                        inset 0 0 30px rgba(255,255,255,0.1);
+            transform: translateZ(0);
+        }
+        .dark .glass-deep {
+            background: rgba(10, 10, 20, 0.6);
+            border-color: rgba(255,255,255,0.05);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5),
+                        inset 0 0 30px rgba(255,255,255,0.03);
+        }
+
+        /* Z-axis layering untuk menu cards */
+        .menu-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(0) scale(1);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            will-change: transform, box-shadow;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            position: relative;
+        }
+        .menu-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(255,255,255,0.3) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+        .menu-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+        }
+        .menu-card:hover::after {
+            opacity: 0.5;
+        }
+        .menu-card:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Slideshow styles */
+        #slideshow-container {
+            position: relative;
+            min-height: 200px;
+            overflow: hidden;
+            border-radius: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .slide {
+            transition: opacity 1s ease-in-out;
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            text-align: center;
+            z-index: 1;
+        }
+        .slide.active {
+            z-index: 10;
+        }
+        .slide-dot {
+            transition: background-color 0.3s;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .dark .spinner {
+            border-color: rgba(255, 255, 255, 0.2);
+            border-top-color: #fbbf24;
+        }
+
+        /* Fade-in Animation */
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse-gold { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .spiritual-text { animation: pulse-gold 3s infinite; }
+
+        /* Automation Mode: Jumat Berkah */
+        body.jumat-mode { background: radial-gradient(circle at top, #1e293b, #0f172a); }
+        body.jumat-mode .spiritual-text { color: #fbbf24; text-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-[#0f172a] min-h-screen text-slate-900 dark:text-slate-100">
+    <div id="app" class="max-w-md mx-auto min-h-screen flex flex-col p-4">
+
+        <!-- HEADER SPIRITUAL -->
+        <header class="text-center py-4">
+            <p class="text-xl arabic spiritual-text text-yellow-600 dark:text-yellow-500">بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
+            <p class="text-[10px] arabic opacity-70">اَللهم صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِ سَيِّدِنَا مُحَمَّدٍ</p>
+            <h1 class="text-xl font-extrabold tracking-tighter mt-2 uppercase italic">DREAM OS <span class="text-yellow-500">v13.3</span></h1>
+        </header>
+
+        <!-- SLIDESHOW 7 SLIDE (7 DETIK) -->
+        <div id="slideshow-container" class="glass-deep relative overflow-hidden rounded-[2.5rem] mb-6" style="min-height: 200px;">
+            <!-- Slide 1: Greeting -->
+            <div class="slide slide-1 active flex flex-col items-center justify-center p-6">
+                <p class="text-3xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">✨ Selamat Datang</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300">Keluarga SIF Al-Fikri</p>
+                <div class="flex items-center justify-center gap-2 mt-3">
+                    <span class="bg-emerald-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">ISO 27001</span>
+                    <span class="bg-amber-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">ACTIVE</span>
+                </div>
+            </div>
+            <!-- Slide 2: Booking -->
+            <div class="slide slide-2 absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0">
+                <p class="text-2xl font-bold text-blue-500 mb-2">📅 Booking Hari Ini</p>
+                <p class="text-4xl font-black text-blue-600"><span id="slide2-count">0</span> pending</p>
+            </div>
+            <!-- Slide 3: K3 -->
+            <div class="slide slide-3 absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0">
+                <p class="text-2xl font-bold text-orange-500 mb-2">⚠️ K3 Progress</p>
+                <p class="text-4xl font-black text-orange-600"><span id="slide3-count">0</span> laporan</p>
+            </div>
+            <!-- Slide 4: Cuaca & Lalin -->
+            <div class="slide slide-4 absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0">
+                <p class="text-2xl font-bold text-cyan-500 mb-2">🌤️ Cuaca</p>
+                <p class="text-xl"><span id="weather-info">Cerah, 26°C</span></p>
+                <p class="text-sm opacity-70 mt-1">Lalin: <span id="traffic-info">Lancar</span></p>
+            </div>
+            <!-- Slide 5: Info Admin -->
+            <div class="slide slide-5 absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0">
+                <p class="text-2xl font-bold text-purple-500 mb-2">📢 Info Admin</p>
+                <p class="text-sm" id="admin-info-1">Tidak ada info</p>
+            </div>
+            <!-- Slide 6: Smart Suggestion -->
+            <div class="slide slide-6 absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0">
+                <p class="text-2xl font-bold text-pink-500 mb-2">💡 Saran AI</p>
+                <p class="text-sm" id="smart-suggestion"></p>
+            </div>
+            <!-- Slide 7: Spiritual -->
+            <div class="slide slide-7 absolute inset-0 flex flex-col items-center justify-center p-6 opacity-0 bg-yellow-100 dark:bg-yellow-900/30">
+                <p class="text-2xl font-bold text-yellow-700 dark:text-yellow-300 mb-2">🕌 Waktu Shalat</p>
+                <p class="text-sm" id="spiritual-message">Mari istirahat sejenak</p>
+            </div>
+
+            <!-- Slide indicator dots -->
+            <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 z-20">
+                <span class="slide-dot w-1.5 h-1.5 rounded-full bg-white/50" data-slide="0"></span>
+                <span class="slide-dot w-1.5 h-1.5 rounded-full bg-white/50" data-slide="1"></span>
+                <span class="slide-dot w-1.5 h-1.5 rounded-full bg-white/50" data-slide="2"></span>
+                <span class="slide-dot w-1.5 h-1.5 rounded-full bg-white/50" data-slide="3"></span>
+                <span class="slide-dot w-1.5 h-1.5 rounded-full bg-white/50" data-slide="4"></span>
+                <span class="slide-dot w-1.5 h-1.5 rounded-full bg-white/50" data-slide="5"></span>
+                <span class="slide-dot w-1.5 h-1.5 rounded-full bg-white/50" data-slide="6"></span>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT (diisi router) -->
+        <main id="main-content" class="flex-grow"></main>
+
+        <!-- FOOTER -->
+        <footer class="py-4 text-center opacity-40 text-[10px] font-bold tracking-widest uppercase">
+            The Power Soul of Shalawat — ISO 27001 Certified
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module">
+        // ========== SUPABASE ==========
+        const SUPABASE_URL = 'https://rqpodzjexghrvcpyacyo.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_U9MbSdPJOMSmaw3BsHJcVQ_PDiOy-UM';
+        window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ========== SLIDESHOW ENGINE ==========
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.slide-dot');
+
+        function showSlide(index) {
+            slides.forEach((s, i) => {
+                s.style.opacity = i === index ? '1' : '0';
+                s.style.zIndex = i === index ? '10' : '1';
+            });
+            dots.forEach((d, i) => {
+                d.classList.toggle('bg-yellow-500', i === index);
+                d.classList.toggle('bg-white/50', i !== index);
+            });
+            currentSlide = index;
+        }
+
+        // Auto slide setiap 7 detik
+        setInterval(() => {
+            let next = (currentSlide + 1) % slides.length;
+            showSlide(next);
+        }, 7000);
+
+        // Inisialisasi slide pertama
+        showSlide(0);
+
+        // ========== UPDATE DATA REAL-TIME UNTUK SLIDE ==========
+        async function updateSlidesData() {
+            try {
+                // Booking count
+                const { count: b } = await supabase
+                    .from('bookings')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'pending');
+                document.getElementById('slide2-count').textContent = b || 0;
+
+                // K3 count
+                const { count: k } = await supabase
+                    .from('k3_reports')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'pending');
+                document.getElementById('slide3-count').textContent = k || 0;
+
+                // Admin info (ambil data terbaru untuk slide 5)
+                const { data: adminData } = await supabase
+                    .from('admin_info')
+                    .select('content')
+                    .eq('slide_number', 5)
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+                if (adminData && adminData.length > 0) {
+                    document.getElementById('admin-info-1').textContent = adminData[0].content;
+                }
+
+                // Smart suggestion (slide 6) – logika sederhana
+                const hour = new Date().getHours();
+                const day = new Date().getDay();
+                let suggestion = '';
+                if (day === 5 && hour === 11) {
+                    suggestion = '🕌 Jumat berkah, persiapan shalat!';
+                } else if (hour >= 15 && hour < 16) {
+                    suggestion = '📋 Saatnya laporan K3 sebelum pulang';
+                } else if (hour >= 7 && hour < 8) {
+                    suggestion = '☀️ Selamat pagi, cek jadwal booking';
+                } else {
+                    suggestion = 'Sistem berjalan normal';
+                }
+                document.getElementById('smart-suggestion').textContent = suggestion;
+
+                // Cuaca & lalin (placeholder – nanti bisa integrasi API)
+                document.getElementById('weather-info').textContent = 'Cerah, 26°C';
+                document.getElementById('traffic-info').textContent = 'Lancar';
+            } catch (err) {
+                console.warn('Gagal update slide data', err);
+            }
+        }
+
+        updateSlidesData();
+        setInterval(updateSlidesData, 30000); // update tiap 30 detik
+
+        // ========== SPIRITUAL SYNC (SLIDE 7) ==========
+        (async function initSpiritual() {
+            try {
+                const res = await fetch('https://api.aladhan.com/v1/timingsByCoordinates?latitude=-6.4&longitude=106.8&method=20');
+                const data = await res.json();
+                const prayerTimes = data.data.timings;
+
+                function getCurrentPrayer() {
+                    const now = new Date();
+                    const current = now.getHours() * 60 + now.getMinutes();
+                    const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+                    for (let p of prayers) {
+                        if (!prayerTimes[p]) continue;
+                        const [h, m] = prayerTimes[p].split(':').map(Number);
+                        const prayerTime = h * 60 + m;
+                        if (Math.abs(current - prayerTime) <= 15) return p;
+                    }
+                    return null;
+                }
+
+                function updateSpiritualSlide() {
+                    const prayer = getCurrentPrayer();
+                    const msgEl = document.getElementById('spiritual-message');
+                    if (prayer) {
+                        msgEl.innerHTML = `🕌 Waktu ${prayer} - Mari istirahat`;
+                        document.body.classList.add('spiritual-mode');
+                    } else {
+                        msgEl.innerHTML = 'Mari istirahat sejenak';
+                        document.body.classList.remove('spiritual-mode');
+                    }
+                }
+
+                updateSpiritualSlide();
+                setInterval(updateSpiritualSlide, 60000);
+            } catch (err) {
+                console.warn('Spiritual sync gagal', err);
+            }
+        })();
+
+        // ========== ROUTER ==========
+        const routes = {
+            '#home': './modules/home/index.html',
+            '#booking': './modules/booking/index.html',
+            '#k3': './modules/k3/index.html',
+            '#sekuriti': './modules/sekuriti/index.html',
+            '#janitor-indoor': './modules/janitor-indoor/index.html',
+            '#janitor-outdoor': './modules/janitor-outdoor/index.html',
+            '#stok': './modules/stok/index.html',
+            '#maintenance': './modules/maintenance/index.html',
+            '#asset': './modules/asset/index.html',
+            '#commandcenter': './modules/commandcenter/index.html'
+        };
+
+        async function router() {
+            const mainContent = document.getElementById('main-content');
+            const slideshow = document.getElementById('slideshow-container');
+            const allowed = sessionStorage.getItem('allowed_modules');
+
+            if (!allowed) {
+                slideshow.style.display = 'none';
+                renderLogin();
+                return;
+            }
+
+            slideshow.style.display = 'block';
+
+            const hash = window.location.hash || '#home';
+            const moduleId = hash.slice(1);
+            const allowedArray = JSON.parse(allowed);
+
+            if (moduleId !== 'home' && !allowedArray.includes(moduleId)) {
+                alert('Akses ditolak!');
+                window.location.hash = '#home';
+                return;
+            }
+
+            const path = routes[hash];
+            if (!path) {
+                mainContent.innerHTML = '<p class="text-center p-4">Modul tidak ditemukan</p>';
+                return;
+            }
+
+            try {
+                const res = await fetch(path);
+                if (!res.ok) throw new Error('Gagal memuat');
+                const html = await res.text();
+                mainContent.innerHTML = html;
+
+                // Hapus script lama jika ada
+                const oldScript = document.getElementById('module-script');
+                if (oldScript) oldScript.remove();
+
+                // Load script modul
+                const script = document.createElement('script');
+                script.id = 'module-script';
+                script.type = 'module';
+                script.src = `./modules/${moduleId}/${moduleId}.js?t=${Date.now()}`;
+                document.body.appendChild(script);
+            } catch (err) {
+                mainContent.innerHTML = `<div class="text-center p-8 text-red-500">⚠️ Modul error</div>`;
+            }
+        }
+
+        // ========== LOGIN ==========
+        function renderLogin() {
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = `
+                <div class="glass-deep p-8 rounded-[2.5rem] shadow-2xl mt-4 border-white/20">
+                    <div class="relative mb-4">
+                        <input type="password" id="pass" placeholder="MASTER KEY" class="w-full p-4 rounded-2xl border-none ring-2 ring-yellow-500/20 focus:ring-yellow-500 bg-white dark:bg-slate-800 text-center text-xl font-bold">
+                        <button id="eye" class="absolute right-4 top-4 opacity-50 text-xl">👁️</button>
+                    </div>
+                    <button id="go" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-black p-4 rounded-2xl shadow-lg transition-all active:scale-95">ACCESS SYSTEM</button>
+                </div>
+            `;
+            const passInput = document.getElementById('pass');
+            document.getElementById('eye').onclick = () => {
+                passInput.type = passInput.type === 'password' ? 'text' : 'password';
+            };
+            document.getElementById('go').onclick = async () => {
+                const { data } = await supabase
+                    .from('access_codes')
+                    .select('allowed_modules')
+                    .eq('code', passInput.value.trim())
+                    .maybeSingle();
+                if (data) {
+                    sessionStorage.setItem('allowed_modules', JSON.stringify(data.allowed_modules));
+                    window.location.hash = '#home';
+                    router();
+                } else {
+                    alert('Password salah!');
+                }
+            };
+        }
+
+        // ========== DETEKSI HARI JUMAT ==========
+        function checkJumatMode() {
+            const today = new Date().getDay();
+            if (today === 5) document.body.classList.add('jumat-mode');
+        }
+
+        // ========== INIT ==========
+        window.addEventListener('hashchange', router);
+        window.addEventListener('load', () => {
+            checkJumatMode();
+            router();
+        });
+    </script>
+</body>
+</html>
