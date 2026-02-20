@@ -9,6 +9,7 @@
         <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
             <h3 class="text-lg font-semibold mb-4 border-b pb-2">Form Laporan Baru</h3>
             <form id="k3Form" class="space-y-4">
+                <!-- Field dasar -->
                 <div>
                     <label class="block mb-1 text-sm font-medium">Tanggal Kejadian *</label>
                     <input type="date" id="tanggal" required class="w-full p-2 border rounded dark:bg-gray-700">
@@ -22,15 +23,63 @@
                     <input type="text" id="lokasi" required placeholder="Contoh: Gedung A Lantai 2" class="w-full p-2 border rounded dark:bg-gray-700">
                 </div>
                 <div>
-                    <label class="block mb-1 text-sm font-medium">Jenis Insiden</label>
-                    <select id="jenis" class="w-full p-2 border rounded dark:bg-gray-700">
+                    <label class="block mb-1 text-sm font-medium">Jenis Laporan *</label>
+                    <select id="jenis_laporan" required class="w-full p-2 border rounded dark:bg-gray-700">
                         <option value="">Pilih Jenis</option>
-                        <option value="Kerusakan">Kerusakan</option>
-                        <option value="Kehilangan">Kehilangan</option>
-                        <option value="Kebersihan">Kebersihan</option>
-                        <option value="Lainnya">Lainnya</option>
+                        <option value="kerusakan">🔧 Kerusakan</option>
+                        <option value="kehilangan">🔒 Kehilangan</option>
+                        <option value="kebersihan">🧹 Kebersihan</option>
                     </select>
                 </div>
+
+                <!-- Field tambahan untuk Kerusakan -->
+                <div id="field-kerusakan" style="display: none;" class="space-y-3 border-l-4 border-orange-400 pl-4">
+                    <h4 class="font-semibold text-orange-600">Detail Kerusakan</h4>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">Kategori Kerusakan</label>
+                        <input type="text" id="kategori_kerusakan" placeholder="Contoh: Listrik, Plumbing" class="w-full p-2 border rounded dark:bg-gray-700">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">Prioritas</label>
+                        <select id="prioritas" class="w-full p-2 border rounded dark:bg-gray-700">
+                            <option value="rendah">Rendah</option>
+                            <option value="normal" selected>Normal</option>
+                            <option value="tinggi">Tinggi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Field tambahan untuk Kehilangan -->
+                <div id="field-kehilangan" style="display: none;" class="space-y-3 border-l-4 border-blue-400 pl-4">
+                    <h4 class="font-semibold text-blue-600">Detail Kehilangan</h4>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">Barang Hilang</label>
+                        <input type="text" id="barang_hilang" placeholder="Sebutkan barang" class="w-full p-2 border rounded dark:bg-gray-700">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">Estimasi Nilai (Rp)</label>
+                        <input type="number" id="nilai_estimasi" placeholder="Contoh: 500000" class="w-full p-2 border rounded dark:bg-gray-700">
+                    </div>
+                </div>
+
+                <!-- Field tambahan untuk Kebersihan -->
+                <div id="field-kebersihan" style="display: none;" class="space-y-3 border-l-4 border-green-400 pl-4">
+                    <h4 class="font-semibold text-green-600">Detail Kebersihan</h4>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">Area Kebersihan</label>
+                        <input type="text" id="area_kebersihan" placeholder="Contoh: Toilet, Koridor" class="w-full p-2 border rounded dark:bg-gray-700">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">Tingkat Kekotoran</label>
+                        <select id="tingkat_kekotoran" class="w-full p-2 border rounded dark:bg-gray-700">
+                            <option value="ringan">Ringan</option>
+                            <option value="sedang">Sedang</option>
+                            <option value="berat">Berat</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Field umum lanjutan -->
                 <div>
                     <label class="block mb-1 text-sm font-medium">Deskripsi Kejadian *</label>
                     <textarea id="deskripsi" required rows="3" placeholder="Jelaskan kronologi kejadian" class="w-full p-2 border rounded dark:bg-gray-700"></textarea>
@@ -55,6 +104,7 @@
                     <label class="block mb-1 text-sm font-medium">Foto Kejadian</label>
                     <input type="file" id="foto" accept="image/*" class="w-full p-2 border rounded dark:bg-gray-700">
                 </div>
+
                 <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white p-3 rounded-xl font-semibold">
                     Kirim Laporan
                 </button>
