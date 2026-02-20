@@ -1,154 +1,73 @@
 
-<div class="max-w-6xl mx-auto p-4 md:p-6 fade-in">
-    <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-gradient-to-r from-purple-800 to-indigo-900 p-6 rounded-2xl shadow-xl text-white">
-        <div>
-            <h2 class="text-3xl font-extrabold tracking-tight">Command Center 🚀</h2>
-            <p class="text-sm opacity-80 mt-1 font-medium">Dream OS v13.3 • The Power Soul of Shalawat</p>
+<div class="max-w-4xl mx-auto p-4 fade-in space-y-6">
+    <div class="flex items-center justify-between bg-slate-900 text-white p-6 rounded-[2.5rem] shadow-2xl border-b-4 border-yellow-500 relative overflow-hidden">
+        <div class="z-10">
+            <h2 class="text-xs font-black tracking-[0.3em] uppercase text-yellow-500 mb-1">Mission Control</h2>
+            <h1 class="text-2xl font-bold tracking-tight">COMMAND CENTER <span class="text-blue-400">AI</span></h1>
+            <p class="text-[10px] opacity-60 mt-2 font-mono">ID: DREAM-OS-CC-V13 [cite: 2026-01-11]</p>
         </div>
-        <div class="mt-4 md:mt-0 text-right">
-            <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm border border-white/30">ISO 9001 & 27001 Ready</span>
-            <p class="text-xs mt-2 opacity-75">Admin Panel - SIF Al-Fikri</p>
+        <div class="text-right z-10">
+            <div id="clock" class="text-2xl font-mono font-bold">00:00:00</div>
+            <div class="text-[10px] uppercase tracking-widest text-green-400 font-bold animate-pulse">● System Active</div>
         </div>
+        <div class="absolute -right-5 -bottom-10 text-9xl opacity-10 arabic">ﷻ</div>
     </div>
 
-    <div class="flex space-x-2 mb-6 border-b border-gray-200 dark:border-gray-700 overflow-x-auto pb-2 scrollbar-hide">
-        <button class="tab-btn active px-5 py-2.5 font-bold text-purple-600 border-b-4 border-purple-600 transition-all" data-tab="dashboard">📊 Dashboard</button>
-        <button class="tab-btn px-5 py-2.5 text-gray-500 hover:text-purple-500 font-semibold transition-all" data-tab="approval">✅ Approval</button>
-        <button class="tab-btn px-5 py-2.5 text-gray-500 hover:text-purple-500 font-semibold transition-all" data-tab="pengajuan">📄 SPJ & Booking</button>
-        <button class="tab-btn px-5 py-2.5 text-gray-500 hover:text-purple-500 font-semibold transition-all" data-tab="slides">🖼️ Kelola Slide</button>
-    </div>
-
-    <div id="tab-dashboard" class="tab-content block">
-        <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">Ringkasan Sistem Real-time</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border-t-4 border-blue-500 relative overflow-hidden">
-                <div class="absolute -right-4 -top-4 text-blue-500 opacity-10 text-7xl">📅</div>
-                <div class="text-4xl font-black text-blue-600 dark:text-blue-400 mb-1" id="stat-booking">0</div>
-                <div class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Booking Pending</div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border-t-4 border-orange-500 relative overflow-hidden">
-                <div class="absolute -right-4 -top-4 text-orange-500 opacity-10 text-7xl">⚠️</div>
-                <div class="text-4xl font-black text-orange-600 dark:text-orange-400 mb-1" id="stat-k3">0</div>
-                <div class="text-sm font-semibold text-gray-500 uppercase tracking-wide">K3 Pending</div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border-t-4 border-green-500 relative overflow-hidden">
-                <div class="absolute -right-4 -top-4 text-green-500 opacity-10 text-7xl">🔧</div>
-                <div class="text-4xl font-black text-green-600 dark:text-green-400 mb-1" id="stat-maintenance">0</div>
-                <div class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Maint. Pending</div>
-            </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <p class="text-[10px] font-bold text-slate-400 uppercase">Security (27001)</p>
+            <p id="stat-security" class="text-xl font-black text-emerald-500">SAFE</p> [cite: 2026-01-16]
+        </div>
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <p class="text-[10px] font-bold text-slate-400 uppercase">Assets (55001)</p>
+            <p id="stat-assets" class="text-xl font-black text-blue-500">0</p> [cite: 2026-01-16]
+        </div>
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <p class="text-[10px] font-bold text-slate-400 uppercase">Quality (9001)</p>
+            <p id="stat-quality" class="text-xl font-black text-purple-500">100%</p> [cite: 2026-01-16]
+        </div>
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <p class="text-[10px] font-bold text-slate-400 uppercase">Approvals</p>
+            <p id="stat-pending" class="text-xl font-black text-orange-500">0</p>
         </div>
     </div>
 
-    <div id="tab-approval" class="tab-content hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
-                <h4 class="font-extrabold text-blue-600 mb-4 flex items-center"><span>📅 Antrean Booking</span></h4>
-                <div id="approval-booking" class="text-sm space-y-3">
-                    <div class="animate-pulse flex space-x-4"><div class="flex-1 space-y-4 py-1"><div class="h-4 bg-gray-200 rounded w-3/4"></div></div></div>
+    <div class="bg-slate-50 dark:bg-slate-900/50 rounded-[2rem] p-6 border-2 border-dashed border-slate-300 dark:border-slate-700">
+        <div class="flex items-center gap-2 mb-4">
+            <span class="p-2 bg-blue-500 rounded-lg text-white text-xs">🤖</span>
+            <h3 class="font-bold text-sm tracking-tight">AI Agent Intelligence Log</h3>
+        </div>
+        <div id="ai-logs" class="space-y-3 font-mono text-[11px] h-40 overflow-y-auto">
+            <p class="text-blue-500">>> Initializing AI Agent Connection...</p>
+            <p class="text-slate-400">>> Bismillah bi idznillah, system ready. [cite: 2026-01-18]</p>
+        </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-[2rem] shadow-xl border-l-8 border-red-500">
+            <h3 class="font-black text-slate-800 dark:text-white text-sm mb-4 flex items-center gap-2">
+                🛡️ DEPOT LIGHTNING STRIKE
+            </h3> [cite: 2026-01-18]
+            <div class="space-y-4">
+                <div class="flex justify-between items-center text-xs">
+                    <span>Root Attempt Protection</span>
+                    <span class="text-green-500 font-bold uppercase">Active</span>
                 </div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
-                <h4 class="font-extrabold text-orange-600 mb-4 flex items-center"><span>⚠️ Antrean K3</span></h4>
-                <div id="approval-k3" class="text-sm space-y-3">
-                    <div class="animate-pulse flex space-x-4"><div class="flex-1 space-y-4 py-1"><div class="h-4 bg-gray-200 rounded w-3/4"></div></div></div>
+                <div class="flex justify-between items-center text-xs">
+                    <span>Area Core (5 KM)</span>
+                    <span class="text-blue-500 font-bold uppercase">Secure</span> [cite: 2026-01-14]
                 </div>
+                <button onclick="triggerSecurityCheck()" class="w-full py-3 bg-slate-100 dark:bg-slate-700 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all">Run Security Audit</button>
             </div>
         </div>
-    </div>
 
-    <div id="tab-pengajuan" class="tab-content hidden space-y-6">
-        
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
-            <h4 class="font-extrabold text-indigo-600 mb-4">👑 Pengajuan Booking (Perlu Persetujuan Khusus)</h4>
-            <div id="pengajuan-booking" class="text-sm space-y-3 bg-gray-50 dark:bg-gray-900 p-4 rounded-xl"></div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
-                <h4 class="font-extrabold text-purple-600 mb-4 border-b pb-2">📄 Form Pengajuan SPJ</h4>
-                <form id="spjForm" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Judul Keperluan</label>
-                        <input type="text" id="spj_judul" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition" placeholder="Contoh: Beli Sapu & Pel" required>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Nominal (Rp)</label>
-                        <input type="number" id="spj_nominal" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition" placeholder="50000" required>
-                    </div>
-
-                    <div class="bg-blue-50 dark:bg-gray-900 p-4 rounded-xl border border-blue-100 dark:border-gray-600">
-                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-2">📸 Kamera Pemindai Bukti</label>
-                        <div class="border-2 border-dashed border-blue-300 dark:border-gray-500 rounded-lg p-3 text-center bg-white dark:bg-gray-800">
-                            <video id="camera-preview" autoplay playsinline class="w-full max-h-48 object-cover rounded-md bg-black mb-2"></video>
-                            <canvas id="camera-canvas" class="hidden"></canvas>
-                            
-                            <div class="flex justify-center flex-wrap gap-2">
-                                <button type="button" id="start-camera" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm font-bold transition shadow">Nyalakan</button>
-                                <button type="button" id="capture-photo" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-sm font-bold transition shadow">Jepret 📸</button>
-                                <button type="button" id="stop-camera" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm font-bold transition shadow">Matikan</button>
-                            </div>
-                            <div id="camera-result" class="mt-3 text-xs font-semibold text-green-600 flex flex-col items-center"></div>
-                            <input type="hidden" id="spj_photo_data" value="">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1">Upload File Tambahan (PDF/Img)</label>
-                        <input type="file" id="spj_file" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 cursor-pointer">
-                    </div>
-
-                    <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white p-3 rounded-xl font-bold shadow-lg transform active:scale-95 transition">🚀 Ajukan SPJ & Generate QR</button>
-                </form>
-            </div>
-
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
-                <h4 class="font-extrabold text-teal-600 mb-4 border-b pb-2">🖨️ Riwayat & Cetak SPJ</h4>
-                <div id="riwayat-spj" class="text-sm space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-                    <div class="animate-pulse"><div class="h-20 bg-gray-100 dark:bg-gray-700 rounded-xl w-full"></div></div>
-                </div>
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-[2rem] shadow-xl border-l-8 border-blue-500">
+            <h3 class="font-black text-slate-800 dark:text-white text-sm mb-4 flex items-center gap-2">
+                ✍️ APPROVAL PIPELINE
+            </h3> [cite: 2026-01-24]
+            <div id="approval-list" class="space-y-3">
+                <p class="text-[11px] text-slate-400 text-center py-4 italic">No pending requests for Pak Hanung.</p>
             </div>
         </div>
-    </div>
-
-    <div id="tab-slides" class="tab-content hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
-                <h4 class="font-extrabold text-pink-600 mb-4">📺 Update Teks Slide</h4>
-                <form id="slideForm" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold mb-1">Pilih Target Slide</label>
-                        <select id="slide_number" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl font-semibold">
-                            <option value="5">Slide 5 - Info Admin</option>
-                            <option value="6">Slide 6 - Info Keamanan</option>
-                            <option value="7">Slide 7 - Pesan Spiritual/Maghrib</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold mb-1">Pesan Broadcast</label>
-                        <textarea id="slide_content" rows="4" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none transition" placeholder="Tulis instruksi atau pesan ISO di sini..."></textarea>
-                    </div>
-                    <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white p-3 rounded-xl font-bold shadow-md">Kirim ke Layar Utama 📡</button>
-                </form>
-            </div>
-            
-            <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-4 border-gray-800 relative">
-                <div class="absolute top-3 right-4 flex space-x-1">
-                    <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-                    <span class="text-[10px] uppercase font-bold text-red-400">Live Preview</span>
-                </div>
-                <h4 class="font-extrabold text-white mb-4">Monitor Slide Saat Ini</h4>
-                <div class="space-y-4 text-sm font-mono bg-black/50 p-4 rounded-xl border border-gray-700">
-                    <div><span class="text-pink-400 font-bold">[S5]</span> <span id="preview-slide5" class="text-gray-300">Loading...</span></div>
-                    <div class="border-t border-gray-700 pt-2"><span class="text-blue-400 font-bold">[S6]</span> <span id="preview-slide6" class="text-gray-300">Loading...</span></div>
-                    <div class="border-t border-gray-700 pt-2"><span class="text-orange-400 font-bold">[S7]</span> <span id="preview-slide7" class="text-gray-300">Loading...</span></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="mt-8 text-center pb-10">
-        <a href="#home" class="inline-block bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white px-6 py-2 rounded-full font-bold transition shadow">
-            ⬅️ Kembali ke 9 Ikon
-        </a>
     </div>
 </div>
