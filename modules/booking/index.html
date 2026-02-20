@@ -7,9 +7,7 @@
 
     <div id="smart-alerts-container" class="mb-4"></div>
 
-    <div id="main-content" class="bg-white dark:bg-slate-800 rounded-[2.5rem] p-6 shadow-2xl min-h-[300px]">
-        <div id="debug-info" class="hidden"></div>
-        
+    <div id="main-content" class="bg-white dark:bg-slate-800 rounded-[2.5rem] p-6      
         <div id="menu-grid" class="grid grid-cols-3 gap-3">
             </div>
 
@@ -55,33 +53,4 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
     
     // Ambil Data
     const data = {
-        nama: document.getElementById('nama').value,
-        sarana: document.getElementById('sarana').value,
-        tgl: new Date(document.getElementById('tgl_mulai').value),
-        jamM: document.getElementById('jam_mulai').value,
-        jamS: document.getElementById('jam_selesai').value
-    };
-
-    // 🛡️ Logic Sakral Validasi (ISO 9001 Standards)
-    const now = new Date();
-    const diff = (data.tgl - now.setHours(0,0,0,0)) / (1000*60*60*24);
-    const hari = data.tgl.getDay();
-
-    if (diff < 1) { // Minimal H-1
-        resDiv.innerHTML = "<span class='text-red-500'>❌ Error: Booking wajib H-1, Bro!</span>";
-        return;
-    }
-
-    if (data.jamM < "07:30" || data.jamS > "16:00") { // Jam Kerja
-        resDiv.innerHTML = "<span class='text-red-500'>❌ Jam kerja: 07:30 - 16:00 saja.</span>";
-        return;
-    }
-
-    if (hari === 0 || hari === 6) { // Weekend
-        resDiv.innerHTML = "<span class='text-orange-500'>⚠️ Weekend? Hubungi Pak Hanung Budianto S.E / Erwinsyah.</span>";
-        return;
-    }
-
-    // Lanjutkan ke simpan Supabase...
-    // (Gunakan sisa kode booking.js lu yang sudah ada)
-});
+        nama: a('nama').value,
