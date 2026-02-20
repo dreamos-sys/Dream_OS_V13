@@ -13,6 +13,61 @@
         <!-- Akan diisi oleh JavaScript -->
     </div>
 
+(function() {
+    const form = document.getElementById('bookForm');
+    if (!form) return;
+
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        const feedback = document.getElementById('feedback');
+        feedback.innerHTML = "🌀 Processing...";
+
+        const data = {
+            nama: document.getElementById('nama').value,
+            sarana: document.getElementById('sarana').value,
+            tgl: new Date(document.getElementById('tgl').value),
+            jamM: document.getElementById('jamM').value,
+            jamS: document.getElementById('jamS').value
+        };
+
+        // 🛡️ Logic Sakral
+        const now = new Date();
+        const diff = (data.tgl - now.setHours(0,0,0,0)) / (1000*60*60*24);
+        const hari = data.tgl.getDay();
+
+        // 1. Validasi H-1
+        if (diff < 1) {
+            feedback.innerHTML = "❌ Error: Booking wajib H-1, Bro!";
+            return;
+        }
+
+        // 2. Validasi Jam Kerja (07:30 - 16:00)
+        if (data.jamM < "07:30" || data.jamS > "16:00") {
+            feedback.innerHTML = "❌ Jam kerja: 07:30 - 16:00 saja.";
+            return;
+        }
+
+        // 3. Validasi Weekend (Sabtu=6, Minggu=0)
+        if (hari === 0 || hari === 6) {
+            feedback.innerHTML = "⚠️ Weekend? Hubungi Pak Hanung Budianto S.E / Erwinsyah.";
+            return;
+        }
+
+        // Simpan ke Supabase
+        const { error } = await window.supabase.from('bookings').insert([{
+            nama: data.nama, sarana: data.sarana, tanggal_mulai: document.getElementById('tgl').value,
+            jam_mulai: data.jamM, jam_selesai: data.jamS, status: 'pending'
+        }]);
+
+        if (!error) {
+            feedback.innerHTML = "✅ Berhasil! Menunggu Approval Pak Hanung.";
+            form.reset();
+        } else {
+            feedback.innerHTML = "❌ Gagal: " + error.message;
+        }
+    };
+})();
+
     <button id="logout" class="mt-6 w-full bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl hover-lift">Logout</button>
 </div>
 
