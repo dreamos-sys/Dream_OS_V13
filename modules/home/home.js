@@ -81,6 +81,18 @@
         }).join('');
     }
 
+// Fallback: coba pasang event listener setelah 0.5 detik
+setTimeout(() => {
+    const btn = document.getElementById('logout');
+    if (btn) {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            sessionStorage.removeItem('allowed_modules');
+            window.location.href = '/Dream_OS_V13/';
+        });
+    }
+}, 500);
+
     // Logout
     document.getElementById('logout').addEventListener('click', (e) => {
         e.preventDefault();
