@@ -432,6 +432,50 @@
             };
         }
 
+// ========== VOICE COMMAND ==========
+let recognition = null;
+
+function initVoiceCommand() {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        console.log('Voice command tidak didukung di browser ini.');
+        return;
+    }
+    
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.lang = 'id-ID';
+    recognition.interimResults = false;
+
+    recognition.onresult = (event) => {
+        const transcript = event.results[event.resultIndex][0].transcript.toLowerCase().trim();
+        console.log('🎤 Perintah:', transcript);
+
+        // Navigasi
+        if (transcript.includes('buka booking')) window.location.hash = '#booking';
+        else if (transcript.includes('buka k3')) window.location.hash = '#k3';
+        else if (transcript.includes('buka sekuriti')) window.location.hash = '#sekuriti';
+        else if (transcript.includes('buka janitor indoor')) window.location.hash = '#janitor-indoor';
+        else if (transcript.includes('buka janitor outdoor')) window.location.hash = '#janitor-outdoor';
+        else if (transcript.includes('buka stok')) window.location.hash = '#stok';
+        else if (transcript.includes('buka maintenance')) window.location.hash = '#maintenance';
+        else if (transcript.includes('buka asset')) window.location.hash = '#asset';
+        else if (transcript.includes('buka command center')) window.location.hash = '#commandcenter';
+        else if (transcript.includes('logout')) {
+            sessionStorage.removeItem('allowed_modules');
+            window.location.href = '/Dream_OS_V13/';
+        }
+    };
+
+    recognition.onerror = (event) => {
+        console.error('Voice error:', event.error);
+    };
+}
+
+// Tombol mic akan diletakkan di Command Center, tapi listener global di sini
+// Agar voice tetap berjalan meski pindah halaman
+initVoiceCommand();
+
         // ========== DETEKSI HARI JUMAT ==========
         function checkJumatMode() {
             const today = new Date().getDay();
