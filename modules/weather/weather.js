@@ -2,7 +2,7 @@ alert('🌤️ Weather Module Loaded');
 
 (function() {
     // OpenWeatherMap API (FREE tier)
-    const WEATHER_API_KEY = 'YOUR_OPENWEATHER_API_KEY'; //f7890d7569950ffa34a5827880e8442f
+    const WEATHER_API_KEY = 'f7890d7569950ffa34a5827880e8442f'; 
     const WEATHER_URL = 'https://api.openweathermap.org/data/2.5';
     const LOCATION = { lat: -6.4, lon: 106.8 }; // Depok coordinates
 
