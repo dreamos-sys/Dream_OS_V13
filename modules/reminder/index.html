@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DREAM OS – REMINDER MAINTENANCE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: white; }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Header -->
+        <div class="text-center">
+            <h1 class="text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
+                ⏰ REMINDER MAINTENANCE
+            </h1>
+            <p class="text-xs text-slate-400 font-mono mt-1">Sistem Pengingat Preventif</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Form Tambah Reminder -->
+            <div class="glass-card p-6 rounded-3xl border border-yellow-500/30">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-plus-circle text-yellow-500"></i> Tambah Reminder
+                </h2>
+
+                <form id="reminderForm" class="space-y-4">
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Nama Item *</label>
+                        <input type="text" id="reminder_nama" required placeholder="Contoh: AC Aula, Pompa Air" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Lokasi *</label>
+                        <input type="text" id="reminder_lokasi" required placeholder="Gedung A, Lantai 2" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-mono text-slate-400 uppercase">Interval (bulan) *</label>
+                            <input type="number" id="reminder_interval" required placeholder="3" min="1" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">                        </div>
+                        <div>
+                            <label class="text-xs font-mono text-slate-400 uppercase">Prioritas</label>
+                            <select id="reminder_prioritas" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                                <option value="normal">Normal</option>
+                                <option value="tinggi">Tinggi</option>
+                                <option value="kritis">Kritis</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Terakhir Service</label>
+                        <input type="date" id="reminder_terakhir" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Catatan</label>
+                        <textarea id="reminder_catatan" rows="2" placeholder="Catatan tambahan" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 text-white p-4 rounded-xl font-black tracking-widest uppercase shadow-xl transition-all active:scale-95">
+                        <i class="fas fa-save mr-2"></i> SIMPAN REMINDER
+                    </button>
+                    <div id="form-result" class="text-center text-sm font-mono"></div>
+                </form>
+            </div>
+
+            <!-- Daftar Reminder -->
+            <div class="glass-card p-6 rounded-3xl border border-yellow-500/30">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold flex items-center gap-2">
+                        <i class="fas fa-list text-yellow-500"></i> Daftar Reminder
+                    </h2>
+                    <button id="refresh-reminder" class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-3 py-1 rounded-full">
+                        <i class="fas fa-sync-alt mr-1"></i> Refresh
+                    </button>
+                </div>
+
+                <div id="reminder-list" class="space-y-3 max-h-[500px] overflow-y-auto">
+                    <p class="text-center text-slate-500">Memuat...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a href="#home" class="text-blue-400 hover:text-blue-300 text-sm"><i class="fas fa-arrow-left mr-1"></i> Kembali ke Dashboard</a>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="reminder.js"></script>
+</body>
+</html>
