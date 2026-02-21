@@ -47,8 +47,7 @@
                 <p class="text-2xl font-black text-green-400" id="stat-baik">0</p>
             </div>
             <div class="glass-card p-4 rounded-2xl text-center">
-                <p class="text-xs text-slate-400 uppercase">Rusak Ringan</p>
-                <p class="text-2xl font-black text-yellow-400" id="stat-rusak-ringan">0</p>
+                <p class="text-xs text-slate-400 uppercase">Rusak Ringan</p>                <p class="text-2xl font-black text-yellow-400" id="stat-rusak-ringan">0</p>
             </div>
             <div class="glass-card p-4 rounded-2xl text-center">
                 <p class="text-xs text-slate-400 uppercase">Rusak Berat</p>
@@ -96,4 +95,164 @@
                     <div>
                         <label class="text-xs font-mono text-slate-400 uppercase">Kode Aset *</label>
                         <input type="text" id="aset_kode" required placeholder="AST-2025-001" 
-                               class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-mono
+                               class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-mono">
+                    </div>
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Nama Aset *</label>
+                        <input type="text" id="aset_nama" required placeholder="Contoh: AC Split 1 PK" 
+                               class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Kategori *</label>
+                        <select id="aset_kategori" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                            <option value="">Pilih Kategori</option>
+                            <option value="elektronik">📱 Elektronik</option>
+                            <option value="furniture">🪑 Furniture</option>
+                            <option value="kendaraan">🚗 Kendaraan</option>
+                            <option value="peralatan">🔧 Peralatan</option>
+                            <option value="lainnya">📦 Lainnya</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Lokasi *</label>
+                        <input type="text" id="aset_lokasi" required placeholder="Gedung A, Lantai 2, Ruang 201" 
+                               class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-mono text-slate-400 uppercase">Kondisi *</label>
+                            <select id="aset_kondisi" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                                <option value="baik">✅ Baik</option>
+                                <option value="rusak-ringan">⚠️ Rusak Ringan</option>
+                                <option value="rusak-berat">❌ Rusak Berat</option>
+                                <option value="hilang">❓ Hilang</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-mono text-slate-400 uppercase">Jumlah</label>
+                            <input type="number" id="aset_jumlah" value="1" min="1"
+                                   class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Nilai Aset (Rp)</label>
+                        <input type="number" id="aset_nilai" placeholder="5000000" 
+                               class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Tanggal Perolehan</label>                        <input type="date" id="aset_tanggal" 
+                               class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Catatan</label>
+                        <textarea id="aset_catatan" rows="2" placeholder="Informasi tambahan" 
+                                  class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white p-4 rounded-xl font-black tracking-widest uppercase shadow-xl transition-all active:scale-95">
+                        <i class="fas fa-save mr-2"></i> SIMPAN ASET
+                    </button>
+                    <div id="form-result" class="text-center text-sm font-mono"></div>
+                </form>
+            </div>
+
+            <!-- Daftar Aset -->
+            <div class="glass-card p-6 rounded-3xl border border-purple-500/30 lg:col-span-2">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold flex items-center gap-2">
+                        <i class="fas fa-list text-purple-500"></i> Daftar Inventaris
+                    </h2>
+                    <button onclick="exportToCSV()" class="text-xs bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-xl font-bold">
+                        <i class="fas fa-file-csv mr-1"></i> Export CSV
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto scroll-custom max-h-[600px]">
+                    <table class="min-w-full text-xs">
+                        <thead class="bg-slate-800 sticky top-0">
+                            <tr class="text-left text-slate-400">
+                                <th class="p-3">Kode</th>
+                                <th class="p-3">Nama</th>
+                                <th class="p-3">Kategori</th>
+                                <th class="p-3">Lokasi</th>
+                                <th class="p-3">Kondisi</th>
+                                <th class="p-3">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventaris-table-body">
+                            <tr><td colspan="6" class="text-center py-6 text-slate-500">Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- QR Code Section -->
+        <div class="glass-card p-6 rounded-3xl border border-purple-500/30">            <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                <i class="fas fa-qrcode text-purple-500"></i> Generate QR Code Aset
+            </h2>
+            <div class="flex flex-wrap gap-3 items-center">
+                <select id="qr-aset-select" class="flex-1 min-w-[200px] p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                    <option value="">Pilih Aset</option>
+                </select>
+                <button onclick="generateQRCode()" class="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl font-bold">
+                    <i class="fas fa-qrcode mr-2"></i> Generate QR
+                </button>
+            </div>
+            <div id="qr-result" class="mt-4 hidden text-center">
+                <div id="qr-code-display" class="inline-block bg-white p-4 rounded-xl"></div>
+                <p class="text-xs text-slate-400 mt-2">Scan QR untuk info aset cepat</p>
+                <button onclick="printQR()" class="mt-3 bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-xl text-sm">
+                    <i class="fas fa-print mr-1"></i> Print QR Label
+                </button>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a href="#home" class="text-blue-400 hover:text-blue-300 text-sm">
+                <i class="fas fa-arrow-left mr-1"></i> Kembali ke Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+        <div class="glass-card p-6 rounded-2xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-bold mb-4">✏️ Edit Aset</h3>
+            <form id="editForm" class="space-y-3">
+                <input type="hidden" id="edit-id">
+                <input type="text" id="edit-kode" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" readonly>
+                <input type="text" id="edit-nama" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                <select id="edit-kategori" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                    <option value="elektronik">Elektronik</option>
+                    <option value="furniture">Furniture</option>
+                    <option value="kendaraan">Kendaraan</option>
+                    <option value="peralatan">Peralatan</option>
+                    <option value="lainnya">Lainnya</option>
+                </select>
+                <input type="text" id="edit-lokasi" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                <select id="edit-kondisi" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                    <option value="baik">Baik</option>
+                    <option value="rusak-ringan">Rusak Ringan</option>
+                    <option value="rusak-berat">Rusak Berat</option>
+                    <option value="hilang">Hilang</option>
+                </select>
+                <input type="number" id="edit-jumlah" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">                <textarea id="edit-catatan" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" rows="2"></textarea>
+                <div class="flex gap-2">
+                    <button type="submit" class="flex-1 bg-purple-600 hover:bg-purple-500 text-white py-3 rounded-xl font-bold">SIMPAN</button>
+                    <button type="button" onclick="closeEditModal()" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-xl font-bold">BATAL</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="inventaris.js"></script>
+</body>
+</html>
