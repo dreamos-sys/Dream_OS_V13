@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DREAM OS v13.4 — COMMAND CENTER AI</title>
+    <title>DREAM OS v13.4 — RUANG KERJA ADMIN</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -21,7 +21,6 @@
             font-size: 10px; font-family: monospace; z-index: 9999; max-width: 300px; max-height: 200px; overflow: auto;
             border: 1px solid #0f0; opacity: 0.9;
         }
-        /* Search results styling */
         #search-results {
             animation: slideDown 0.2s ease-out;
         }
@@ -38,6 +37,10 @@
         #global-search-input:focus {
             box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3), 0 0 20px rgba(234, 179, 8, 0.2);
         }
+        /* Custom scroll */
+        .scroll-custom::-webkit-scrollbar { width: 6px; }
+        .scroll-custom::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
+        .scroll-custom::-webkit-scrollbar-thumb { background: #8b5cf6; border-radius: 10px; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -50,12 +53,12 @@
     🏠 HOME
 </a>
 
-<div class="max-w-4xl mx-auto p-4 fade-in space-y-6">
+<div class="max-w-6xl mx-auto p-4 fade-in space-y-6">
     <!-- HEADER -->
     <div class="flex items-center justify-between bg-slate-900 text-white p-6 rounded-[2.5rem] shadow-2xl border-b-4 border-yellow-500 relative overflow-hidden">
         <div class="z-10">
             <h2 class="text-xs font-black tracking-[0.3em] uppercase text-yellow-500 mb-1">Mission Control</h2>
-            <h1 class="text-2xl font-bold tracking-tight">COMMAND CENTER <span class="text-blue-400">AI</span></h1>
+            <h1 class="text-2xl font-bold tracking-tight">RUANG KERJA <span class="text-blue-400">ADMIN</span></h1>
             <p class="text-[10px] opacity-60 mt-2 font-mono">ID: DREAM-OS-CC-V13</p>
         </div>
         <div class="text-right z-10 flex items-center gap-4">
@@ -70,27 +73,31 @@
         <div class="absolute -right-5 -bottom-10 text-9xl opacity-10 arabic">ﷻ</div>
     </div>
 
-    <!-- STATS CARDS -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <!-- STATS CARDS (diperbarui) -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
-            <p class="text-[10px] font-bold text-slate-400 uppercase">Security (27001)</p>
+            <p class="text-[10px] font-bold text-slate-400 uppercase">Booking</p>
+            <p id="stat-booking" class="text-xl font-black text-blue-500">0</p>
+        </div>
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <p class="text-[10px] font-bold text-slate-400 uppercase">K3</p>
+            <p id="stat-k3" class="text-xl font-black text-orange-500">0</p>
+        </div>
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <p class="text-[10px] font-bold text-slate-400 uppercase">Pengajuan</p>
+            <p id="stat-pengajuan" class="text-xl font-black text-purple-500">0</p>
+        </div>
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <p class="text-[10px] font-bold text-slate-400 uppercase">Reminder</p>
+            <p id="stat-reminder" class="text-xl font-black text-yellow-500">0</p>
+        </div>
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <p class="text-[10px] font-bold text-slate-400 uppercase">Security</p>
             <p id="stat-security" class="text-xl font-black text-emerald-500">SAFE</p>
-        </div>
-        <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
-            <p class="text-[10px] font-bold text-slate-400 uppercase">Assets (55001)</p>
-            <p id="stat-assets" class="text-xl font-black text-blue-500">0</p>
-        </div>
-        <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
-            <p class="text-[10px] font-bold text-slate-400 uppercase">Quality (9001)</p>
-            <p id="stat-quality" class="text-xl font-black text-purple-500">100%</p>
-        </div>
-        <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
-            <p class="text-[10px] font-bold text-slate-400 uppercase">Approvals</p>
-            <p id="stat-pending" class="text-xl font-black text-orange-500">0</p>
         </div>
     </div>
 
-    <!-- ========== GLOBAL SEARCH HUB ========== -->
+    <!-- GLOBAL SEARCH -->
     <div class="mb-4 relative px-4">
         <input type="text" id="global-search-input" 
                placeholder="🔍 Cari booking, aset, K3, SPJ, maintenance..." 
@@ -104,18 +111,20 @@
         </div>
     </div>
 
-    <!-- TAB NAVIGATION -->
+    <!-- TAB NAVIGASI (tambah Ruang Kerja & Dana) -->
     <div class="flex space-x-2 mb-2 border-b flex-wrap overflow-x-auto pb-2">
         <button class="tab-btn active px-4 py-2 text-xs font-semibold text-purple-500 border-b-2 border-purple-500" data-tab="dashboard">📊 Dashboard</button>
+        <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="ruangkerja">🏢 R. Kerja</button>
+        <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="dana">💰 Dana</button>
         <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="analytics">📈 Analytics</button>
-        <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="ai">🤖 AI Assistant</button>
+        <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="ai">🤖 AI</button>
         <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="approval">✅ Approval</button>
         <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="pengajuan">📋 Pengajuan</button>
         <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="slides">🖼️ Slide</button>
         <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="search">🔍 Search</button>
     </div>
 
-    <!-- TAB DASHBOARD -->
+    <!-- TAB DASHBOARD (tetap) -->
     <div id="tab-dashboard" class="tab-content space-y-6">
         <div class="bg-slate-900/50 rounded-[2rem] p-6 border-2 border-dashed border-slate-700">
             <div class="flex items-center gap-2 mb-4">
@@ -143,7 +152,106 @@
         </div>
     </div>
 
-    <!-- TAB ANALYTICS -->
+    <!-- TAB RUANG KERJA (pusat monitoring) -->
+    <div id="tab-ruangkerja" class="tab-content hidden space-y-6">
+        <!-- Cuaca & mitigasi -->
+        <div class="grid md:grid-cols-3 gap-4">
+            <div class="bg-slate-800 p-4 rounded-xl col-span-2">
+                <div class="flex items-center gap-2">
+                    <span class="text-3xl">🌤️</span>
+                    <div>
+                        <p class="text-xs opacity-70">Cuaca Depok</p>
+                        <p id="weather-display" class="text-xl font-bold">Cerah, 26°C</p>
+                        <p id="traffic-display" class="text-xs">Lalu lintas: Lancar</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-slate-800 p-4 rounded-xl">
+                <p class="text-xs opacity-70">Mitigasi Bencana</p>
+                <p id="disaster-display" class="text-sm">Tidak ada peringatan</p>
+            </div>
+        </div>
+
+        <!-- Grid laporan pending -->
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-slate-800 p-4 rounded-xl">
+                <h4 class="font-bold flex items-center gap-2"><span class="text-blue-500">📅</span> Booking Pending</h4>
+                <div id="rk-booking-list" class="mt-2 space-y-2 max-h-60 overflow-y-auto scroll-custom text-sm"></div>
+            </div>
+            <div class="bg-slate-800 p-4 rounded-xl">
+                <h4 class="font-bold flex items-center gap-2"><span class="text-orange-500">⚠️</span> K3 Pending</h4>
+                <div id="rk-k3-list" class="mt-2 space-y-2 max-h-60 overflow-y-auto scroll-custom text-sm"></div>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-slate-800 p-4 rounded-xl">
+                <h4 class="font-bold flex items-center gap-2"><span class="text-teal-500">🧹</span> Janitor (Pending)</h4>
+                <div id="rk-janitor-list" class="mt-2 space-y-2 max-h-60 overflow-y-auto scroll-custom text-sm"></div>
+            </div>
+            <div class="bg-slate-800 p-4 rounded-xl">
+                <h4 class="font-bold flex items-center gap-2"><span class="text-yellow-500">🔧</span> Maintenance Aktif</h4>
+                <div id="rk-maintenance-list" class="mt-2 space-y-2 max-h-60 overflow-y-auto scroll-custom text-sm"></div>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-slate-800 p-4 rounded-xl">
+                <h4 class="font-bold flex items-center gap-2"><span class="text-purple-500">📋</span> Pengajuan Dana Pending</h4>
+                <div id="rk-pengajuan-list" class="mt-2 space-y-2 max-h-60 overflow-y-auto scroll-custom text-sm"></div>
+            </div>
+            <div class="bg-slate-800 p-4 rounded-xl">
+                <h4 class="font-bold flex items-center gap-2"><span class="text-yellow-500">⏰</span> Reminder Service</h4>
+                <div id="rk-reminder-list" class="mt-2 space-y-2 max-h-60 overflow-y-auto scroll-custom text-sm"></div>
+            </div>
+        </div>
+
+        <!-- Tombol aksi cepat -->
+        <div class="grid grid-cols-3 gap-2">
+            <a href="#booking-approval" class="bg-blue-600 text-center p-2 rounded-xl text-sm">📋 Approve Booking</a>
+            <a href="#k3-officer" class="bg-orange-600 text-center p-2 rounded-xl text-sm">⚠️ Verif K3</a>
+            <button onclick="showAddReminderForm()" class="bg-yellow-600 text-center p-2 rounded-xl text-sm">➕ Tambah Reminder</button>
+        </div>
+    </div>
+
+    <!-- TAB DANA (pengajuan dana) -->
+    <div id="tab-dana" class="tab-content hidden space-y-4">
+        <div class="bg-slate-800 p-6 rounded-3xl">
+            <h3 class="font-bold mb-4">💰 Form Pengajuan Dana</h3>
+            <form id="danaForm" class="space-y-4">
+                <select id="dana_kategori" class="w-full p-3 bg-slate-700 rounded-xl" required>
+                    <option value="">Pilih Kategori</option>
+                    <option value="makan_sekuriti_bulanan">🍱 Makan Sekuriti Bulanan</option>
+                    <option value="makan_sahur_sekuriti">🌙 Makan Sahur Sekuriti</option>
+                    <option value="makanan_ringan_rapat">🍪 Makanan Ringan Rapat</option>
+                    <option value="janitor_taman_bulanan">🌿 Janitor Taman Bulanan</option>
+                    <option value="gaji_tukang_harian_mingguan">🛠️ Gaji Tukang Harian/Mingguan</option>
+                    <option value="apresiasi_keamanan">🛡️ Apresiasi Keamanan</option>
+                    <option value="tip_jasa">💵 Tip Jasa (PLN, Telkom, dll)</option>
+                    <option value="urunan_kesehatan">🏥 Urunan Kesehatan</option>
+                    <option value="umum">📌 Umum</option>
+                </select>
+                <input type="text" id="dana_judul" placeholder="Judul (misal: Makan siang sekuriti Februari)" class="w-full p-3 bg-slate-700 rounded-xl" required>
+                <textarea id="dana_deskripsi" rows="2" placeholder="Deskripsi" class="w-full p-3 bg-slate-700 rounded-xl"></textarea>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="number" id="dana_nominal" placeholder="Nominal (Rp)" class="w-full p-3 bg-slate-700 rounded-xl" required>
+                    <input type="text" id="dana_periode" placeholder="Periode (misal: Februari 2026)" class="w-full p-3 bg-slate-700 rounded-xl">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" id="dana_pengaju" placeholder="Nama Pengaju" class="w-full p-3 bg-slate-700 rounded-xl" required>
+                    <input type="text" id="dana_departemen" placeholder="Departemen" class="w-full p-3 bg-slate-700 rounded-xl">
+                </div>
+                <button type="submit" class="w-full py-3 bg-purple-600 rounded-xl font-bold">Ajukan Dana</button>
+                <div id="dana-result" class="text-center text-sm"></div>
+            </form>
+        </div>
+        <div class="bg-slate-800 p-6 rounded-3xl">
+            <h3 class="font-bold mb-4">📋 Daftar Pengajuan Dana</h3>
+            <div id="dana-list" class="space-y-2 max-h-96 overflow-y-auto scroll-custom"></div>
+        </div>
+    </div>
+
+    <!-- TAB ANALYTICS (tetap) -->
     <div id="tab-analytics" class="tab-content hidden space-y-6">
         <div class="bg-slate-800 p-6 rounded-3xl">
             <h4 class="font-bold mb-4">📈 Tren Booking 7 Hari Terakhir</h4>
@@ -151,7 +259,7 @@
         </div>
     </div>
 
-    <!-- TAB AI -->
+    <!-- TAB AI (tetap) -->
     <div id="tab-ai" class="tab-content hidden space-y-4">
         <div class="bg-slate-800 p-6 rounded-3xl">
             <h3 class="font-bold mb-4">🤖 AI Smart Assistant</h3>
@@ -165,16 +273,17 @@
         </div>
     </div>
 
-    <!-- TAB APPROVAL -->
+    <!-- TAB APPROVAL (tetap, ditambah pengajuan dana) -->
     <div id="tab-approval" class="tab-content hidden space-y-4">
         <div class="bg-slate-800 p-6 rounded-3xl">
             <h3 class="font-bold mb-4">✅ Pending Approvals</h3>
             <div id="approval-booking" class="space-y-2"></div>
             <div id="approval-k3" class="space-y-2 mt-4"></div>
+            <div id="approval-dana" class="space-y-2 mt-4"></div>
         </div>
     </div>
 
-    <!-- TAB PENGAJUAN -->
+    <!-- TAB PENGAJUAN (SPJ & Foto) tetap -->
     <div id="tab-pengajuan" class="tab-content hidden space-y-4">
         <div class="bg-slate-800 p-6 rounded-3xl">
             <h3 class="font-bold mb-4">📋 Pengajuan SPJ & Foto Nota</h3>
@@ -196,10 +305,10 @@
         </div>
     </div>
 
-    <!-- TAB SLIDES -->
+    <!-- TAB SLIDES (dengan preview) -->
     <div id="tab-slides" class="tab-content hidden space-y-4">
         <div class="bg-slate-800 p-6 rounded-3xl">
-            <h3 class="font-bold mb-4">🖼️ Kelola Slide 5-7</h3>
+            <h3 class="font-bold mb-4">🖼️ Kelola Slide 5, 6, 7</h3>
             <form id="slideForm" class="space-y-4">
                 <select id="slide_number" class="w-full p-3 bg-slate-700 rounded-xl text-white">
                     <option value="5">Slide 5 - Info Admin</option>
@@ -218,7 +327,23 @@
     </div>
 </div>
 
-<!-- INLINE SCRIPT MINIMAL (HANYA UNTUK SUPABASE GLOBAL DAN LOG) -->
+<!-- Modal Tambah Reminder -->
+<div id="reminder-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden z-50">
+    <div class="bg-slate-800 p-6 rounded-2xl max-w-md w-full">
+        <h3 class="text-xl font-bold mb-4">Tambah Reminder Preventif</h3>
+        <form id="reminderForm">
+            <input type="text" id="reminder_nama" placeholder="Nama Item (ex: AC)" class="w-full p-3 bg-slate-700 rounded mb-3">
+            <input type="text" id="reminder_lokasi" placeholder="Lokasi" class="w-full p-3 bg-slate-700 rounded mb-3">
+            <input type="number" id="reminder_interval" placeholder="Interval (bulan)" class="w-full p-3 bg-slate-700 rounded mb-3">
+            <input type="date" id="reminder_terakhir" placeholder="Terakhir Service" class="w-full p-3 bg-slate-700 rounded mb-3">
+            <div class="flex gap-2">
+                <button type="submit" class="flex-1 bg-yellow-600 py-2 rounded-xl">Simpan</button>
+                <button type="button" onclick="closeReminderModal()" class="flex-1 bg-gray-600 py-2 rounded-xl">Batal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     (function() {
         const debugDiv = document.getElementById('debug-console');
@@ -230,8 +355,6 @@
             debugDiv.scrollTop = debugDiv.scrollHeight;
         }
         log('🚀 Command Center UI loaded, JS akan dilanjutkan di file eksternal.');
-        // Tidak perlu membuat client Supabase di sini, karena sudah ada dari root index.html dan akan dipakai di commandcenter.js
-        // Pastikan window.supabase tersedia
         if (window.supabase) {
             log('✅ window.supabase tersedia');
         } else {
