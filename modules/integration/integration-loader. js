@@ -1,0 +1,107 @@
+// ==================== INTEGRATION LOADER ====================
+(function() {
+    // Event Bus sederhana
+    window.EventBus = {
+        events: {},
+        on(event, callback) {
+            if (!this.events[event]) this.events[event] = [];
+            this.events[event].push(callback);
+            console.log('[EventBus] Registered', event);
+        },
+        emit(event, data) {
+            console.log('[EventBus] Emit', event, data);
+            if (this.events[event]) {
+                this.events[event].forEach(cb => cb(data));
+            }
+        },
+        off(event, callback) {
+            if (this.events[event]) {
+                this.events[event] = this.events[event].filter(cb => cb !== callback);
+            }
+        }
+    };
+
+    // Konfigurasi global
+    window.DreamOSConfig = {
+        camera: {
+            defaultResolution: { width: 1920, height: 1080 },
+            imageQuality: 0.8,
+            imageFormat: 'image/jpeg'
+        },
+        print: {
+            defaultPrinter: 'epson',
+            autoScanInterval: 300000 // 5 menit
+        },
+        qr: {
+            size: 100,
+            color: '#000',
+            bgColor: '#fff'
+        }
+    };
+
+    // Printer auto‑scan (simulasi)
+    let printerScanInterval = null;
+
+    function startPrinterScan() {
+        if (printerScanInterval) clearInterval(printerScanInterval);
+        printerScanInterval = setInterval(() => {
+            console.log('[Loader] Background printer scan...');
+            if (window.DreamOSPrint) {
+                // Bisa update list printer di background jika diperlukan
+            }
+        }, DreamOSConfig.print.autoScanInterval);
+    }
+
+    function stopPrinterScan() {
+        if (printerScanInterval) {
+            clearInterval(printerScanInterval);
+            printerScanInterval = null;
+        }
+    }
+
+    // Inisialisasi setelah DOM siap
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('🔌 Integration Loader started');
+
+        // Tambah style untuk floating buttons
+        const style = document.createElement('style');
+        style.textContent = `
+            .camera-float-btn, .print-float-btn, .qr-float-btn {
+                position: fixed; right: 30px; width: 60px; height: 60px;
+                border-radius: 50%; display: flex; align-items: center;
+                justify-content: center; color: white; font-size: 1.5rem;
+                cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                z-index: 1000; transition: transform 0.2s;
+            }
+            .camera-float-btn { bottom: 100px; background: #2196F3; }
+            .print-float-btn { bottom: 170px; background: #4CAF50; }
+            .qr-float-btn { bottom: 240px; background: #9C27B0; }
+            .camera-float-btn:hover, .print-float-btn:hover, .qr-float-btn:hover {
+                transform: scale(1.1);
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Floating buttons (tunda sedikit biar ga bentrok)
+        setTimeout(() => {
+            if (!document.querySelector('.camera-float-btn')) {
+                const floatDiv = document.createElement('div');
+                floatDiv.innerHTML = `
+                    <div class="camera-float-btn" title="Quick Camera" onclick="DreamOSCamera.openCamera('quick', (p)=>alert('Foto tersimpan!'))">📸</div>
+                    <div class="print-float-btn" title="Quick Print" onclick="DreamOSPrint.openPrintPreview('<h3>Quick Test</h3><p>Contoh print</p>','Test')">🖨️</div>
+                    <div class="qr-float-btn" title="Scan QR" onclick="DreamOSQR.openQRScanner()">📱</div>
+                `;
+                document.body.appendChild(floatDiv);
+            }
+        }, 1500);
+
+        startPrinterScan();
+    });
+
+    // Cleanup saat halaman ditutup (jarang dipakai tapi bagus)
+    window.addEventListener('beforeunload', () => {
+        stopPrinterScan();
+    });
+
+    console.log('✅ Integration Loader Ready');
+})();
