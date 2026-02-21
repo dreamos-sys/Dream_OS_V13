@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DREAM OS – AI PREDICTION</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: white; }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Header -->
+        <div class="text-center">
+            <h1 class="text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+                📊 AI PREDICTIVE ANALYTICS
+            </h1>
+            <p class="text-xs text-slate-400 font-mono mt-1">Prediksi & Analitik Berbasis AI</p>
+        </div>
+
+        <!-- Prediction Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-card p-6 rounded-3xl border border-cyan-500/30">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="text-3xl">📅</div>
+                    <div>
+                        <p class="text-xs text-slate-400">Prediksi Booking</p>
+                        <p class="text-2xl font-black text-cyan-400" id="pred-booking">-</p>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-500">Minggu depan</p>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl border border-orange-500/30">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="text-3xl">⚠️</div>
+                    <div>
+                        <p class="text-xs text-slate-400">Risiko K3</p>
+                        <p class="text-2xl font-black text-orange-400" id="pred-k3">-</p>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-500">Area rawan</p>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl border border-purple-500/30">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="text-3xl">💰</div>
+                    <div>
+                        <p class="text-xs text-slate-400">Estimasi Dana</p>
+                        <p class="text-2xl font-black text-purple-400" id="pred-dana">-</p>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-500">Bulan ini</p>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="glass-card p-6 rounded-3xl border border-cyan-500/30">
+                <h2 class="text-lg font-bold mb-4">📈 Tren Booking 30 Hari</h2>
+                <div class="h-64"><canvas id="bookingChart"></canvas></div>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl border border-orange-500/30">
+                <h2 class="text-lg font-bold mb-4">⚠️ Insiden K3 per Kategori</h2>
+                <div class="h-64"><canvas id="k3Chart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="glass-card p-6 rounded-3xl border border-purple-500/30">
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                <i class="fas fa-lightbulb text-yellow-500"></i> AI Insights
+            </h2>
+            <div id="ai-insights" class="space-y-3">
+                <p class="text-slate-400">Menganalisis data...</p>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a href="#home" class="text-blue-400 hover:text-blue-300 text-sm"><i class="fas fa-arrow-left mr-1"></i> Kembali ke Dashboard</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="prediction.js"></script>
+</body>
+</html>
