@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DREAM OS – GUDANG UMUM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: white; }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .stock-low { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .stock-medium { background: rgba(234, 179, 8, 0.2); color: #eab308; }
+        .stock-good { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <div class="max-w-7xl mx-auto space-y-6">
+        <!-- Header -->
+        <div class="text-center">
+            <h1 class="text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500">
+                🏭 GUDANG UMUM
+            </h1>
+            <p class="text-xs text-slate-400 font-mono mt-1">Sistem Manajemen Warehouse & Stock</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="glass-card p-4 rounded-2xl text-center">
+                <p class="text-xs text-slate-400 uppercase">Total Item</p>
+                <p class="text-2xl font-black text-emerald-400" id="stat-total-items">0</p>
+            </div>
+            <div class="glass-card p-4 rounded-2xl text-center">
+                <p class="text-xs text-slate-400 uppercase">Stok Aman</p>
+                <p class="text-2xl font-black text-green-400" id="stat-stok-aman">0</p>
+            </div>
+            <div class="glass-card p-4 rounded-2xl text-center">
+                <p class="text-xs text-slate-400 uppercase">Stok Rendah</p>
+                <p class="text-2xl font-black text-yellow-400" id="stat-stok-rendah">0</p>
+            </div>
+            <div class="glass-card p-4 rounded-2xl text-center">
+                <p class="text-xs text-slate-400 uppercase">Perlu Order</p>
+                <p class="text-2xl font-black text-red-400" id="stat-perlu-order">0</p>
+            </div>
+        </div>
+        <!-- Tabs -->
+        <div class="flex gap-2 overflow-x-auto pb-2">
+            <button class="tab-btn active px-6 py-3 rounded-xl font-bold bg-emerald-600 text-white" data-tab="stock">
+                <i class="fas fa-boxes mr-2"></i>Stok Barang
+            </button>
+            <button class="tab-btn px-6 py-3 rounded-xl font-bold bg-slate-700 text-slate-300" data-tab="in">
+                <i class="fas fa-arrow-down mr-2"></i>Barang Masuk
+            </button>
+            <button class="tab-btn px-6 py-3 rounded-xl font-bold bg-slate-700 text-slate-300" data-tab="out">
+                <i class="fas fa-arrow-up mr-2"></i>Barang Keluar
+            </button>
+            <button class="tab-btn px-6 py-3 rounded-xl font-bold bg-slate-700 text-slate-300" data-tab="history">
+                <i class="fas fa-history mr-2"></i>Riwayat
+            </button>
+        </div>
+
+        <!-- Tab Content: Stock -->
+        <div id="tab-stock" class="tab-content glass-card p-6 rounded-3xl border border-emerald-500/30">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold">📦 Daftar Stok Barang</h2>
+                <button onclick="openAddStockModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl font-bold">
+                    <i class="fas fa-plus mr-2"></i>Tambah Barang
+                </button>
+            </div>
+
+            <div class="overflow-x-auto scroll-custom max-h-[500px]">
+                <table class="min-w-full text-xs">
+                    <thead class="bg-slate-800 sticky top-0">
+                        <tr class="text-left text-slate-400">
+                            <th class="p-3">Kode</th>
+                            <th class="p-3">Nama Barang</th>
+                            <th class="p-3">Kategori</th>
+                            <th class="p-3">Stok</th>
+                            <th class="p-3">Satuan</th>
+                            <th class="p-3">Status</th>
+                            <th class="p-3">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stock-table-body">
+                        <tr><td colspan="7" class="text-center py-6 text-slate-500">Memuat...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab Content: Barang Masuk -->
+        <div id="tab-in" class="tab-content hidden glass-card p-6 rounded-3xl border border-emerald-500/30">
+            <h2 class="text-lg font-bold mb-4">📥 Barang Masuk</h2>
+            <form id="stockInForm" class="space-y-4 max-w-2xl">                <div>
+                    <label class="text-xs font-mono text-slate-400 uppercase">Pilih Barang *</label>
+                    <select id="in_barang_id" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                        <option value="">Pilih barang...</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Jumlah Masuk *</label>
+                        <input type="number" id="in_jumlah" required min="1" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                    </div>
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Tanggal</label>
+                        <input type="date" id="in_tanggal" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-mono text-slate-400 uppercase">Supplier</label>
+                    <input type="text" id="in_supplier" placeholder="Nama supplier" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                </div>
+                <div>
+                    <label class="text-xs font-mono text-slate-400 uppercase">Catatan</label>
+                    <textarea id="in_catatan" rows="2" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white p-4 rounded-xl font-bold">
+                    <i class="fas fa-save mr-2"></i> CATAT BARANG MASUK
+                </button>
+            </form>
+
+            <div class="mt-6">
+                <h3 class="font-bold mb-3">Riwayat Barang Masuk</h3>
+                <div id="stock-in-history" class="space-y-2 max-h-60 overflow-y-auto"></div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Barang Keluar -->
+        <div id="tab-out" class="tab-content hidden glass-card p-6 rounded-3xl border border-emerald-500/30">
+            <h2 class="text-lg font-bold mb-4">📤 Barang Keluar</h2>
+            <form id="stockOutForm" class="space-y-4 max-w-2xl">
+                <div>
+                    <label class="text-xs font-mono text-slate-400 uppercase">Pilih Barang *</label>
+                    <select id="out_barang_id" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                        <option value="">Pilih barang...</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Jumlah Keluar *</label>
+                        <input type="number" id="out_jumlah" required min="1" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                    </div>                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Tanggal</label>
+                        <input type="date" id="out_tanggal" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-mono text-slate-400 uppercase">Keperluan *</label>
+                    <input type="text" id="out_keperluan" required placeholder="Untuk apa barang ini?" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                </div>
+                <div>
+                    <label class="text-xs font-mono text-slate-400 uppercase">Peminta</label>
+                    <input type="text" id="out_peminta" placeholder="Nama yang meminta" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                </div>
+                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-500 text-white p-4 rounded-xl font-bold">
+                    <i class="fas fa-save mr-2"></i> CATAT BARANG KELUAR
+                </button>
+            </form>
+
+            <div class="mt-6">
+                <h3 class="font-bold mb-3">Riwayat Barang Keluar</h3>
+                <div id="stock-out-history" class="space-y-2 max-h-60 overflow-y-auto"></div>
+            </div>
+        </div>
+
+        <!-- Tab Content: History -->
+        <div id="tab-history" class="tab-content hidden glass-card p-6 rounded-3xl border border-emerald-500/30">
+            <h2 class="text-lg font-bold mb-4">📊 Riwayat Transaksi</h2>
+            <div class="flex gap-2 mb-4">
+                <input type="date" id="history-from" class="p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                <span class="self-center">-</span>
+                <input type="date" id="history-to" class="p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                <button onclick="loadHistory()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-xl font-bold">Filter</button>
+            </div>
+            <div id="full-history" class="space-y-2 max-h-[500px] overflow-y-auto"></div>
+        </div>
+
+        <div class="text-center">
+            <a href="#home" class="text-blue-400 hover:text-blue-300 text-sm">
+                <i class="fas fa-arrow-left mr-1"></i> Kembali ke Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Add Stock Modal -->
+    <div id="add-stock-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+        <div class="glass-card p-6 rounded-2xl max-w-md w-full mx-4">
+            <h3 class="text-xl font-bold mb-4">➕ Tambah Barang Baru</h3>
+            <form id="newStockForm" class="space-y-3">
+                <input type="text" id="new-kode" placeholder="Kode Barang (BRG-001)" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" required>
+                <input type="text" id="new-nama" placeholder="Nama Barang" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" required>                <select id="new-kategori" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" required>
+                    <option value="">Kategori</option>
+                    <option value="atk">ATK</option>
+                    <option value="elektronik">Elektronik</option>
+                    <option value="kebersihan">Kebersihan</option>
+                    <option value="peralatan">Peralatan</option>
+                    <option value="lainnya">Lainnya</option>
+                </select>
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="number" id="new-stok" placeholder="Stok Awal" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" required>
+                    <input type="text" id="new-satuan" placeholder="Satuan (pcs, box)" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white" required>
+                </div>
+                <input type="number" id="new-reorder" placeholder="Reorder Level" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                <input type="number" id="new-harga" placeholder="Harga Satuan (Rp)" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                <div class="flex gap-2">
+                    <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-bold">SIMPAN</button>
+                    <button type="button" onclick="closeAddStockModal()" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-3 rounded-xl font-bold">BATAL</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="gudang.js"></script>
+</body>
+</html>
