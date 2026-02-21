@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DREAM OS v13.4 – LAPORAN K3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: white; }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .field-section {
+            transition: all 0.3s ease;
+        }
+        .photo-preview {
+            border: 2px dashed #f97316;
+            border-radius: 12px;
+            padding: 10px;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Header -->
+        <div class="text-center">
+            <h1 class="text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">
+                ⚠️ LAPORAN K3
+            </h1>
+            <p class="text-xs text-slate-400 font-mono mt-1">ISO 45001 • Smart Evidence System</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Kolom Kiri: Form Laporan -->
+            <div class="glass-card p-6 rounded-3xl border border-orange-500/30">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-pen-alt text-orange-500"></i> Form Laporan Baru
+                </h2>
+
+                <form id="k3Form" class="space-y-5">
+                    <!-- Baris Tanggal & Waktu -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-mono text-slate-400 uppercase">Tanggal Kejadian *</label>
+                            <input type="date" id="tanggal" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-orange-500">
+                        </div>
+                        <div>
+                            <label class="text-xs font-mono text-slate-400 uppercase">Waktu Kejadian</label>
+                            <input type="time" id="waktu" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-orange-500">
+                        </div>
+                    </div>
+
+                    <!-- Lokasi -->
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Lokasi *</label>
+                        <input type="text" id="lokasi" required placeholder="Contoh: Gedung A Lantai 2" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-orange-500">
+                    </div>
+
+                    <!-- Jenis Laporan -->
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Jenis Laporan *</label>
+                        <select id="jenis_laporan" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-orange-500">
+                            <option value="">Pilih Jenis</option>
+                            <option value="kerusakan">🔧 Kerusakan</option>
+                            <option value="kehilangan">🔒 Kehilangan</option>
+                            <option value="kebersihan">🧹 Kebersihan</option>
+                        </select>
+                    </div>
+
+                    <!-- Field Dinamis (diisi oleh JS) -->
+                    <div id="dynamic-fields"></div>
+
+                    <!-- Deskripsi -->
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Deskripsi Kejadian *</label>
+                        <textarea id="deskripsi" required rows="3" placeholder="Jelaskan kronologi kejadian" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-orange-500"></textarea>
+                    </div>
+
+                    <!-- Korban & Tindakan -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-mono text-slate-400 uppercase">Korban</label>
+                            <input type="text" id="korban" placeholder="Nama korban atau 'Tidak ada'" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                        </div>
+                        <div>
+                            <label class="text-xs font-mono text-slate-400 uppercase">Tindakan Pertama</label>
+                            <textarea id="tindakan" rows="1" placeholder="Tindakan yang sudah dilakukan" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Pelapor & No HP -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-mono text-slate-400 uppercase">Nama Pelapor *</label>
+                            <input type="text" id="pelapor" required placeholder="Nama lengkap" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                        </div>
+                        <div>
+                            <label class="text-xs font-mono text-slate-400 uppercase">No. HP Pelapor</label>
+                            <input type="tel" id="no_hp" placeholder="08xxxxxxxxxx" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                        </div>
+                    </div>
+
+                    <!-- Foto Evidence dengan Kamera -->
+                    <div class="border-t border-slate-700 pt-4">
+                        <label class="text-xs font-mono text-orange-400 uppercase flex items-center gap-2">
+                            <i class="fas fa-camera-retro"></i> FOTO EVIDENCE
+                        </label>
+                        <div id="k3PhotoPreview" class="photo-preview mt-2">
+                            <span class="text-slate-400 text-sm">Belum ada foto</span>
+                        </div>
+                        <input type="hidden" id="k3PhotoData">
+                        <button type="button" onclick="openK3Camera()" class="mt-3 w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white p-3 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2">
+                            <i class="fas fa-camera"></i> AMBIL FOTO
+                        </button>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="w-full bg-gradient-to-r from-orange-600 to-yellow-600 hover:from-orange-500 hover:to-yellow-500 text-white p-4 rounded-xl font-black tracking-widest uppercase shadow-xl transition-all active:scale-95">
+                        <i class="fas fa-paper-plane mr-2"></i> KIRIM LAPORAN
+                    </button>
+                    <div id="form-result" class="text-center text-sm font-mono"></div>
+                </form>
+            </div>
+
+            <!-- Kolom Kanan: Riwayat Laporan -->
+            <div class="glass-card p-6 rounded-3xl border border-orange-500/30">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold flex items-center gap-2">
+                        <i class="fas fa-history text-orange-500"></i> Riwayat Laporan
+                    </h2>
+                    <button id="refresh-history" class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-3 py-1 rounded-full transition-colors border border-slate-600">
+                        <i class="fas fa-sync-alt mr-1"></i> Refresh
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto scroll-custom max-h-[600px]">
+                    <table class="min-w-full text-xs">
+                        <thead class="bg-slate-800 sticky top-0">
+                            <tr class="text-left text-slate-400">
+                                <th class="p-2">No</th>
+                                <th class="p-2">Tanggal</th>
+                                <th class="p-2">Lokasi</th>
+                                <th class="p-2">Jenis</th>
+                                <th class="p-2">Pelapor</th>
+                                <th class="p-2">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body">
+                            <tr><td colspan="6" class="text-center py-6 text-slate-500">Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Link Kembali -->
+        <div class="text-center">
+            <a href="#home" class="text-blue-400 hover:text-blue-300 text-sm"><i class="fas fa-arrow-left mr-1"></i> Kembali ke Dashboard</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../integration/camera-system.js"></script> <!-- Pastikan path sesuai -->
+    <script src="k3.js"></script>
+</body>
+</html>
