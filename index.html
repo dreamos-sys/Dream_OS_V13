@@ -261,6 +261,31 @@
                 }, 700);
             }, 2000);
         });
+
+<script type="module">
+    import { CONFIG, MODULES_CONFIG } from './js/config.js';
+    import { supabase } from './js/supabase.js';
+    import { loadAllManifests, getAccessibleModules } from './lib/pluginLoader.js';
+
+    // 1. Inisialisasi Supabase ke Window (Biar bisa diakses handler lain)
+    window.supabase = supabase;
+    window.DreamConfig = CONFIG;
+
+    // 2. Jalankan Auto-Loader Modul
+    async function bootSystem() {
+        const manifests = await loadAllManifests();
+        const allowedModules = JSON.parse(sessionStorage.getItem('allowed_modules') || '[]');
+        
+        // Filter modul berdasarkan role (User/Admin/Developer)
+        const activeModules = getAccessibleModules(manifests, allowedModules);
+        
+        console.log(`✅ ${activeModules.length} Modul Terverifikasi ISO.`);
+        // Render ke Grid Menu...
+    }
+
+    bootSystem();
+</script>
+
     </script>
 </body>
 </html>
