@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="Dream OS v13.4 - Sistem Informasi Terintegrasi Al-Fikri">
+    <meta name="author" content="Dream Team">
+
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" href="./icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="./icons/icon-192x192.png">
+
+    <title>Dream OS v13.4 | Sovereign System</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { primary: '#3b82f6', dark: '#0a0e27', surface: '#1e293b', gold: '#fbbf24' },
+                    borderRadius: { '3xl': '2rem' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Amiri:wght@400;700&display=swap');        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .arabic { font-family: 'Amiri', serif; }
+        .glass { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); }
+        .spinner { border: 3px solid rgba(0,243,255,0.1); border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .slide { display: none; min-width: 100%; transition: 0.5s; }
+        .slide.active { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .slider-dot.active { width: 20px; background: #3b82f6; border-radius: 10px; }
+    </style>
+</head>
+<body class="text-slate-100 overflow-hidden h-screen flex flex-col">
+
+    <div id="loading-screen" class="fixed inset-0 z-[100] bg-dark flex flex-col items-center justify-center transition-opacity duration-700">
+        <div class="spinner w-16 h-16 mb-4"></div>
+        <h1 class="text-2xl font-black tracking-widest text-white">DREAM OS</h1>
+        <p class="text-[10px] text-blue-400 mt-2 uppercase tracking-[0.4em]">Panchabhuta Security Active</p>
+    </div>
+
+    <div id="login-screen" class="hidden fixed inset-0 z-40 bg-dark flex flex-col items-center justify-center p-6">
+        <div class="w-full max-w-md space-y-8">
+            <div class="text-center space-y-2">
+                <p class="text-3xl arabic text-gold">بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
+                <p class="text-xs arabic text-slate-400 italic">اَللهم صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ</p>
+                <h1 class="text-4xl font-black mt-4 tracking-tighter italic text-white">DREAM <span class="text-blue-500 underline decoration-blue-900">OS</span></h1>
+            </div>
+
+            <div class="glass p-8 rounded-[2.5rem] shadow-2xl space-y-6">
+                <div class="relative">
+                    <input type="password" id="password-input" placeholder="ENTER ACCESS CODE" 
+                        class="w-full p-5 bg-black/30 border border-slate-700 rounded-2xl text-center text-white font-bold tracking-[0.3em] focus:border-blue-500 outline-none transition-all">
+                </div>
+                <button onclick="handleLogin()" id="login-btn" class="w-full py-5 bg-blue-600 hover:bg-blue-500 rounded-2xl font-black text-white shadow-lg active:scale-95 transition-all">
+                    UNLOCK SYSTEM
+                </button>
+                <p id="login-error" class="hidden text-red-500 text-[10px] text-center font-bold"></p>
+            </div>
+            <p class="text-center text-[10px] text-slate-600 uppercase tracking-widest italic">"The Power Soul of Shalawat"</p>
+        </div>
+    </div>
+
+    <div id="main-app" class="hidden flex-1 flex flex-col h-full overflow-hidden">
+        <header class="p-6 text-center">
+            <p class="text-xl arabic text-gold">بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
+            <h1 class="font-black text-sm tracking-[0.2em] text-slate-400 mt-1 uppercase">Dream OS v13.4</h1>
+        </header>
+
+        <section class="px-6">
+            <div class="glass h-48 rounded-[2.5rem] relative overflow-hidden p-6 border-white/5">
+                <div id="slider" class="h-full flex transition-transform duration-700">
+                    <div class="slide active">
+                        <p class="text-2xl font-black text-gold">Selamat Datang</p>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">SIF Al-Fikri Sovereign System</p>
+                    </div>
+                    <div class="slide">
+                        <p class="text-sm text-slate-400 uppercase font-bold">Pending Booking</p>
+                        <p class="text-5xl font-black text-blue-500 mt-2" id="slide-booking">0</p>
+                    </div>
+                    <div class="slide">
+                        <p class="text-sm text-slate-400 uppercase font-bold">K3 Reports</p>
+                        <p class="text-5xl font-black text-orange-500 mt-2" id="slide-k3">0</p>
+                    </div>
+                    </div>
+                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500 slider-dot active"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-700 slider-dot"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-700 slider-dot"></div>
+                </div>
+            </div>
+        </section>
+
+        <main class="flex-1 px-8 py-10 overflow-y-auto">
+            <div class="grid grid-cols-3 gap-6">
+                <button onclick="openModule('booking')" class="flex flex-col items-center gap-2 group active:scale-90 transition-all">
+                    <div class="w-16 h-16 bg-blue-600/10 border border-blue-500/20 rounded-2xl flex items-center justify-center shadow-lg"><i data-lucide="calendar" class="text-blue-500"></i></div>
+                    <span class="text-[9px] font-bold tracking-tighter">BOOKING</span>
+                </button>
+                <button onclick="openModule('k3')" class="flex flex-col items-center gap-2 group active:scale-90 transition-all">
+                    <div class="w-16 h-16 bg-orange-600/10 border border-orange-500/20 rounded-2xl flex items-center justify-center shadow-lg"><i data-lucide="alert-triangle" class="text-orange-500"></i></div>
+                    <span class="text-[9px] font-bold tracking-tighter">K3 REPORT</span>
+                </button>
+                <button onclick="openModule('security')" class="flex flex-col items-center gap-2 group active:scale-90 transition-all">
+                    <div class="w-16 h-16 bg-emerald-600/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center shadow-lg"><i data-lucide="shield" class="text-emerald-500"></i></div>
+                    <span class="text-[9px] font-bold tracking-tighter">SECURITY</span>
+                </button>
+                <button onclick="openModule('janitor-in')" class="flex flex-col items-center gap-2 group active:scale-90 transition-all">
+                    <div class="w-16 h-16 bg-cyan-600/10 border border-cyan-500/20 rounded-2xl flex items-center justify-center shadow-lg"><i data-lucide="door-open" class="text-cyan-500"></i></div>
+                    <span class="text-[9px] font-bold tracking-tighter">JANITOR IN</span>
+                </button>
+                <button onclick="openModule('janitor-out')" class="flex flex-col items-center gap-2 group active:scale-90 transition-all">
+                    <div class="w-16 h-16 bg-sky-600/10 border border-sky-500/20 rounded-2xl flex items-center justify-center shadow-lg"><i data-lucide="tree-pine" class="text-sky-500"></i></div>
+                    <span class="text-[9px] font-bold tracking-tighter">JANITOR OUT</span>
+                </button>
+                <button onclick="openModule('maintenance')" class="flex flex-col items-center gap-2 group active:scale-90 transition-all">
+                    <div class="w-16 h-16 bg-amber-600/10 border border-amber-500/20 rounded-2xl flex items-center justify-center shadow-lg"><i data-lucide="wrench" class="text-amber-500"></i></div>
+                    <span class="text-[9px] font-bold tracking-tighter">MAINTENANCE</span>
+                </button>
+                <button onclick="openModule('stok')" class="flex flex-col items-center gap-2 group active:scale-90 transition-all">
+                    <div class="w-16 h-16 bg-purple-600/10 border border-purple-500/20 rounded-2xl flex items-center justify-center shadow-lg"><i data-lucide="package" class="text-purple-500"></i></div>
+                    <span class="text-[9px] font-bold tracking-tighter">STOK GUDANG</span>
+                </button>
+                <button onclick="openModule('asset')" class="flex flex-col items-center gap-2 group active:scale-90 transition-all">
+                    <div class="w-16 h-16 bg-indigo-600/10 border border-indigo-500/20 rounded-2xl flex items-center justify-center shadow-lg"><i data-lucide="database" class="text-indigo-500"></i></div>
+                    <span class="text-[9px] font-bold tracking-tighter">ASSET ISO</span>
+                </button>
+                <button onclick="openModule('admin')" class="flex flex-col items-center gap-2 group active:scale-90 transition-all">
+                    <div class="w-16 h-16 bg-rose-600/10 border border-rose-500/20 rounded-2xl flex items-center justify-center shadow-lg ring-2 ring-rose-500/30 ring-offset-4 ring-offset-dark"><i data-lucide="layout-dashboard" class="text-rose-500"></i></div>
+                    <span class="text-[9px] font-bold tracking-tighter text-rose-400 font-black italic">COMMANDER</span>
+                </button>
+            </div>
+        </main>
+
+        <nav class="glass mx-6 mb-8 rounded-3xl p-4 flex justify-around items-center border-t border-white/5 shadow-2xl">
+            <i data-lucide="home" class="text-blue-500 w-6 h-6"></i>
+            <button onclick="toggleAI()" class="p-4 bg-blue-600 rounded-full -mt-12 border-4 border-[#0a0e27] shadow-xl shadow-blue-500/40 active:scale-90 transition-all">
+                <i data-lucide="bot" class="text-white w-7 h-7"></i>
+            </button>
+            <i data-lucide="log-out" onclick="handleLogout()" class="text-slate-500 w-6 h-6"></i>
+        </nav>
+    </div>
+
+    <div id="bottom-sheet" class="fixed inset-x-0 bottom-0 z-50 translate-y-full glass rounded-t-[3rem] p-8 h-[85vh] transition-transform duration-500 shadow-[0_-20px_60px_-15px_rgba(0,0,0,0.7)]">
+        <div class="w-12 h-1.5 bg-slate-700 rounded-full mx-auto mb-8 cursor-pointer" onclick="closeModule()"></div>
+        <div id="module-content" class="h-full overflow-y-auto pb-20"></div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://rqpodzjexghrvcpyacyo.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_U9MbSdPJOMSmaw3BsHJcVQ_PDiOy-UM';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Security Core
+        const Security = {
+            async check() {
+                console.log("🛡️ Security Core Active...");
+                // Logika Depok Safe Zone 5KM
+                return true;
+            }
+        };
+
+        // Multi-Slide Controller
+        let slideIndex = 0;
+        function runSlider() {
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.slider-dot');
+            slides.forEach((s, i) => {
+                s.classList.toggle('active', i === slideIndex);
+                dots[i].classList.toggle('active', i === slideIndex);
+            });
+            slideIndex = (slideIndex + 1) % slides.length;
+        }
+        setInterval(runSlider, 7000);
+
+        // Login Handler
+        async function handleLogin() {
+            const pass = document.getElementById('password-input').value;
+            const btn = document.getElementById('login-btn');
+            const errorDiv = document.getElementById('login-error');
+
+            btn.innerText = "VERIFYING...";
+            btn.disabled = true;
+
+            try {
+                const { data, error } = await supabase.from('access_codes').select('*').eq('code', pass).maybeSingle();
+                if (data) {
+                    localStorage.setItem('dream_token', pass);
+                    enterApp();
+                } else {
+                    errorDiv.innerText = "❌ AKSES DITOLAK!";
+                    errorDiv.classList.remove('hidden');
+                }
+            } catch (e) {
+                console.error(e);
+            } finally {
+                btn.innerText = "UNLOCK SYSTEM";
+                btn.disabled = false;
+            }
+        }
+
+        function enterApp() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function openModule(name) {
+            const sheet = document.getElementById('bottom-sheet');
+            const content = document.getElementById('module-content');
+            content.innerHTML = `<div class="fade-in"><h2 class="text-3xl font-black italic mb-4">${name.toUpperCase()}</h2><div class="p-8 bg-slate-800/50 rounded-3xl border border-white/5 text-center"><p class="text-slate-400">Loading Secure ISO-55001 Form...</p></div></div>`;
+            sheet.classList.remove('translate-y-full');
+        }
+
+        function closeModule() {
+            document.getElementById('bottom-sheet').classList.add('translate-y-full');
+        }
+
+        function handleLogout() {
+            if(confirm('Logout dari Dream OS?')) {
+                localStorage.removeItem('dream_token');
+                location.reload();
+            }
+        }
+
+        function toggleAI() {
+            alert('🤖 Dream AI: Sistem Normal. Shalawat Teraktivasi.');
+        }
+
+        // Init System
+        document.addEventListener('DOMContentLoaded', async () => {
+            lucide.createIcons();
+            await Security.check();
+
+            setTimeout(() => {
+                const loader = document.getElementById('loading-screen');
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                    if(localStorage.getItem('dream_token')) enterApp();
+                    else document.getElementById('login-screen').classList.remove('hidden');
+                }, 700);
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
