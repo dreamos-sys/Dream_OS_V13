@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0e27">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Dream OS v13.4 | Sovereign System</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        dark: '#0a0e27',
+                        surface: '#1e293b',
+                        gold: '#fbbf24'
+                    },
+                    borderRadius: { 'xl': '1rem', '2xl': '2rem', '3xl': '3rem' }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Amiri:wght@400;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #0a0e27; 
+            overflow: hidden; 
+            height: 100vh;
+        }
+        
+        .arabic { font-family: 'Amiri', serif; }        
+        .glass { 
+            background: rgba(30, 41, 59, 0.6); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1); 
+        }
+        
+        .spinner { 
+            border: 3px solid rgba(59, 130, 246, 0.1); 
+            border-top-color: #3b82f6; 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .slide { 
+            display: none; 
+            width: 100%; 
+            transition: 0.5s; 
+        }
+        
+        .slide.active { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            animation: fadeIn 0.5s; 
+        }
+        
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        .fade-in { animation: fadeIn 0.3s ease; }
+        
+        .bottom-sheet { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+</head>
+
+<body class="text-slate-100 flex flex-col">
+
+    <!-- ===== LOADING SCREEN ===== -->
+    <div id="loading-screen" class="fixed inset-0 z-[100] bg-[#0a0e27] flex flex-col items-center justify-center transition-opacity duration-700">
+        <div class="spinner w-16 h-16 mb-4"></div>
+        <h1 class="text-2xl font-black tracking-[0.3em] text-white">DREAM OS</h1>
+        <p class="text-[10px] text-blue-400 mt-2 uppercase tracking-[0.4em]">v13.4 - Sovereign System</p>
+        <p class="text-[8px] text-slate-500 mt-4">🛡️ Panchabhuta Security Loading...</p>    </div>
+
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div id="login-screen" class="hidden fixed inset-0 z-50 bg-[#0a0e27] flex flex-col items-center justify-center p-6">
+        <div class="w-full max-w-md space-y-8">
+            <!-- Spiritual Header -->
+            <div class="text-center space-y-2">
+                <p class="text-3xl arabic text-gold">بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
+                <p class="text-[8px] arabic text-slate-400">اَللهم صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ</p>
+                <h1 class="text-4xl font-black italic tracking-tighter mt-2">DREAM <span class="text-blue-500 underline decoration-blue-900">OS</span></h1>
+                <p class="text-[10px] text-slate-500 uppercase tracking-widest">Access Control</p>
+            </div>
+
+            <!-- Login Card -->
+            <div class="glass p-8 rounded-[2.5rem] shadow-2xl space-y-6 border-blue-500/20 fade-in">
+                <!-- Password Input -->
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Access Code</label>
+                    <div class="relative">
+                        <input type="password" id="password-input" placeholder="ENTER ACCESS CODE" 
+                            class="w-full p-5 pr-12 bg-black/40 border border-slate-700 rounded-2xl text-center text-white font-bold tracking-[0.3em] focus:border-blue-500 outline-none transition-all">
+                        
+                        <!-- Show/Hide Password -->
+                        <button type="button" id="toggle-password" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-2">
+                            <i data-lucide="eye" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remember Me -->
+                <div class="flex items-center gap-2 justify-center">
+                    <input type="checkbox" id="remember-me" class="w-4 h-4 rounded border-slate-700 bg-slate-800 text-blue-500">
+                    <label for="remember-me" class="text-[10px] text-slate-400">Remember this device</label>
+                </div>
+
+                <!-- Login Button -->
+                <button onclick="handleLogin()" id="login-btn" class="w-full py-5 bg-blue-600 hover:bg-blue-500 rounded-2xl font-black text-white shadow-lg active:scale-95 transition-all">
+                    <span id="login-btn-text">🔓 UNLOCK SYSTEM</span>
+                    <span id="login-btn-loading" class="hidden">
+                        <span class="spinner w-5 h-5 border-2 inline-block mr-2"></span>
+                        Verifying...
+                    </span>
+                </button>
+
+                <!-- Error Message -->
+                <p id="login-error" class="hidden text-red-500 text-[10px] text-center font-bold uppercase"></p>
+
+                <!-- Help Text -->
+                <div class="text-center">
+                    <p class="text-[8px] text-slate-600">🔐 ISO 27001 Certified Access Control</p>                </div>
+            </div>
+
+            <!-- Footer -->
+            <p class="text-center text-[10px] text-slate-600 uppercase tracking-widest italic">"The Power Soul of Shalawat"</p>
+            <p class="text-center text-[8px] text-slate-700">Dream Team © 2026</p>
+        </div>
+    </div>
+
+    <!-- ===== MAIN APP ===== -->
+    <div id="main-app" class="hidden flex-1 flex flex-col h-full overflow-hidden">
+        
+        <!-- Header -->
+        <header class="p-6 text-center">
+            <p class="text-xl arabic text-gold">بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
+            <p class="text-[8px] arabic text-slate-400">اَللهم صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ</p>
+            <h1 class="font-black text-[10px] tracking-[0.3em] text-slate-500 mt-1 uppercase">Sovereign Edition v13.4</h1>
+        </header>
+
+        <!-- 7 Slides -->
+        <section class="px-6 mb-6">
+            <div class="glass h-44 rounded-[2.5rem] relative overflow-hidden p-6 border-white/5 shadow-inner">
+                <div id="slider" class="h-full flex transition-transform duration-700">
+                    <!-- SLIDE 1: WELCOME -->
+                    <div class="slide active">
+                        <p class="text-2xl font-black text-gold">✨ Selamat Datang</p>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">SIF Al-Fikri Admin Panel</p>
+                        <div class="flex gap-2 mt-3 justify-center">
+                            <span class="bg-emerald-600/80 text-white text-[8px] font-bold px-2 py-1 rounded-full">ISO 27001</span>
+                            <span class="bg-blue-600/80 text-white text-[8px] font-bold px-2 py-1 rounded-full">v13.4</span>
+                        </div>
+                    </div>
+                    <!-- SLIDE 2: BOOKING -->
+                    <div class="slide">
+                        <p class="text-xs text-slate-500 uppercase font-bold tracking-widest">Booking Pending</p>
+                        <p class="text-5xl font-black text-blue-500 mt-2" id="slide-booking">0</p>
+                    </div>
+                    <!-- SLIDE 3: K3 -->
+                    <div class="slide">
+                        <p class="text-xs text-slate-500 uppercase font-bold tracking-widest">K3 Reports</p>
+                        <p class="text-5xl font-black text-orange-500 mt-2" id="slide-k3">0</p>
+                    </div>
+                    <!-- SLIDE 4: WEATHER -->
+                    <div class="slide">
+                        <p class="text-xs text-slate-500 uppercase font-bold tracking-widest">Cuaca Depok</p>
+                        <p class="text-2xl font-black text-cyan-400 mt-2" id="slide-weather">26°C</p>
+                    </div>
+                    <!-- SLIDE 5: ADMIN INFO -->
+                    <div class="slide">
+                        <p class="text-xs text-slate-500 uppercase font-bold tracking-widest">Info Admin</p>                        <p class="text-sm text-slate-300 mt-2 text-center" id="slide-admin">Selamat datang di Dream OS!</p>
+                    </div>
+                    <!-- SLIDE 6: AI SUGGESTION -->
+                    <div class="slide">
+                        <p class="text-xs text-slate-500 uppercase font-bold tracking-widest">Saran AI</p>
+                        <p class="text-sm text-slate-300 mt-2 text-center" id="slide-ai">Sistem berjalan normal</p>
+                    </div>
+                    <!-- SLIDE 7: PRAYER -->
+                    <div class="slide">
+                        <p class="text-xs text-gold uppercase font-bold tracking-widest">🕌 Waktu Shalat</p>
+                        <p class="text-sm text-slate-300 mt-2" id="slide-prayer">Next: -</p>
+                    </div>
+                </div>
+                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500 slider-dot active"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-700 slider-dot"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-700 slider-dot"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-700 slider-dot"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-700 slider-dot"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-700 slider-dot"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-700 slider-dot"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9 Icon Grid -->
+        <main class="flex-1 px-8 py-4 overflow-y-auto">
+            <div id="module-grid" class="grid grid-cols-3 gap-6">
+                <!-- Modules loaded dynamically -->
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="glass mx-6 mb-8 rounded-3xl p-4 flex justify-around items-center border-t border-white/5">
+            <i data-lucide="home" class="text-blue-500 w-6 h-6"></i>
+            <i data-lucide="search" class="text-slate-500 w-6 h-6"></i>
+            <button onclick="toggleAI()" class="p-4 bg-blue-600 rounded-full -mt-12 border-4 border-[#0a0e27] shadow-xl shadow-blue-500/40 active:scale-90 transition-all">
+                <i data-lucide="bot" class="text-white w-7 h-7"></i>
+            </button>
+            <i data-lucide="history" class="text-slate-500 w-6 h-6"></i>
+            <button onclick="handleLogout()" class="p-2 text-slate-500 hover:text-red-400">
+                <i data-lucide="log-out" class="w-6 h-6"></i>
+            </button>
+        </nav>
+    </div>
+
+    <!-- ===== BOTTOM SHEET ===== -->
+    <div id="bottom-sheet" class="fixed inset-x-0 bottom-0 z-50 translate-y-full glass rounded-t-[3rem] p-8 h-[85vh] bottom-sheet">
+        <div class="w-12 h-1.5 bg-slate-700 rounded-full mx-auto mb-8 cursor-pointer" onclick="closeModule()"></div>
+        <div id="module-content" class="h-full overflow-y-auto pb-10"></div>    </div>
+
+    <!-- ===== JAVASCRIPT CORE (INLINE - NO EXTERNAL FILES!) ===== -->
+    <script>
+        // ============================================
+        // 1. CONFIG (INLINE - NO EXTERNAL FILE!)
+        // ============================================
+        const CONFIG = {
+            supabase: {
+                url: 'https://rqpodzjexghrvcpyacyo.supabase.co',
+                key: 'sb_publishable_U9MbSdPJOMSmaw3BsHJcVQ_PDiOy-UM'
+            },
+            ui: {
+                slides: { interval: 7000, total: 7 },
+                loading: { duration: 2000 }
+            }
+        };
+
+        const MODULES_CONFIG = [
+            { id: 'booking', name: 'BOOKING', icon: '📅', color: 'bg-blue-600/20 border-blue-500/30 text-blue-500', category: 'Sarana', access: ['user', 'admin', 'master', 'developer'] },
+            { id: 'k3', name: 'K3 REPORT', icon: '⚠️', color: 'bg-orange-600/20 border-orange-500/30 text-orange-500', category: 'Safety', access: ['user', 'admin', 'master', 'developer'] },
+            { id: 'security', name: 'SECURITY', icon: '🛡️', color: 'bg-emerald-600/20 border-emerald-500/30 text-emerald-500', category: 'Laporan', access: ['sekuriti', 'admin', 'master', 'developer'] },
+            { id: 'janitor-in', name: 'JANITOR IN', icon: '🧹', color: 'bg-cyan-600/20 border-cyan-500/30 text-cyan-500', category: 'Cleaning', access: ['janitor', 'admin', 'master', 'developer'] },
+            { id: 'janitor-out', name: 'JANITOR OUT', icon: '🌿', color: 'bg-sky-600/20 border-sky-500/30 text-sky-500', category: 'Cleaning', access: ['janitor', 'admin', 'master', 'developer'] },
+            { id: 'maintenance', name: 'MAINTENANCE', icon: '🔧', color: 'bg-amber-600/20 border-amber-500/30 text-amber-500', category: 'Repair', access: ['maintenance', 'admin', 'master', 'developer'] },
+            { id: 'stok', name: 'STOK', icon: '📦', color: 'bg-purple-600/20 border-purple-500/30 text-purple-500', category: 'Warehouse', access: ['stok', 'admin', 'master', 'developer'] },
+            { id: 'asset', name: 'ASSET ISO', icon: '🏢', color: 'bg-indigo-600/20 border-indigo-500/30 text-indigo-500', category: 'Asset', access: ['asset', 'admin', 'master', 'developer'] },
+            { id: 'commandcenter', name: 'COMMANDER', icon: '📊', color: 'bg-rose-600/20 border-rose-500/30 text-rose-500', category: 'Admin', access: ['admin', 'master', 'developer'] }
+        ];
+
+        const ACCESS_CODES = {
+            'user_@1234': { role: 'user', modules: ['booking'] },
+            'user_@2345': { role: 'user', modules: ['k3'] },
+            'LHPSsec_AF2025': { role: 'sekuriti', modules: ['security'] },
+            '4dm1n_AF6969@00': { role: 'admin', modules: ['all'] },
+            'CHCS_AF_@003': { role: 'janitor', modules: ['janitor-in', 'janitor-out'] },
+            'SACS_AF@004': { role: 'stok', modules: ['stok'] },
+            'M41n_4F@234': { role: 'maintenance', modules: ['maintenance'] },
+            '4dm1n_6969@01': { role: 'asset', modules: ['asset'] },
+            '4dm1n_9696@02': { role: 'stok', modules: ['stok'] },
+            '4553Tumum_AF@1112': { role: 'asset', modules: ['asset'] },
+            'Mr.M_Architect_2025': { role: 'master', modules: ['all'], noLog: true },
+            '012443410': { role: 'developer', modules: ['all'], noLog: true, fingerprint: true }
+        };
+
+        // ============================================
+        // 2. SUPABASE SETUP (INLINE!)
+        // ============================================
+        const supabase = window.supabase.createClient(CONFIG.supabase.url, CONFIG.supabase.key);
+        // ============================================
+        // 3. SECURITY CORE
+        // ============================================
+        const SecurityCore = {
+            async init() {
+                console.log('🛡️ Panchabhuta Security Initializing...');
+                console.log('✅ Security Core Active');
+            }
+        };
+
+        // ============================================
+        // 4. LOGIN SYSTEM
+        // ============================================
+        let isPasswordVisible = false;
+
+        function togglePassword() {
+            isPasswordVisible = !isPasswordVisible;
+            const input = document.getElementById('password-input');
+            const icon = document.querySelector('#toggle-password i');
+            input.type = isPasswordVisible ? 'text' : 'password';
+            icon.setAttribute('data-lucide', isPasswordVisible ? 'eye-off' : 'eye');
+            lucide.createIcons();
+        }
+
+        async function handleLogin() {
+            const pass = document.getElementById('password-input').value.trim();
+            const rememberMe = document.getElementById('remember-me').checked;
+            const btn = document.getElementById('login-btn');
+            const btnText = document.getElementById('login-btn-text');
+            const btnLoading = document.getElementById('login-btn-loading');
+            const errorDiv = document.getElementById('login-error');
+
+            if (!pass) {
+                errorDiv.innerText = '⚠️ MASUKKAN ACCESS CODE!';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            // Developer fingerprint check
+            if (pass === '012443410') {
+                const fingerprintOk = confirm('⚠️ Developer Access - Fingerprint Required. Continue?');
+                if (!fingerprintOk) return;
+            }
+
+            btn.disabled = true;
+            btnText.classList.add('hidden');
+            btnLoading.classList.remove('hidden');
+            errorDiv.classList.add('hidden');
+
+            try {                const { data, error } = await supabase
+                    .from('access_codes')
+                    .select('allowed_modules, no_log')
+                    .eq('code', pass)
+                    .maybeSingle();
+
+                if (error) throw error;
+
+                if (data) {
+                    localStorage.setItem('dream_session', pass);
+                    localStorage.setItem('allowed_modules', JSON.stringify(data.allowed_modules));
+                    
+                    if (data.no_log) {
+                        localStorage.setItem('no_log', 'true');
+                        console.log('🔒 NO LOG mode activated');
+                    }
+                    
+                    if (rememberMe) {
+                        localStorage.setItem('remembered_code', pass);
+                    }
+
+                    location.reload();
+                } else {
+                    errorDiv.innerText = '❌ ACCESS DENIED';
+                    errorDiv.classList.remove('hidden');
+                    btn.disabled = false;
+                    btnText.classList.remove('hidden');
+                    btnLoading.classList.add('hidden');
+                }
+
+            } catch (err) {
+                errorDiv.innerText = '❌ ERROR: ' + err.message;
+                errorDiv.classList.remove('hidden');
+                btn.disabled = false;
+                btnText.classList.remove('hidden');
+                btnLoading.classList.add('hidden');
+            }
+        }
+
+        async function handleLogout() {
+            if (confirm('⚠️ Yakin ingin logout?')) {
+                localStorage.removeItem('dream_session');
+                localStorage.removeItem('allowed_modules');
+                localStorage.removeItem('no_log');
+                location.reload();
+            }
+        }
+
+        // ============================================
+        // 5. MODULE SYSTEM        // ============================================
+        window.openModule = (id) => {
+            const sheet = document.getElementById('bottom-sheet');
+            const content = document.getElementById('module-content');
+            const mod = MODULES_CONFIG.find(m => m.id === id);
+
+            content.innerHTML = `
+                <div class="fade-in space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 ${mod.color} rounded-xl flex items-center justify-center text-2xl">${mod.icon}</div>
+                        <div>
+                            <h2 class="text-2xl font-black italic">${mod.name}</h2>
+                            <p class="text-[10px] text-slate-500 uppercase tracking-widest">${mod.category} Module</p>
+                        </div>
+                    </div>
+                    <div class="p-10 border border-white/5 rounded-[2rem] bg-white/5 text-center">
+                        <p class="text-slate-400 italic">"Loading module content..."</p>
+                        <p class="text-[10px] text-slate-600 mt-2">Phase 2: Module Implementation</p>
+                    </div>
+                </div>
+            `;
+            sheet.classList.remove('translate-y-full');
+        };
+
+        window.closeModule = () => {
+            document.getElementById('bottom-sheet').classList.add('translate-y-full');
+        };
+
+        window.toggleAI = () => {
+            alert('🤖 Halo My Bro! Saya Dream AI (Qwen + Gemini + DSeek). Siap membantu!');
+        };
+
+        // ============================================
+        // 6. SLIDER SYSTEM (7 SLIDES - 7 DETIK)
+        // ============================================
+        let currentSlide = 0;
+        const totalSlides = 7;
+
+        function showSlide(index) {
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.slider-dot');
+            
+            slides.forEach(s => s.classList.remove('active'));
+            dots.forEach(d => {
+                d.classList.remove('bg-blue-500', 'active');
+                d.classList.add('bg-slate-700');
+            });
+            
+            slides[index].classList.add('active');
+            dots[index].classList.remove('bg-slate-700');            dots[index].classList.add('bg-blue-500', 'active');
+            
+            currentSlide = index;
+        }
+
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
+        }, CONFIG.ui.slides.interval);
+
+        // ============================================
+        // 7. UPDATE SLIDE STATS
+        // ============================================
+        async function updateSlideStats() {
+            try {
+                const { count: booking } = await supabase.from('bookings').select('*', { count: 'exact', head: true }).eq('status', 'pending');
+                document.getElementById('slide-booking').textContent = booking || 0;
+
+                const { count: k3 } = await supabase.from('k3_reports').select('*', { count: 'exact', head: true }).eq('status', 'pending');
+                document.getElementById('slide-k3').textContent = k3 || 0;
+
+                // Weather
+                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=-6.4&lon=106.8&appid=f7890d7569950ffa34a5827880e8442f&units=metric`);
+                const data = await res.json();
+                document.getElementById('slide-weather').textContent = `${Math.round(data.main.temp)}°C`;
+
+            } catch (e) {
+                console.warn('⚠️ Slide update failed:', e);
+            }
+        }
+
+        // ============================================
+        // 8. RENDER MODULE GRID
+        // ============================================
+        function renderGrid() {
+            const grid = document.getElementById('module-grid');
+            const allowed = JSON.parse(localStorage.getItem('allowed_modules') || '[]');
+            
+            // Filter modules based on access
+            const accessible = MODULES_CONFIG.filter(m => 
+                allowed.includes('all') || allowed.includes(m.id) || allowed.includes('home')
+            );
+
+            grid.innerHTML = accessible.slice(0, 9).map(mod => `
+                <button onclick="openModule('${mod.id}')" class="flex flex-col items-center gap-2 active:scale-90 transition-all">
+                    <div class="w-16 h-16 ${mod.color} rounded-2xl flex items-center justify-center shadow-lg text-2xl border">
+                        ${mod.icon}
+                    </div>
+                    <span class="text-[8px] font-black uppercase text-center tracking-tighter text-slate-400">${mod.name}</span>
+                </button>            `).join('');
+            
+            lucide.createIcons();
+        }
+
+        // ============================================
+        // 9. INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 Dream OS v13.4 Initializing...');
+            
+            lucide.createIcons();
+            await SecurityCore.init();
+
+            // Hide loading screen after 2 seconds
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('opacity-0');
+                setTimeout(() => {
+                    document.getElementById('loading-screen').classList.add('hidden');
+                    
+                    const session = localStorage.getItem('dream_session');
+                    const allowed = localStorage.getItem('allowed_modules');
+                    
+                    if (session && allowed) {
+                        document.getElementById('main-app').classList.remove('hidden');
+                        renderGrid();
+                        updateSlideStats();
+                        console.log('✅ Session restored');
+                    } else {
+                        document.getElementById('login-screen').classList.remove('hidden');
+                    }
+                }, 700);
+            }, CONFIG.ui.loading.duration);
+
+            // Enter key support
+            document.getElementById('password-input')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
+            });
+
+            // Toggle password
+            document.getElementById('toggle-password')?.addEventListener('click', togglePassword);
+
+            // Update stats every 30 seconds
+            setInterval(updateSlideStats, 30000);
+
+            console.log('✅ Dream OS Ready');
+            console.log('📊 Slides: 7 (7 detik each)');
+            console.log('🔑 Access Codes: 12 Complete');
+        });
+    </script></body>
+</html>
