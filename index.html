@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0e27">
+    <title>Dream OS v13.4</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:sans-serif;background:#0a0e27;color:white;overflow:hidden;height:100vh}
+        .hidden{display:none!important}
+        .spinner{width:60px;height:60px;border:4px solid rgba(59,130,246,0.1);border-top-color:#3b82f6;border-radius:50%;animation:spin 1s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .glass{background:rgba(30,41,59,0.6);backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.1)}
+        .slide{display:none;width:100%}
+        .slide.active{display:flex;flex-direction:column;align-items:center;justify-content:center}
+    </style>
+</head>
+<body>
+
+    <!-- LOADING - HARD TIMEOUT 3 DETIK -->
+    <div id="loading" style="position:fixed;inset:0;z:50;background:#0a0e27;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div class="spinner" style="margin-bottom:20px"></div>
+        <h1 style="font-size:24px;font-weight:900">DREAM OS</h1>
+        <p style="font-size:10px;color:#3b82f6;margin-top:8px">v13.4 - Sovereign System</p>
+        <p style="font-size:8px;color:#64748b;margin-top:16px">🛡️ Security Loading...</p>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="login" class="hidden" style="position:fixed;inset:0;z:40;background:#0a0e27;display:flex;align-items:center;justify-content:center;padding:24px">
+        <div style="width:100%;max-width:360px">
+            <div style="text-align:center;margin-bottom:24px">
+                <p style="font-size:28px;color:#fbbf24;margin-bottom:8px">بِسْمِ اللَّهِ</p>
+                <h1 style="font-size:32px;font-weight:900">DREAM <span style="color:#3b82f6">OS</span></h1>
+                <p style="font-size:10px;color:#64748b">Access Control</p>
+            </div>
+            <div class="glass" style="padding:32px;border-radius:24px">
+                <input type="password" id="pass" placeholder="ACCESS CODE" style="width:100%;padding:16px;background:rgba(0,0,0,0.4);border:1px solid #334155;border-radius:16px;color:white;text-align:center;font-weight:700;letter-spacing:2px;margin-bottom:16px;outline:none">
+                <button onclick="doLogin()" id="btn" style="width:100%;padding:16px;background:#2563eb;border:none;border-radius:16px;color:white;font-weight:900;cursor:pointer">🔓 UNLOCK</button>
+                <p id="err" class="hidden" style="color:#ef4444;font-size:10px;text-align:center;font-weight:700;margin-top:12px"></p>
+            </div>
+            <p style="text-align:center;font-size:10px;color:#475569;margin-top:16px">"The Power Soul of Shalawat"</p>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="app" class="hidden" style="display:flex;flex-direction:column;height:100vh">
+        <header style="padding:16px;text-align:center">
+            <p style="font-size:16px;color:#fbbf24">بِسْمِ اللَّهِ</p>
+            <h1 style="font-size:10px;color:#64748b">DREAM OS v13.4</h1>        </header>
+
+        <!-- SLIDES -->
+        <section style="padding:16px">
+            <div class="glass" style="height:160px;border-radius:24px;position:relative;overflow:hidden;padding:16px">
+                <div id="slider" style="height:100%;display:flex">
+                    <div class="slide active"><p style="font-size:20px;font-weight:900;color:#fbbf24">✨ Welcome</p><p style="font-size:8px;color:#94a3b8;margin-top:4px">SIF Al-Fikri</p></div>
+                    <div class="slide"><p style="font-size:8px;color:#64748b">Booking</p><p style="font-size:36px;font-weight:900;color:#3b82f6;margin-top:8px" id="s-booking">0</p></div>
+                    <div class="slide"><p style="font-size:8px;color:#64748b">K3</p><p style="font-size:36px;font-weight:900;color:#f97316;margin-top:8px" id="s-k3">0</p></div>
+                    <div class="slide"><p style="font-size:8px;color:#64748b">Weather</p><p style="font-size:20px;font-weight:900;color:#06b6d4;margin-top:8px" id="s-weather">26°C</p></div>
+                    <div class="slide"><p style="font-size:8px;color:#64748b">Admin</p><p style="font-size:12px;color:#cbd5e1;margin-top:8px" id="s-admin">Ready</p></div>
+                    <div class="slide"><p style="font-size:8px;color:#64748b">AI</p><p style="font-size:12px;color:#cbd5e1;margin-top:8px" id="s-ai">Normal</p></div>
+                    <div class="slide"><p style="font-size:8px;color:#fbbf24">🕌 Prayer</p><p style="font-size:12px;color:#cbd5e1;margin-top:8px" id="s-prayer">-</p></div>
+                </div>
+                <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px">
+                    <div style="width:6px;height:6px;border-radius:50%;background:#3b82f6"></div>
+                    <div style="width:6px;height:6px;border-radius:50%;background:#334155"></div>
+                    <div style="width:6px;height:6px;border-radius:50%;background:#334155"></div>
+                    <div style="width:6px;height:6px;border-radius:50%;background:#334155"></div>
+                    <div style="width:6px;height:6px;border-radius:50%;background:#334155"></div>
+                    <div style="width:6px;height:6px;border-radius:50%;background:#334155"></div>
+                    <div style="width:6px;height:6px;border-radius:50%;background:#334155"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9 ICONS -->
+        <main style="flex:1;padding:24px 24px 0;overflow-y:auto">
+            <div id="grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px"></div>
+        </main>
+
+        <!-- BOTTOM NAV -->
+        <nav class="glass" style="margin:16px;border-radius:20px;padding:12px;display:flex;justify-content:space-around;align-items:center">
+            <span style="color:#3b82f6">🏠</span>
+            <span style="color:#64748b">🔍</span>
+            <button onclick="alert('🤖 AI Ready!')" style="width:56px;height:56px;background:#2563eb;border:4px solid #0a0e27;border-radius:50%;color:white;font-size:24px;margin-top:-40px;cursor:pointer">🤖</button>
+            <span style="color:#64748b">📜</span>
+            <button onclick="doLogout()" style="color:#64748b;background:none;border:none;cursor:pointer">🚪</button>
+        </nav>
+    </div>
+
+    <!-- BOTTOM SHEET -->
+    <div id="sheet" style="position:fixed;left:0;right:0;bottom:0;z:50;transform:translateY(100%);background:rgba(30,41,59,0.6);backdrop-filter:blur(15px);border-top:1px solid rgba(255,255,255,0.1);border-radius:24px 24px 0 0;padding:24px;height:80vh;transition:transform 0.3s">
+        <div style="width:48px;height:4px;background:#334155;border-radius:2px;margin:0 auto 16px;cursor:pointer" onclick="closeSheet()"></div>
+        <div id="sheet-content" style="height:100%;overflow-y:auto"></div>
+    </div>
+
+    <script>
+        // ===== HARD TIMEOUT - PASTI JALAN! =====
+        var loadingHideTime = 3000; // 3 detik        console.log('⏱️ Loading timeout set:', loadingHideTime, 'ms');
+
+        // ===== MODULES =====
+        var modules = [
+            {id:'booking',name:'BOOKING',icon:'📅',color:'bg-blue'},
+            {id:'k3',name:'K3',icon:'⚠️',color:'bg-orange'},
+            {id:'security',name:'SECURITY',icon:'🛡️',color:'bg-emerald'},
+            {id:'janitor-in',name:'JANITOR IN',icon:'🧹',color:'bg-cyan'},
+            {id:'janitor-out',name:'JANITOR OUT',icon:'🌿',color:'bg-sky'},
+            {id:'maintenance',name:'MAINTENANCE',icon:'🔧',color:'bg-amber'},
+            {id:'stok',name:'STOK',icon:'📦',color:'bg-purple'},
+            {id:'asset',name:'ASSET',icon:'🏢',color:'bg-indigo'},
+            {id:'commandcenter',name:'COMMAND',icon:'📊',color:'bg-rose'}
+        ];
+
+        // ===== INIT - LANGSUNG JALAN! =====
+        console.log('🚀 Dream OS Initializing...');
+        
+        // FORCE hide loading setelah 3 detik
+        setTimeout(function() {
+            console.log('⏰ Timeout triggered!');
+            var loading = document.getElementById('loading');
+            if (loading) {
+                loading.style.display = 'none';
+                console.log('✅ Loading screen hidden');
+            }
+            checkSession();
+        }, loadingHideTime);
+
+        // ===== CHECK SESSION =====
+        function checkSession() {
+            console.log('📝 Checking session...');
+            var session = localStorage.getItem('dream_session');
+            var allowed = localStorage.getItem('allowed_modules');
+            
+            if (session && allowed) {
+                document.getElementById('login').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                document.getElementById('app').style.display = 'flex';
+                renderGrid(JSON.parse(allowed));
+                console.log('✅ Session restored');
+            } else {
+                document.getElementById('login').classList.remove('hidden');
+                document.getElementById('app').classList.add('hidden');
+                document.getElementById('app').style.display = 'none';
+                console.log('✅ Show login screen');
+            }
+        }
+
+        // ===== LOGIN =====        function doLogin() {
+            var pass = document.getElementById('pass').value.trim();
+            var btn = document.getElementById('btn');
+            var err = document.getElementById('err');
+
+            if (!pass) {
+                err.textContent = '⚠️ MASUKKAN CODE!';
+                err.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = '⏳...';
+            err.classList.add('hidden');
+
+            // Developer bypass
+            if (pass === '012443410') {
+                localStorage.setItem('dream_session', pass);
+                localStorage.setItem('allowed_modules', JSON.stringify(['all']));
+                location.reload();
+                return;
+            }
+
+            // Master key
+            if (pass === 'Mr.M_Architect_2025') {
+                localStorage.setItem('dream_session', pass);
+                localStorage.setItem('allowed_modules', JSON.stringify(['all']));
+                location.reload();
+                return;
+            }
+
+            // Admin key
+            if (pass === '4dm1n_AF6969@00') {
+                localStorage.setItem('dream_session', pass);
+                localStorage.setItem('allowed_modules', JSON.stringify(['all']));
+                location.reload();
+                return;
+            }
+
+            // User booking
+            if (pass === 'user_@1234') {
+                localStorage.setItem('dream_session', pass);
+                localStorage.setItem('allowed_modules', JSON.stringify(['booking']));
+                location.reload();
+                return;
+            }
+
+            // User K3
+            if (pass === 'user_@2345') {
+                localStorage.setItem('dream_session', pass);                localStorage.setItem('allowed_modules', JSON.stringify(['k3']));
+                location.reload();
+                return;
+            }
+
+            // Default: access denied
+            err.textContent = '❌ ACCESS DENIED';
+            err.classList.remove('hidden');
+            btn.disabled = false;
+            btn.textContent = '🔓 UNLOCK';
+        }
+
+        // ===== LOGOUT =====
+        function doLogout() {
+            if (confirm('⚠️ Logout?')) {
+                localStorage.removeItem('dream_session');
+                localStorage.removeItem('allowed_modules');
+                location.reload();
+            }
+        }
+
+        // ===== RENDER GRID =====
+        function renderGrid(allowed) {
+            var grid = document.getElementById('grid');
+            var hasAll = allowed.indexOf('all') !== -1;
+            
+            var accessible = modules.filter(function(m) {
+                return hasAll || allowed.indexOf(m.id) !== -1;
+            });
+
+            grid.innerHTML = accessible.slice(0, 9).map(function(m) {
+                return '<button onclick="openSheet(\'' + m.id + '\',\'' + m.name + '\')" style="display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;cursor:pointer">';
+            }).join('') + accessible.slice(0, 9).map(function(m) {
+                return '<div style="width:56px;height:56px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);border-radius:16px;display:flex;align-items:center;justify-content-center;font-size:24px">' + m.icon + '</div><span style="font-size:7px;font-weight:700;color:#94a3b8">' + m.name + '</span></button>';
+            }).join('');
+
+            console.log('✅ Grid rendered:', accessible.length, 'modules');
+        }
+
+        // ===== OPEN SHEET =====
+        function openSheet(id, name) {
+            var sheet = document.getElementById('sheet');
+            var content = document.getElementById('sheet-content');
+            content.innerHTML = '<div style="padding:16px"><h2 style="font-size:24px;font-weight:900;margin-bottom:24px">' + name + '</h2><div style="padding:48px;background:rgba(255,255,255,0.05);border-radius:16px;text-align:center"><p style="color:#94a3b8">Module loading...</p></div></div>';
+            sheet.style.transform = 'translateY(0)';
+        }
+
+        // ===== CLOSE SHEET =====
+        function closeSheet() {
+            document.getElementById('sheet').style.transform = 'translateY(100%)';        }
+
+        // ===== SLIDER =====
+        var slideIdx = 0;
+        setInterval(function() {
+            var slides = document.querySelectorAll('.slide');
+            slides.forEach(function(s) { s.classList.remove('active'); });
+            slideIdx = (slideIdx + 1) % slides.length;
+            slides[slideIdx].classList.add('active');
+        }, 7000);
+        console.log('✅ Slider started (7 detik)');
+
+        // ===== ENTER KEY =====
+        document.getElementById('pass')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') doLogin();
+        });
+
+        console.log('✅ Dream OS Ready!');
+        console.log('🔑 Access Codes: 12 Complete');
+        console.log('⏱️ Loading timeout: 3 seconds');
+    </script>
+</body>
+</html>
