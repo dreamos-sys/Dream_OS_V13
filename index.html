@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0e27">
+    <title>Dream OS v13.4 | Sovereign System</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Amiri:wght@400;700&display=swap');
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #0a0e27; 
+            overflow: hidden; 
+            height: 100vh;
+        }
+        .arabic { font-family: 'Amiri', serif; }
+        .glass { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); }
+        .spinner { border: 3px solid rgba(59, 130, 246, 0.1); border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .slide { display: none; width: 100%; transition: 0.5s; }
+        .slide.active { display: flex; flex-direction: column; align-items: center; justify-content: center; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+
+<body class="text-slate-100 flex flex-col">
+
+    <div id="loading-screen" class="fixed inset-0 z-[100] bg-[#0a0e27] flex flex-col items-center justify-center transition-opacity duration-700">
+        <div class="spinner w-16 h-16 mb-4"></div>
+        <h1 class="text-2xl font-black tracking-[0.3em] text-white">DREAM OS</h1>
+        <p class="text-[10px] text-blue-400 mt-2 uppercase tracking-[0.4em]">Sovereign System Active</p>
+    </div>
+
+    <div id="login-screen" class="hidden fixed inset-0 z-50 bg-[#0a0e27] flex flex-col items-center justify-center p-6">
+        <div class="w-full max-w-md space-y-8">
+            <div class="text-center space-y-2">
+                <p class="text-3xl arabic text-amber-400">بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
+                <h1 class="text-4xl font-black italic tracking-tighter">DREAM <span class="text-blue-500 underline decoration-blue-900">OS</span></h1>
+            </div>
+
+            <div class="glass p-8 rounded-[2.5rem] shadow-2xl space-y-6 border-blue-500/20">
+                <input type="password" id="password-input" placeholder="ACCESS CODE" 
+                    class="w-full p-5 bg-black/40 border border-slate-700 rounded-2xl text-center text-white font-bold tracking-[0.5em] focus:border-blue-500 outline-none">
+                
+                <button onclick="handleLogin()" id="login-btn" class="w-full py-5 bg-blue-600 hover:bg-blue-500 rounded-2xl font-black text-white shadow-lg active:scale-95 transition-all">
+                    UNLOCK SYSTEM
+                </button>
+                <p id="login-error" class="hidden text-red-500 text-[10px] text-center font-bold uppercase"></p>
+            </div>
+            <p class="text-center text-[10px] text-slate-600 uppercase tracking-widest italic">"The Power Soul of Shalawat"</p>
+        </div>
+    </div>
+
+    <div id="main-app" class="hidden flex-1 flex flex-col h-full overflow-hidden">
+        <header class="p-6 text-center">
+            <p class="text-xl arabic text-amber-400">بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
+            <h1 class="font-black text-[10px] tracking-[0.3em] text-slate-500 mt-1 uppercase">Sovereign Edition v13.4</h1>
+        </header>
+
+        <section class="px-6 mb-6">
+            <div class="glass h-44 rounded-[2.5rem] relative overflow-hidden p-6 border-white/5 shadow-inner">
+                <div id="slider" class="h-full flex transition-transform duration-700">
+                    <div class="slide active">
+                        <p class="text-2xl font-black text-amber-400">Marhaban,</p>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">SIF Al-Fikri Admin Panel</p>
+                    </div>
+                    <div class="slide">
+                        <p class="text-xs text-slate-500 uppercase font-bold tracking-widest">Aset Terpantau</p>
+                        <p class="text-5xl font-black text-blue-500 mt-2">ISO</p>
+                    </div>
+                </div>
+                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+                    <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-700"></div>
+                </div>
+            </div>
+        </section>
+
+        <main class="flex-1 px-8 py-4 overflow-y-auto">
+            <div id="module-grid" class="grid grid-cols-3 gap-6">
+                </div>
+        </main>
+
+        <nav class="glass mx-6 mb-8 rounded-3xl p-4 flex justify-around items-center border-t border-white/5">
+            <i data-lucide="home" class="text-blue-500 w-6 h-6"></i>
+            <button onclick="openAI()" class="p-4 bg-blue-600 rounded-full -mt-12 border-4 border-[#0a0e27] shadow-xl shadow-blue-500/40 active:scale-90 transition-all">
+                <i data-lucide="bot" class="text-white w-7 h-7"></i>
+            </button>
+            <i data-lucide="settings" class="text-slate-500 w-6 h-6"></i>
+        </nav>
+    </div>
+
+    <div id="bottom-sheet" class="fixed inset-x-0 bottom-0 z-50 translate-y-full glass rounded-t-[3rem] p-8 h-[85vh] transition-transform duration-500">
+        <div class="w-12 h-1.5 bg-slate-700 rounded-full mx-auto mb-8 cursor-pointer" onclick="closeModule()"></div>
+        <div id="module-content" class="h-full overflow-y-auto pb-10"></div>
+    </div>
+
+    <script type="module">
+        // Import Config & Supabase
+        import { CONFIG, MODULES_CONFIG } from './js/config.js';
+        import { supabase } from './js/supabase.js';
+
+        // === GLOBAL FUNCTIONS ===
+        window.handleLogin = async () => {
+            const pass = document.getElementById('password-input').value;
+            const btn = document.getElementById('login-btn');
+            const errorDiv = document.getElementById('login-error');
+
+            btn.disabled = true;
+            btn.innerText = "VERIFYING...";
+
+            const { data, error } = await supabase.from('access_codes').select('*').eq('code', pass).maybeSingle();
+
+            if (data) {
+                localStorage.setItem('dream_session', pass);
+                localStorage.setItem('user_role', data.role || 'user');
+                location.reload();
+            } else {
+                errorDiv.innerText = "ACCESS DENIED";
+                errorDiv.classList.remove('hidden');
+                btn.disabled = false;
+                btn.innerText = "UNLOCK SYSTEM";
+            }
+        };
+
+        window.openModule = (id) => {
+            const sheet = document.getElementById('bottom-sheet');
+            const content = document.getElementById('module-content');
+            const mod = MODULES_CONFIG.find(m => m.id === id);
+
+            content.innerHTML = `
+                <div class="fade-in space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 ${mod.color} rounded-xl flex items-center justify-center text-2xl">${mod.icon}</div>
+                        <div>
+                            <h2 class="text-2xl font-black italic">${mod.name}</h2>
+                            <p class="text-[10px] text-slate-500 uppercase tracking-widest">${mod.category} Module</p>
+                        </div>
+                    </div>
+                    <div class="p-10 border border-white/5 rounded-[2rem] bg-white/5 text-center">
+                        <p class="text-slate-400 italic">"Memproses data sesuai standar ISO..."</p>
+                    </div>
+                </div>
+            `;
+            sheet.classList.remove('translate-y-full');
+        };
+
+        window.closeModule = () => {
+            document.getElementById('bottom-sheet').classList.add('translate-y-full');
+        };
+
+        // === INITIALIZATION ===
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            // Slider Logic
+            let currentSlide = 0;
+            setInterval(() => {
+                const slides = document.querySelectorAll('.slide');
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }, CONFIG.ui.slides.interval);
+
+            // App Boot
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('opacity-0');
+                setTimeout(() => {
+                    document.getElementById('loading-screen').classList.add('hidden');
+                    const session = localStorage.getItem('dream_session');
+                    if (session) {
+                        document.getElementById('main-app').classList.remove('hidden');
+                        renderGrid();
+                    } else {
+                        document.getElementById('login-screen').classList.remove('hidden');
+                    }
+                }, 700);
+            }, 2000);
+        });
+
+        function renderGrid() {
+            const grid = document.getElementById('module-grid');
+            const role = localStorage.getItem('user_role') || 'user';
+            
+            // Filter modul berdasarkan Role (Erwinsyah vs Hanung Budianto)
+            const accessible = MODULES_CONFIG.filter(m => m.access.includes(role));
+
+            grid.innerHTML = accessible.slice(0, 9).map(mod => `
+                <button onclick="openModule('${mod.id}')" class="flex flex-col items-center gap-2 active:scale-90 transition-all">
+                    <div class="w-16 h-16 ${mod.color} rounded-2xl flex items-center justify-center shadow-lg text-2xl">
+                        ${mod.icon}
+                    </div>
+                    <span class="text-[8px] font-black uppercase text-center tracking-tighter text-slate-400">${mod.name}</span>
+                </button>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
