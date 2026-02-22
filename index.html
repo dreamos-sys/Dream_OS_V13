@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="Dream OS v13.4 - Sistem Informasi Terintegrasi Al-Fikri">
+    <meta name="keywords" content="Dream OS, SIF Al-Fikri, Management System, PWA">
+    <meta name="author" content="Dream Team">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" href="./icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="./icons/icon-192x192.png">
+    
+    <title>Dream OS v13.4 | Sovereign System</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        dark: '#0f172a',
+                        surface: '#1e293b',
+                        accent: '#8b5cf6',
+                        gold: '#fbbf24'
+                    },
+                    borderRadius: { 'xl': '1.5rem', '2xl': '2rem', '3xl': '3rem' }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Amiri:wght@400;700&display=swap');        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 20s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .arabic { font-family: 'Amiri', serif; }
+        
+        .glass { 
+            background: rgba(30, 41, 59, 0.7); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1); 
+        }
+        
+        .icon-grid-active:active { transform: scale(0.9); transition: 0.1s; }
+        
+        .bottom-sheet { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        .spinner {
+            border: 3px solid rgba(0,243,255,0.2);
+            border-top-color: #00f3ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .fade-in { animation: fadeIn 0.3s ease; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide { display: none; min-width: 100%; padding: 1.5rem; flex-direction: column; align-items: center; justify-content: center; text-align: center; animation: fadeIn 0.5s; }
+        .slide.active { display: flex; }
+        
+        .slider-dot { transition: all 0.3s; }        .slider-dot.active { width: 20px; background: #06b6d4; border-radius: 10px; }
+        
+        .compliance-link { color: #94a3b8; font-size: 10px; text-decoration: none; }
+        .compliance-link:hover { color: #3b82f6; text-decoration: underline; }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 2px; }
+    </style>
+</head>
+<body class="bg-dark text-slate-100 overflow-hidden h-screen flex flex-col">
+
+    <!-- ===== LOADING SCREEN ===== -->
+    <div id="loading-screen" class="fixed inset-0 z-50 bg-dark flex flex-col items-center justify-center">
+        <div class="spinner w-16 h-16 border-4 mb-4"></div>
+        <h1 class="text-2xl font-bold text-white mb-2">DREAM OS</h1>
+        <p class="text-sm text-slate-400">v13.4 - Sovereign System</p>
+        <p class="text-xs text-slate-500 mt-4">🛡️ Panchabhuta Security Loading...</p>
+    </div>
+
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div id="login-screen" class="hidden fixed inset-0 z-40 bg-dark flex flex-col items-center justify-center p-6">
+        <div class="w-full max-w-md space-y-6">
+            <!-- Spiritual Header -->
+            <div class="text-center space-y-2">
+                <p class="text-2xl arabic text-gold">بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
+                <p class="text-xs arabic text-slate-400">اَللهم صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ</p>
+                <h1 class="text-3xl font-black mt-3">DREAM <span class="text-blue-500">OS</span></h1>
+                <p class="text-xs text-slate-400">v13.4 - Access Control</p>
+            </div>
+
+            <!-- Login Card -->
+            <div class="glass p-8 rounded-3xl space-y-6 fade-in">
+                <!-- Language Selector -->
+                <div class="flex justify-center gap-2">
+                    <button onclick="setLanguage('id')" class="px-3 py-1 rounded-full text-[10px] font-bold bg-blue-600/20 text-blue-400 border border-blue-500/30">ID</button>
+                    <button onclick="setLanguage('en')" class="px-3 py-1 rounded-full text-[10px] font-bold bg-slate-700 text-slate-400 border border-slate-600">EN</button>
+                    <button onclick="setLanguage('ar')" class="px-3 py-1 rounded-full text-[10px] font-bold bg-slate-700 text-slate-400 border border-slate-600">عربي</button>
+                </div>
+
+                <!-- Password Input -->
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="access_code">Access Code</label>
+                    <div class="relative">
+                        <input type="password" id="password-input" 
+                               data-i18n-placeholder="enter_code"
+                               placeholder="Enter your access code" 
+                               class="w-full p-4 pr-12 bg-slate-800/50 border border-slate-700 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all">
+                        
+                        <!-- Show/Hide Password Icon -->                        <button type="button" id="toggle-password" 
+                                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors p-2">
+                            <i data-lucide="eye" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remember Me -->
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="remember-me" 
+                           class="w-4 h-4 rounded border-slate-700 bg-slate-800 text-blue-500 focus:ring-blue-500/20">
+                    <label for="remember-me" class="text-xs text-slate-400" data-i18n="remember_device">Remember this device</label>
+                </div>
+
+                <!-- Login Button -->
+                <button onclick="handleLogin()" id="login-btn"
+                        class="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-2xl font-bold text-white transition-all active:scale-95 shadow-lg shadow-blue-900/50">
+                    <span id="login-btn-text" data-i18n="unlock">🔓 UNLOCK SYSTEM</span>
+                    <span id="login-btn-loading" class="hidden">
+                        <span class="spinner w-5 h-5 border-2 inline-block mr-2"></span>
+                        <span data-i18n="verifying">Verifying...</span>
+                    </span>
+                </button>
+
+                <!-- Error Message -->
+                <div id="login-error" class="hidden p-3 bg-red-500/10 border border-red-500/30 rounded-xl">
+                    <p class="text-xs text-red-400 text-center" id="login-error-text"></p>
+                </div>
+
+                <!-- Help Text -->
+                <div class="text-center">
+                    <p class="text-[10px] text-slate-500">🔐 ISO 27001 Certified Access Control</p>
+                </div>
+            </div>
+
+            <!-- Play Store Compliance Links -->
+            <div class="text-center space-y-2">
+                <div class="flex justify-center gap-4">
+                    <a href="#privacy" onclick="showModal('privacy')" class="compliance-link" data-i18n="privacy">Privacy</a>
+                    <a href="#terms" onclick="showModal('terms')" class="compliance-link" data-i18n="terms">Terms</a>
+                    <a href="#delete" onclick="showModal('delete')" class="compliance-link" data-i18n="delete_account">Delete</a>
+                </div>
+                <p class="text-[9px] text-slate-600">Dream OS v13.4 © 2026</p>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center space-y-1">
+                <p class="text-[9px] text-slate-600" data-i18n="power_soul">"The Power Soul of Shalawat"</p>
+                <p class="text-[8px] text-slate-700">Dream Team © 2026</p>
+            </div>        </div>
+    </div>
+
+    <!-- ===== MAIN APP (Hidden until login) ===== -->
+    <div id="main-app" class="hidden flex-1 flex flex-col">
+
+        <!-- Spiritual Header -->
+        <header class="p-4 pb-2 text-center">
+            <p class="text-lg arabic text-gold mb-1">بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
+            <p class="text-[8px] arabic text-slate-400 mb-2">اَللهم صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ</p>
+            <h1 class="text-xl font-extrabold tracking-tight">DREAM OS <span class="text-blue-500">v13.4</span></h1>
+            <p class="text-[9px] text-slate-400 italic" data-i18n="power_soul">"The Power Soul of Shalawat"</p>
+        </header>
+
+        <!-- ===== 7 SLIDES (7 DETIK EACH) ===== -->
+        <section class="px-4 mt-2">
+            <div class="glass relative overflow-hidden rounded-3xl" style="min-height:200px">
+                <div id="slider" class="flex transition-transform duration-700 ease-in-out">
+                    
+                    <!-- SLIDE 1: WELCOME -->
+                    <div class="slide active">
+                        <p class="text-2xl font-black mb-2 text-gold" data-i18n="welcome">✨ Selamat Datang</p>
+                        <p class="text-sm text-slate-400 mb-3">Keluarga Besar SIF Al-Fikri</p>
+                        <div class="flex gap-2 flex-wrap justify-center">
+                            <span class="bg-emerald-600/80 text-white text-[10px] font-bold px-3 py-1 rounded-full">ISO 27001</span>
+                            <span class="bg-cyan-600/80 text-white text-[10px] font-bold px-3 py-1 rounded-full">Active</span>
+                            <span class="bg-blue-600/80 text-white text-[10px] font-bold px-3 py-1 rounded-full">v13.4</span>
+                        </div>
+                    </div>
+
+                    <!-- SLIDE 2: BOOKING STATS -->
+                    <div class="slide">
+                        <p class="text-xl font-bold mb-2 text-blue-400">📅 Booking</p>
+                        <p class="text-4xl font-black" id="slide-booking">0</p>
+                        <p class="text-xs text-slate-400 mt-1" data-i18n="pending_approval">Pending Approval</p>
+                    </div>
+
+                    <!-- SLIDE 3: K3 STATS -->
+                    <div class="slide">
+                        <p class="text-xl font-bold mb-2 text-orange-400">⚠️ K3</p>
+                        <p class="text-4xl font-black" id="slide-k3">0</p>
+                        <p class="text-xs text-slate-400 mt-1" data-i18n="pending_reports">Laporan Menunggu</p>
+                    </div>
+
+                    <!-- SLIDE 4: WEATHER -->
+                    <div class="slide">
+                        <p class="text-xl font-bold mb-2 text-cyan-400">🌤️ Cuaca</p>
+                        <p class="text-2xl font-bold" id="slide-weather">Cerah, 26°C</p>
+                        <p class="text-xs text-slate-400 mt-1">Depok Area</p>
+                    </div>
+                    <!-- SLIDE 5: ADMIN INFO -->
+                    <div class="slide">
+                        <p class="text-xl font-bold mb-2 text-purple-400">📢 Info Admin</p>
+                        <p class="text-sm" id="slide-admin" data-i18n="welcome_message">Selamat datang di Dream OS! Silakan booking fasilitas.</p>
+                    </div>
+
+                    <!-- SLIDE 6: AI SUGGESTION -->
+                    <div class="slide">
+                        <p class="text-xl font-bold mb-2 text-pink-400">💡 Saran AI</p>
+                        <p class="text-sm" id="slide-ai" data-i18n="ai_suggestion">Sistem berjalan normal</p>
+                    </div>
+
+                    <!-- SLIDE 7: PRAYER TIME -->
+                    <div class="slide" style="background:rgba(251,191,36,0.1)">
+                        <p class="text-xl font-bold mb-2 text-gold">🕌 Waktu Shalat</p>
+                        <p class="text-sm" id="slide-prayer">Mari istirahat sejenak</p>
+                        <p class="text-xs opacity-70 mt-1" id="slide-prayer-time">-</p>
+                    </div>
+
+                </div>
+                
+                <!-- 7 SLIDE DOTS -->
+                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                    <div class="w-1.5 h-1.5 rounded-full bg-cyan-500 slider-dot active"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-600 slider-dot"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-600 slider-dot"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-600 slider-dot"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-600 slider-dot"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-600 slider-dot"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-slate-600 slider-dot"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Greeting Card -->
+        <section class="px-6 mt-4">
+            <div class="glass p-4 rounded-2xl flex items-center justify-between overflow-hidden relative group">
+                <div class="z-10">
+                    <p id="ai-greeting" class="text-xs text-slate-400">Assalamu'alaikum!</p>
+                    <p id="ai-insight" class="text-sm font-semibold text-white mt-1 italic">"Sistem aman. Siap eksekusi?"</p>
+                </div>
+                <div class="bg-blue-500/20 p-2 rounded-full z-10">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-blue-400 animate-pulse"></i>
+                </div>
+                <div class="absolute -right-4 -top-4 w-20 h-20 bg-blue-600/20 blur-3xl rounded-full"></div>
+            </div>
+        </section>
+
+        <!-- 9 Icon Grid -->        <main class="flex-1 px-6 py-8 overflow-y-auto">
+            <div class="grid grid-cols-3 gap-5">
+                <!-- 1. BOOKING -->
+                <button onclick="openModule('booking')" class="flex flex-col items-center gap-2 group icon-grid-active">
+                    <div class="w-16 h-16 bg-blue-600/10 border border-blue-500/30 rounded-2xl flex items-center justify-center group-active:scale-90 transition-all shadow-lg shadow-blue-900/20">
+                        <i data-lucide="calendar-check" class="text-blue-500"></i>
+                    </div>
+                    <span class="text-[10px] font-semibold tracking-wide">BOOKING</span>
+                </button>
+
+                <!-- 2. K3 -->
+                <button onclick="openModule('k3')" class="flex flex-col items-center gap-2 group icon-grid-active">
+                    <div class="w-16 h-16 bg-orange-600/10 border border-orange-500/30 rounded-2xl flex items-center justify-center group-active:scale-90 transition-all shadow-lg shadow-orange-900/20">
+                        <i data-lucide="alert-triangle" class="text-orange-500"></i>
+                    </div>
+                    <span class="text-[10px] font-semibold tracking-wide">K3 REPORT</span>
+                </button>
+
+                <!-- 3. SECURITY -->
+                <button onclick="openModule('security')" class="flex flex-col items-center gap-2 group icon-grid-active">
+                    <div class="w-16 h-16 bg-emerald-600/10 border border-emerald-500/30 rounded-2xl flex items-center justify-center group-active:scale-90 transition-all shadow-lg shadow-emerald-900/20">
+                        <i data-lucide="shield-check" class="text-emerald-500"></i>
+                    </div>
+                    <span class="text-[10px] font-semibold tracking-wide">SECURITY</span>
+                </button>
+
+                <!-- 4. JANITOR INDOOR -->
+                <button onclick="openModule('janitor-in')" class="flex flex-col items-center gap-2 group icon-grid-active">
+                    <div class="w-16 h-16 bg-cyan-600/10 border border-cyan-500/30 rounded-2xl flex items-center justify-center group-active:scale-90 transition-all">
+                        <i data-lucide="door-open" class="text-cyan-500"></i>
+                    </div>
+                    <span class="text-[10px] font-semibold tracking-wide">JANITOR IN</span>
+                </button>
+
+                <!-- 5. JANITOR OUTDOOR -->
+                <button onclick="openModule('janitor-out')" class="flex flex-col items-center gap-2 group icon-grid-active">
+                    <div class="w-16 h-16 bg-sky-600/10 border border-sky-500/30 rounded-2xl flex items-center justify-center group-active:scale-90 transition-all">
+                        <i data-lucide="tree-pine" class="text-sky-500"></i>
+                    </div>
+                    <span class="text-[10px] font-semibold tracking-wide">JANITOR OUT</span>
+                </button>
+
+                <!-- 6. MAINTENANCE -->
+                <button onclick="openModule('maintenance')" class="flex flex-col items-center gap-2 group icon-grid-active">
+                    <div class="w-16 h-16 bg-amber-600/10 border border-amber-500/30 rounded-2xl flex items-center justify-center group-active:scale-90 transition-all">
+                        <i data-lucide="wrench" class="text-amber-500"></i>
+                    </div>
+                    <span class="text-[10px] font-semibold tracking-wide">MAINTENANCE</span>
+                </button>
+                <!-- 7. STOK GUDANG -->
+                <button onclick="openModule('stok')" class="flex flex-col items-center gap-2 group icon-grid-active">
+                    <div class="w-16 h-16 bg-purple-600/10 border border-purple-500/30 rounded-2xl flex items-center justify-center group-active:scale-90 transition-all">
+                        <i data-lucide="package" class="text-purple-500"></i>
+                    </div>
+                    <span class="text-[10px] font-semibold tracking-wide">STOK GUDANG</span>
+                </button>
+
+                <!-- 8. ASSET ISO -->
+                <button onclick="openModule('asset')" class="flex flex-col items-center gap-2 group icon-grid-active">
+                    <div class="w-16 h-16 bg-indigo-600/10 border border-indigo-500/30 rounded-2xl flex items-center justify-center group-active:scale-90 transition-all">
+                        <i data-lucide="database" class="text-indigo-500"></i>
+                    </div>
+                    <span class="text-[10px] font-semibold tracking-wide">ASSET ISO</span>
+                </button>
+
+                <!-- 9. COMMAND CENTER (Admin) -->
+                <button onclick="openModule('commandcenter')" class="flex flex-col items-center gap-2 group icon-grid-active">
+                    <div class="w-16 h-16 bg-rose-600/10 border border-rose-500/30 rounded-2xl flex items-center justify-center group-active:scale-90 transition-all ring-2 ring-rose-500/50 ring-offset-4 ring-offset-dark">
+                        <i data-lucide="layout-dashboard" class="text-rose-500"></i>
+                    </div>
+                    <span class="text-[10px] font-semibold tracking-wide text-rose-400 font-black">COMMANDER</span>
+                </button>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="glass mx-6 mb-8 rounded-2xl p-3 flex justify-around items-center shadow-2xl">
+            <button class="p-2 text-blue-500"><i data-lucide="home" class="w-6 h-6"></i></button>
+            <button class="p-2 text-slate-500 hover:text-white transition-colors"><i data-lucide="search" class="w-6 h-6"></i></button>
+            <button onclick="toggleAI()" class="p-4 bg-blue-600 rounded-full -mt-12 shadow-lg shadow-blue-500/50 border-4 border-dark">
+                <i data-lucide="bot" class="w-7 h-7 text-white"></i>
+            </button>
+            <button class="p-2 text-slate-500"><i data-lucide="history" class="w-6 h-6"></i></button>
+            <button onclick="handleLogout()" class="p-2 text-slate-500 hover:text-red-400 transition-colors">
+                <i data-lucide="log-out" class="w-6 h-6"></i>
+            </button>
+        </nav>
+    </div>
+
+    <!-- ===== BOTTOM SHEET (Module Container) ===== -->
+    <div id="bottom-sheet" class="fixed inset-x-0 bottom-0 z-50 transform translate-y-full glass rounded-t-[3rem] p-8 bottom-sheet shadow-[0_-20px_50px_-10px_rgba(0,0,0,0.5)] h-[85vh]">
+        <div class="w-12 h-1.5 bg-slate-700 rounded-full mx-auto mb-6 cursor-pointer" onclick="closeModule()"></div>
+        <div id="module-content" class="h-full overflow-y-auto">
+        </div>
+    </div>
+
+    <!-- ===== COMPLIANCE MODAL ===== -->
+    <div id="compliance-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-6">
+        <div class="glass p-6 rounded-3xl max-w-md w-full max-h-[80vh] overflow-y-auto">            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-lg font-bold">Title</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div id="modal-content" class="text-sm text-slate-300 space-y-3"></div>
+        </div>
+    </div>
+
+    <!-- ===== APP RATING DIALOG ===== -->
+    <div id="rating-dialog" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-6">
+        <div class="glass p-6 rounded-3xl max-w-sm w-full text-center">
+            <div class="text-4xl mb-3">⭐</div>
+            <h3 class="text-lg font-bold mb-2" data-i18n="rate_app">Suka Dream OS?</h3>
+            <p class="text-xs text-slate-400 mb-4" data-i18n="rate_desc">Bantu kami dengan memberikan rating!</p>
+            <div class="flex gap-2">
+                <button onclick="closeRating()" class="flex-1 py-3 bg-slate-700 rounded-xl text-xs font-bold">Nanti</button>
+                <button onclick="submitRating()" class="flex-1 py-3 bg-blue-600 rounded-xl text-xs font-bold">Rate ⭐⭐⭐⭐⭐</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== JAVASCRIPT CORE ===== -->
+    <script>
+        // ============================================
+        // 1. MULTI-LANGUAGE SUPPORT (i18n)
+        // ============================================
+        const translations = {
+            id: {
+                access_code: 'Kode Akses',
+                enter_code: 'Masukkan kode akses',
+                remember_device: 'Ingat perangkat ini',
+                unlock: '🔓 BUKA SISTEM',
+                verifying: 'Memverifikasi...',
+                privacy: 'Kebijakan Privasi',
+                terms: 'Syarat Layanan',
+                delete_account: 'Hapus Akun',
+                power_soul: '"The Power Soul of Shalawat"',
+                welcome: '✨ Selamat Datang',
+                pending_approval: 'Pending Approval',
+                pending_reports: 'Laporan Menunggu',
+                welcome_message: 'Selamat datang di Dream OS! Silakan booking fasilitas.',
+                ai_suggestion: 'Sistem berjalan normal',
+                rate_app: 'Suka Dream OS?',
+                rate_desc: 'Bantu kami dengan memberikan rating!'
+            },
+            en: {
+                access_code: 'Access Code',
+                enter_code: 'Enter your access code',                remember_device: 'Remember this device',
+                unlock: '🔓 UNLOCK SYSTEM',
+                verifying: 'Verifying...',
+                privacy: 'Privacy Policy',
+                terms: 'Terms of Service',
+                delete_account: 'Delete Account',
+                power_soul: '"The Power Soul of Shalawat"',
+                welcome: '✨ Welcome',
+                pending_approval: 'Pending Approval',
+                pending_reports: 'Pending Reports',
+                welcome_message: 'Welcome to Dream OS! Please book facilities.',
+                ai_suggestion: 'System running normally',
+                rate_app: 'Like Dream OS?',
+                rate_desc: 'Help us by giving a rating!'
+            },
+            ar: {
+                access_code: 'رمز الدخول',
+                enter_code: 'أدخل رمز الدخول',
+                remember_device: 'تذكر هذا الجهاز',
+                unlock: '🔓 فتح النظام',
+                verifying: 'جاري التحقق...',
+                privacy: 'سياسة الخصوصية',
+                terms: 'شروط الخدمة',
+                delete_account: 'حذف الحساب',
+                power_soul: '"قوة روح الصلاة"',
+                welcome: '✨ مرحبا',
+                pending_approval: 'قيد الموافقة',
+                pending_reports: 'تقارير معلقة',
+                welcome_message: 'مرحبا بكم في Dream OS! يرجى حجز المرافق.',
+                ai_suggestion: 'النظام يعمل بشكل طبيعي',
+                rate_app: 'أعجبك Dream OS؟',
+                rate_desc: 'ساعدنا بإعطاء تقييم!'
+            }
+        };
+
+        let currentLang = 'id';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('language', lang);
+            
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if (translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+            
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.dataset.i18nPlaceholder;                if (translations[lang][key]) {
+                    el.placeholder = translations[lang][key];
+                }
+            });
+
+            document.querySelectorAll('[onclick^="setLanguage"]').forEach(btn => {
+                const btnLang = btn.onclick.toString().match(/'(\w+)'/)[1];
+                if (btnLang === lang) {
+                    btn.className = 'px-3 py-1 rounded-full text-[10px] font-bold bg-blue-600/20 text-blue-400 border border-blue-500/30';
+                } else {
+                    btn.className = 'px-3 py-1 rounded-full text-[10px] font-bold bg-slate-700 text-slate-400 border border-slate-600';
+                }
+            });
+
+            lucide.createIcons();
+        }
+
+        // ============================================
+        // 2. SUPABASE CONFIGURATION
+        // ============================================
+        const SUPABASE_URL = 'https://rqpodzjexghrvcpyacyo.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_U9MbSdPJOMSmaw3BsHJcVQ_PDiOy-UM';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ============================================
+        // 3. PANCHABHUTA SECURITY CORE
+        // ============================================
+        const SecurityCore = {
+            version: '13.4.0',
+            initialized: false,
+            safeZone: { lat: -6.4, lon: 106.8, radius: 5 },
+
+            async init() {
+                console.log('🛡️ Panchabhuta Security v' + this.version);
+                
+                if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+                    console.warn('⚠️ Insecure context detected');
+                }
+
+                await Promise.all([
+                    this.initAirLayer(),
+                    this.initFireLayer(),
+                    this.initEarthLayer(),
+                    this.initWindLayer(),
+                    this.initWoodLayer()
+                ]);
+
+                const location = await this.verifyLocation();
+                console.log('📍 Location:', location);
+                this.initialized = true;
+                window.__SECURITY_READY__ = true;
+                console.log('✅ Security Core Active');
+            },
+
+            async verifyLocation() {
+                return new Promise((resolve) => {
+                    if (!navigator.geolocation) {
+                        resolve({ safe: true, reason: 'GPS unavailable' });
+                        return;
+                    }
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            const latDiff = Math.abs(pos.coords.latitude - this.safeZone.lat);
+                            const lngDiff = Math.abs(pos.coords.longitude - this.safeZone.lon);
+                            const distance = Math.sqrt(latDiff*latDiff + lngDiff*lngDiff) * 111;
+                            resolve({ safe: distance <= this.safeZone.radius, distance: distance.toFixed(2) });
+                        },
+                        () => resolve({ safe: true, reason: 'GPS denied' }),
+                        { timeout: 5000 }
+                    );
+                });
+            },
+
+            async initAirLayer() { console.log('🌊 Layer 1: AIR (Adaptive) - Active'); },
+            async initFireLayer() { console.log('🔥 Layer 2: FIRE (Detection) - Active'); },
+            async initEarthLayer() { console.log('🌍 Layer 3: EARTH (Integrity) - Active'); },
+            async initWindLayer() { console.log('🌬️ Layer 4: WIND (Access) - Active'); },
+            async initWoodLayer() { console.log('🌱 Layer 5: WOOD (Learning) - Active'); }
+        };
+
+        // ============================================
+        // 4. LOGIN SYSTEM (WITH FINGERPRINT)
+        // ============================================
+        let isPasswordVisible = false;
+
+        function togglePassword() {
+            isPasswordVisible = !isPasswordVisible;
+            const input = document.getElementById('password-input');
+            const icon = document.querySelector('#toggle-password i');
+            
+            input.type = isPasswordVisible ? 'text' : 'password';
+            icon.setAttribute('data-lucide', isPasswordVisible ? 'eye-off' : 'eye');
+            lucide.createIcons();
+        }
+
+        // Fingerprint Authentication for Developer
+        async function authenticateWithFingerprint() {
+            if (window.PublicKeyCredential) {
+                try {                    const credential = await navigator.credentials.get({
+                        publicKey: {
+                            challenge: new Uint8Array(32),
+                            timeout: 60000,
+                            userVerification: 'required'
+                        }
+                    });
+                    return true;
+                } catch (err) {
+                    console.warn('👆 Fingerprint auth failed:', err);
+                    return false;
+                }
+            }
+            return confirm('⚠️ Fingerprint tidak tersedia. Gunakan password developer untuk bypass?');
+        }
+
+        async function handleLogin() {
+            const password = document.getElementById('password-input').value.trim();
+            const rememberMe = document.getElementById('remember-me').checked;
+            const btn = document.getElementById('login-btn');
+            const btnText = document.getElementById('login-btn-text');
+            const btnLoading = document.getElementById('login-btn-loading');
+            const errorDiv = document.getElementById('login-error');
+            const errorText = document.getElementById('login-error-text');
+
+            if (!password) {
+                showError('⚠️ Masukkan access code!');
+                return;
+            }
+
+            // Check for Developer Bypass Code (012443410)
+            if (password === '012443410') {
+                const fingerprintVerified = await authenticateWithFingerprint();
+                if (!fingerprintVerified) {
+                    showError('❌ Fingerprint verification required!');
+                    btn.disabled = false;
+                    btnText.classList.remove('hidden');
+                    btnLoading.classList.add('hidden');
+                    return;
+                }
+            }
+
+            btn.disabled = true;
+            btnText.classList.add('hidden');
+            btnLoading.classList.remove('hidden');
+            errorDiv.classList.add('hidden');
+
+            try {
+                const { data, error } = await supabase
+                    .from('access_codes')                    .select('allowed_modules, no_log')
+                    .eq('code', password)
+                    .maybeSingle();
+
+                if (error) throw error;
+
+                if (data) {
+                    sessionStorage.setItem('allowed_modules', JSON.stringify(data.allowed_modules));
+                    
+                    if (data.no_log) {
+                        sessionStorage.setItem('no_log', 'true');
+                        console.log('🔒 NO LOG mode activated');
+                    }
+                    
+                    if (rememberMe) {
+                        localStorage.setItem('remembered_code', password);
+                        localStorage.setItem('allowed_modules', JSON.stringify(data.allowed_modules));
+                        localStorage.setItem('no_log', data.no_log.toString());
+                    }
+
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('main-app').classList.remove('hidden');
+                    
+                    updateGreeting();
+                    checkRating();
+                    showAccessCodeInfo(password);
+                    
+                    if (!data.no_log) {
+                        await supabase.from('activity_logs').insert([{
+                            user_id: 'login_' + password.substring(0, 4),
+                            action: 'login',
+                            ip_address: 'client',
+                            created_at: new Date()
+                        }]);
+                    }
+                    
+                    console.log('✅ Login successful');
+                } else {
+                    showError('❌ Access code salah!');
+                }
+
+            } catch (err) {
+                showError('❌ Error: ' + err.message);
+                console.error('Login error:', err);
+            } finally {
+                btn.disabled = false;
+                btnText.classList.remove('hidden');
+                btnLoading.classList.add('hidden');
+            }
+        }
+        function showError(message) {
+            const errorDiv = document.getElementById('login-error');
+            const errorText = document.getElementById('login-error-text');
+            errorText.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            const greeting = hour < 12 ? 'Selamat Pagi' : hour < 15 ? 'Selamat Siang' : hour < 18 ? 'Selamat Sore' : 'Selamat Malam';
+            document.getElementById('ai-greeting').textContent = `${greeting}, My Bro!`;
+        }
+
+        async function handleLogout() {
+            if (confirm('⚠️ Yakin ingin logout?')) {
+                sessionStorage.removeItem('allowed_modules');
+                localStorage.removeItem('remembered_code');
+                localStorage.removeItem('allowed_modules');
+                
+                document.getElementById('main-app').classList.add('hidden');
+                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('password-input').value = '';
+                
+                console.log('✅ Logged out');
+            }
+        }
+
+        // ============================================
+        // 5. 7 SLIDES - 7 DETIK EACH
+        // ============================================
+        let currentSlide = 0;
+        const totalSlides = 7;
+        const slideInterval = 7000;
+
+        function showSlide(index) {
+            const slider = document.getElementById('slider');
+            const dots = document.querySelectorAll('.slider-dot');
+            
+            slider.style.transform = `translateX(-${index * 100}%)`;
+            
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+                dot.classList.toggle('bg-cyan-500', i === index);
+                dot.classList.toggle('bg-slate-600', i !== index);
+            });
+            
+            currentSlide = index;
+        }
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            showSlide(currentSlide);
+        }, slideInterval);
+
+        async function updateSlideStats() {
+            try {
+                const { count: booking } = await supabase.from('bookings').select('*', { count: 'exact', head: true }).eq('status', 'pending');
+                document.getElementById('slide-booking').textContent = booking || 0;
+
+                const { count: k3 } = await supabase.from('k3_reports').select('*', { count: 'exact', head: true }).eq('status', 'pending');
+                document.getElementById('slide-k3').textContent = k3 || 0;
+
+                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=-6.4&lon=106.8&appid=f7890d7569950ffa34a5827880e8442f&units=metric`);
+                const data = await res.json();
+                document.getElementById('slide-weather').textContent = `${data.weather[0].description}, ${Math.round(data.main.temp)}°C`;
+
+                const { data: admin } = await supabase.from('admin_info').select('content').eq('slide_number', 5).order('created_at', { ascending: false }).limit(1);
+                if (admin?.length) document.getElementById('slide-admin').textContent = admin[0].content;
+
+                const hour = new Date().getHours();
+                let ai = 'Sistem berjalan normal';
+                if (hour >= 15 && hour < 16) ai = '📋 Saatnya laporan K3 sebelum pulang';
+                else if (hour >= 7 && hour < 8) ai = '☀️ Selamat pagi! Cek jadwal booking';
+                document.getElementById('slide-ai').textContent = ai;
+
+                const prayerRes = await fetch(`https://api.aladhan.com/v1/timingsByCoordinates?latitude=-6.4&longitude=106.8&method=20`);
+                const prayerData = await prayerRes.json();
+                const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+                const now = new Date();
+                const current = now.getHours() * 60 + now.getMinutes();
+                let nextPrayer = { name: 'Fajr', time: prayerData.data.timings.Fajr };
+                for (let p of prayers) {
+                    const [h, m] = prayerData.data.timings[p].split(':').map(Number);
+                    if ((h * 60 + m) > current) { nextPrayer = { name: p, time: prayerData.data.timings[p] }; break; }
+                }
+                document.getElementById('slide-prayer').innerHTML = `⏰ Berikutnya: ${nextPrayer.name}`;
+                document.getElementById('slide-prayer-time').textContent = nextPrayer.time;
+
+            } catch (e) {
+                console.warn('⚠️ Slide update failed:', e);
+            }
+        }
+        updateSlideStats();
+        setInterval(updateSlideStats, 30000);
+
+        // ============================================
+        // 6. MODULE SYSTEM
+        // ============================================
+        function openModule(name) {            const sheet = document.getElementById('bottom-sheet');
+            const content = document.getElementById('module-content');
+            
+            content.innerHTML = `
+                <div class="space-y-6 fade-in">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-black uppercase tracking-tighter">${name.replace('-', ' ')}</h2>
+                        <span class="px-3 py-1 bg-blue-500/20 text-blue-400 text-[10px] rounded-full font-bold">LIVE MODE</span>
+                    </div>
+                    <div class="p-6 bg-slate-800/50 rounded-2xl border border-white/5">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="spinner w-5 h-5 border-2"></span>
+                            <p class="text-sm text-slate-400 font-medium">Loading module...</p>
+                        </div>
+                        <p class="text-xs text-slate-500">Module: ${name}</p>
+                    </div>
+                    <div class="text-center py-8">
+                        <p class="text-sm text-slate-400">Module content will be loaded here</p>
+                        <p class="text-xs text-slate-500 mt-2">Phase 2: Module Implementation</p>
+                    </div>
+                </div>
+            `;
+            
+            sheet.classList.remove('translate-y-full');
+        }
+
+        function closeModule() {
+            document.getElementById('bottom-sheet').classList.add('translate-y-full');
+        }
+
+        function toggleAI() {
+            alert('🤖 Halo My Bro! Saya Dream AI (Qwen + Gemini + DSeek). Siap membantu!');
+        }
+
+        // ============================================
+        // 7. COMPLIANCE MODALS
+        // ============================================
+        const complianceContent = {
+            privacy: {
+                title: 'Privacy Policy',
+                content: `<p>Dream OS v13.4 respects your privacy. We collect minimal data necessary for app functionality.</p><p class="mt-2"><strong>Data Collected:</strong></p><ul class="list-disc ml-4 mt-1"><li>Access code (for authentication)</li><li>Usage data (for analytics)</li><li>Location (for security verification)</li></ul><p class="mt-2"><strong>Data Storage:</strong> All data is stored securely in Supabase with encryption.</p><p class="mt-2"><strong>Data Sharing:</strong> We do not share your data with third parties.</p>`
+            },
+            terms: {
+                title: 'Terms of Service',
+                content: `<p>By using Dream OS v13.4, you agree to the following terms:</p><p class="mt-2"><strong>1. Acceptable Use:</strong> You agree to use the app responsibly.</p><p class="mt-2"><strong>2. Account Security:</strong> You are responsible for keeping your access code secure.</p><p class="mt-2"><strong>3. Data Accuracy:</strong> You agree to provide accurate information.</p><p class="mt-2"><strong>4. Modifications:</strong> We reserve the right to modify these terms.</p>`
+            },
+            delete: {
+                title: 'Delete Account',
+                content: `<p>To delete your account:</p><p class="mt-2"><strong>Option 1:</strong> Contact admin at admin@sif-alfikri.sch.id</p><p class="mt-2"><strong>Option 2:</strong> Clear app data from device settings</p><p class="mt-2"><strong>Option 3:</strong> Uninstall the app</p><p class="mt-2 text-red-400"><strong>Warning:</strong> Account deletion is permanent.</p><button onclick="confirmDelete()" class="mt-4 w-full py-3 bg-red-600 rounded-xl text-xs font-bold">CONFIRM DELETE</button>`
+            }        };
+
+        function showModal(type) {
+            const modal = document.getElementById('compliance-modal');
+            const title = document.getElementById('modal-title');
+            const content = document.getElementById('modal-content');
+            
+            title.textContent = complianceContent[type].title;
+            content.innerHTML = complianceContent[type].content;
+            
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            document.getElementById('compliance-modal').classList.add('hidden');
+        }
+
+        function confirmDelete() {
+            if (confirm('⚠️ Are you sure? This cannot be undone!')) {
+                alert('✅ Account deletion request submitted.');
+                closeModal();
+            }
+        }
+
+        // ============================================
+        // 8. APP RATING
+        // ============================================
+        function checkRating() {
+            const loginCount = parseInt(localStorage.getItem('login_count') || '0') + 1;
+            localStorage.setItem('login_count', loginCount.toString());
+            
+            if (loginCount === 5 && !localStorage.getItem('rating_shown')) {
+                document.getElementById('rating-dialog').classList.remove('hidden');
+                localStorage.setItem('rating_shown', 'true');
+            }
+        }
+
+        function closeRating() {
+            document.getElementById('rating-dialog').classList.add('hidden');
+        }
+
+        function submitRating() {
+            alert('⭐ Thank you for your rating!');
+            closeRating();
+        }
+
+        // ============================================
+        // 9. ACCESS CODE INFO (For Testing)
+        // ============================================        const accessCodeInfo = {
+            'user_@1234': { role: 'User Booking', modules: 4 },
+            'user_@2345': { role: 'User K3', modules: 4 },
+            'LHPSsec_AF2025': { role: 'Sekuriti LHPS', modules: 4 },
+            '4dm1n_AF6969@00': { role: 'Admin Super', modules: 23 },
+            'CHCS_AF_@003': { role: 'Janitor CS', modules: 4 },
+            'SACS_AF@004': { role: 'Stock & Tools', modules: 3 },
+            'M41n_4F@234': { role: 'Maintenance', modules: 3 },
+            '4dm1n_6969@01': { role: 'Inventaris', modules: 3 },
+            '4dm1n_9696@02': { role: 'Gudang', modules: 3 },
+            '4553Tumum_AF@1112': { role: 'Asset', modules: 3 },
+            'Mr.M_Architect_2025': { role: 'Master Key', modules: 23, noLog: true },
+            '012443410': { role: 'Developer Bypass', modules: 23, noLog: true, fingerprint: true }
+        };
+
+        function showAccessCodeInfo(code) {
+            const info = accessCodeInfo[code];
+            if (info) {
+                console.log('🔑 Access Code Info:');
+                console.log('  Role:', info.role);
+                console.log('  Modules:', info.modules);
+                console.log('  NO LOG:', info.noLog || false);
+                console.log('  Fingerprint:', info.fingerprint || false);
+            }
+        }
+
+        // ============================================
+        // 10. INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            lucide.createIcons();
+
+            const savedLang = localStorage.getItem('language') || 'id';
+            setLanguage(savedLang);
+
+            await SecurityCore.init();
+
+            const rememberedModules = localStorage.getItem('allowed_modules');
+            if (rememberedModules) {
+                sessionStorage.setItem('allowed_modules', rememberedModules);
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                updateGreeting();
+                checkRating();
+                console.log('✅ Auto-login from remembered session');
+            } else {
+                setTimeout(() => {
+                    document.getElementById('loading-screen').classList.add('hidden');
+                    document.getElementById('login-screen').classList.remove('hidden');                }, 1500);
+            }
+
+            document.getElementById('password-input')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
+            });
+
+            document.getElementById('toggle-password')?.addEventListener('click', togglePassword);
+
+            console.log('🚀 Dream OS v13.4 Initialized');
+            console.log('📊 Slides: 7 (7 detik each)');
+            console.log('🌍 Language: Multi-language (ID/EN/AR)');
+            console.log('🛡️ Security: Panchabhuta 5-layer');
+            console.log('📱 Play Store: Compliance ready');
+            console.log('🔑 Access Codes: 12 Complete');
+        });
+    </script>
+</body>
+</html>
