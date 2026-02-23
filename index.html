@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DREAM OS v13.0 | SAKRAL EDITION</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --p: #a855f7; --bg: #020617; }
+        body { font-family: 'JetBrains+Mono', monospace; background: var(--bg); color: #f1f5f9; overflow: hidden; height: 100vh; }
+        .font-arabic { font-family: 'Noto Sans Arabic', sans-serif; }
+
+        /* Glassmorphism Sweat Style */
+        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.05); }
+        
+        /* Modern Glow Arabic */
+        .glow-text {
+            text-shadow: 0 0 15px rgba(168, 85, 247, 0.6);
+            background: linear-gradient(to bottom, #fff, #d8b4fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 7 Slide Smooth Animation */
+        .slide-in { animation: slideIn 0.8s cubic-bezier(0.23, 1, 0.32, 1); }
+        @keyframes slideIn { 
+            from { opacity: 0; transform: translateY(10px) scale(0.95); filter: blur(5px); } 
+            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } 
+        }
+
+        .nav-active { color: var(--p); transform: translateY(-3px); }
+    </style>
+</head>
+<body>
+
+    <div id="login-zone" class="fixed inset-0 z-[999] flex items-center justify-center bg-[#020617] transition-all duration-1000">
+        <div class="w-full max-w-sm p-10 rounded-[3.5rem] glass border border-purple-500/20 text-center">
+            <div class="mb-8">
+                <div class="font-arabic text-5xl glow-text font-black mb-3">بِسْمِ اللَّهِ</div>
+                <h1 class="text-[10px] font-black tracking-[0.5em] text-slate-500 uppercase italic">Dream OS Master v13</h1>
+            </div>
+            <div class="space-y-4">
+                <input type="password" id="access-key" class="w-full bg-slate-900/50 border border-white/5 p-4 rounded-2xl text-center focus:border-purple-500 outline-none transition-all" placeholder="••••••••">
+                <button onclick="router.checkAccess()" class="w-full bg-white text-black font-black p-4 rounded-2xl hover:bg-purple-600 hover:text-white transition-all shadow-xl shadow-purple-500/10">BISMILLAH</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-shell" class="hidden h-screen flex flex-col">
+        <header class="flex flex-col glass border-b border-white/5">
+            <div class="h-20 flex items-center justify-between px-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-600/20 to-transparent rounded-2xl border border-purple-500/20 flex items-center justify-center">
+                        <i class="fas fa-ghost text-purple-500"></i>
+                    </div>
+                    <div>
+                        <h2 id="user-display" class="text-xs font-black tracking-widest uppercase leading-none">My Bro</h2>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span id="mode-tag" class="text-[8px] text-slate-500 font-bold uppercase tracking-widest">Ghost Mode</span>
+                            <i id="global-eye" class="fas fa-eye-slash text-[10px] text-slate-700"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div id="clock" class="text-sm font-black text-white leading-none">00:00:00</div>
+                    <div class="font-arabic text-purple-400 text-lg mt-1 glow-text">الحَمْدُ للهِ</div>
+                </div>
+            </div>
+            
+            <div class="h-14 bg-white/5 border-t border-white/5 flex items-center justify-center px-4 overflow-hidden">
+                <div id="sakral-slider" class="w-full text-center">
+                    </div>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-auto p-4 relative" id="main-viewport">
+            <div id="module-container" class="pb-32"></div>
+        </main>
+
+        <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[85%] h-16 glass rounded-[2.5rem] border border-white/10 flex items-center justify-around shadow-2xl z-[99]">
+            <button onclick="router.load('dashboard')" class="nav-btn nav-active"><i class="fas fa-home-alt text-lg"></i></button>
+            <button onclick="router.load('inventory')" class="nav-btn text-slate-500"><i class="fas fa-cube text-lg"></i></button>
+            <button onclick="router.load('security')" class="nav-btn text-slate-500"><i class="fas fa-shield-check text-lg"></i></button>
+            <button onclick="router.logout()" class="nav-btn text-red-500/20"><i class="fas fa-power-off text-lg"></i></button>
+        </nav>
+    </div>
+
+    <script>
+        const CONFIG = {
+            SB_URL: "https://zntofshvpxvrmvubrltq.supabase.co",
+            SB_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpudG9mc2h2cHh2cm12dWJybHRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY1ODkyMjksImV4cCI6MjA1MjE2NTIyOX0.S_1-M9yXp-yqW-C7-f8-Q8-Y-Z-A-B-C",
+            KEYS: { GHOST: "Bismillah-Ghost-V13", ADMIN: "Admin-Shalawat-2026" },
+            // 7 SLIDE SAKRAL COMPLETE ARABIC
+            SLIDES: [
+                { ar: "بِسْمِ اللَّهِ بِإِذْنِ اللَّهِ", id: "Bismillah bi idznillah" },
+                { ar: "اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ", id: "Allahumma Sholli 'ala Sayyidina Muhammad" },
+                { ar: "وَعَلَى آلِ سَيِّدِنَا مُحَمَّدٍ", id: "Wa 'ala ali Sayyidina Muhammad" },
+                { ar: "قُوَّةُ رُوحِ الصَّلَاوَةِ", id: "The Power Soul of Shalawat" },
+                { ar: "خَارِجَ الصُّنْدُوقِ فِي الدَّاخِلِ", id: "Out of The Box Inside" },
+                { ar: "فَرِيقُ الأَحْلَامِ: عَمَلٌ سَرِيعٌ بَرَكَةٌ", id: "Dream Team: Kerja Cepat Berkat" },
+                { ar: "نِظَامٌ مَحْمِيٌّ بِالدُّعَاءِ وَالتِّكْنُولُوجِيَا", id: "Sistem Terproteksi Doa & Teknologi" }
+            ]
+        };
+
+        const supabase = window.supabase.createClient(CONFIG.SB_URL, CONFIG.SB_KEY);
+
+        const router = {
+            idx: 0,
+            init() {
+                setInterval(() => document.getElementById('clock').textContent = new Date().toLocaleTimeString('id-ID'), 1000);
+                this.startSlider();
+            },
+            startSlider() {
+                const box = document.getElementById('sakral-slider');
+                const run = () => {
+                    const s = CONFIG.SLIDES[this.idx];
+                    box.innerHTML = `
+                        <div class="slide-in flex flex-col items-center">
+                            <span class="font-arabic text-purple-400 text-sm font-bold tracking-wide">${s.ar}</span>
+                            <span class="text-[7px] uppercase tracking-[0.3em] text-slate-500 font-bold mt-1">${s.id}</span>
+                        </div>`;
+                    this.idx = (this.idx + 1) % CONFIG.SLIDES.length;
+                };
+                run(); setInterval(run, 4000);
+            },
+            async checkAccess() {
+                const val = document.getElementById('access-key').value;
+                if (val === CONFIG.KEYS.GHOST) this.launch('ERWINSYAH', 'GHOST_STEALTH');
+                else if (val === CONFIG.KEYS.ADMIN) this.launch('HANUNG BUDIANTO S.E', 'ADMIN_STANDARD');
+            },
+            async launch(user, mode) {
+                document.getElementById('login-zone').classList.add('opacity-0', 'scale-110');
+                setTimeout(() => {
+                    document.getElementById('login-zone').style.display = 'none';
+                    document.getElementById('app-shell').classList.remove('hidden');
+                    document.getElementById('user-display').textContent = user;
+                    this.load('dashboard');
+                }, 800);
+            },
+            async load(module) {
+                const container = document.getElementById('module-container');
+                try {
+                    const res = await fetch(`./modules/${module}/index.html`);
+                    container.innerHTML = res.ok ? await res.text() : '<div class="p-20 text-center opacity-20 font-arabic text-2xl">قريباً (Segera Hadir)</div>';
+                } catch (e) { console.log(e); }
+            },
+            logout() { location.reload(); }
+        };
+        router.init();
+    </script>
+</body>
+</html>
