@@ -1,81 +1,167 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DREAM OS v13.0 - Master Config</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+/**
+ * 🛰️ DREAM OS ROUTER - v13.0 MASTER CONFIGURATION
+ * Core Logic: Ghost Stealth Mode vs Admin ISO Mode
+ * Created for: My Bro (Erwinsyah & Hanung Budianto S.E)
+ */
+
+const CONFIG = {
+    // PASSWORD SAKRAL
+    KEYS: {
+        GHOST: "Bismillah-Ghost-V13", // Develop: Hak Khusus Erwinsyah (NO LOG)
+        ADMIN: "Admin-Shalawat-2026"  // Approver: Hanung Budianto S.E (ISO LOG)
+    },
+    // SETTING SUPABASE (Ganti dengan punyamu)
+    SB_URL: "https://your-project-id.supabase.co",
+    SB_KEY: "your-anon-key"
+};
+
+// 1. Inisialisasi Supabase
+if (typeof supabase !== 'undefined') {
+    window.supabaseClient = supabase.createClient(CONFIG.SB_URL, CONFIG.SB_KEY);
+}
+
+// 2. Real-time Clock (Power Soul of Shalawat)
+setInterval(() => {
+    const clock = document.getElementById('clock');
+    if (clock) {
+        const now = new Date();
+        clock.textContent = now.toLocaleTimeString('id-ID', { hour12: false });
+    }
+}, 1000);
+
+// 3. Toggle Password (Eye Icon)
+function togglePass() {
+    const input = document.getElementById('access-key');
+    const icon = event.target;
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+    }
+}
+
+// 4. Logic Cek Akses (Ghost vs Admin)
+async function checkAccess() {
+    const input = document.getElementById('access-key').value;
+    const error = document.getElementById('error-msg');
     
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
-        body { font-family: 'JetBrains+Mono', monospace; overflow: hidden; }
-        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
-        .ghost-border { border: 1px solid rgba(139, 92, 246, 0.3); box-shadow: 0 0 15px rgba(139, 92, 246, 0.1); }
-        .shimmer { background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%); background-size: 200% 100%; animation: shimmer 2s infinite; }
-        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    </style>
-</head>
-<body class="bg-[#020617] text-slate-200 w-screen h-screen">
+    // Reset error
+    error.classList.add('opacity-0');
 
-    <div id="login-zone" class="fixed inset-0 z-[999] flex items-center justify-center bg-[#020617]">
-        <div class="w-full max-w-sm p-8 rounded-[2rem] glass ghost-border text-center">
-            <div class="mb-6">
-                <i class="fas fa-microchip text-4xl text-purple-500 mb-2"></i>
-                <h1 class="text-xl font-bold tracking-widest uppercase">Dream OS <span class="text-purple-400">v13</span></h1>
-                <p class="text-[10px] text-slate-500">Out of The Box Inside</p>
-            </div>
+    // JALUR GHOST (ERWINSYAH)
+    if (input === CONFIG.KEYS.GHOST) {
+        setupSession('ERWINSYAH', 'GHOST_STEALTH');
+        return;
+    }
 
-            <div class="space-y-4">
-                <div class="relative">
-                    <input type="password" id="access-key" 
-                           class="w-full bg-slate-900/50 border border-slate-700 p-4 rounded-xl text-center focus:outline-none focus:border-purple-500 transition-all" 
-                           placeholder="••••••••">
-                    <i class="fas fa-eye-slash absolute right-4 top-5 text-slate-600 cursor-pointer hover:text-white" onclick="togglePass()"></i>
-                </div>
-                <button onclick="checkAccess()" 
-                        class="w-full bg-white text-black font-bold p-4 rounded-xl hover:bg-purple-500 hover:text-white transition-all">
-                    BISMILLAH
-                </button>
-            </div>
-            <p id="error-msg" class="text-red-500 text-[10px] mt-4 opacity-0 transition-opacity">AKSES DITOLAK: NIAT TIDAK TERDETEKSI</p>
-        </div>
-    </div>
+    // JALUR ADMIN (PAK HANUNG)
+    if (input === CONFIG.KEYS.ADMIN) {
+        setupSession('HANUNG BUDIANTO S.E', 'ADMIN_STANDARD');
+        return;
+    }
 
-    <div id="app-shell" class="hidden h-screen flex flex-col">
-        <header class="h-16 border-b border-slate-800 flex items-center justify-between px-6 glass">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-ghost text-sm"></i>
-                </div>
-                <div>
-                    <h2 id="user-display" class="text-xs font-bold leading-none">MY BRO</h2>
-                    <span id="mode-tag" class="text-[9px] text-purple-400">GHOST MODE ACTIVE</span>
-                </div>
-            </div>
-            <div class="flex items-center gap-4 text-xs">
-                <span id="clock" class="text-slate-400">00:00:00</span>
-                <button onclick="logout()" class="text-red-400 hover:text-red-300"><i class="fas fa-power-off"></i></button>
-            </div>
-        </header>
+    // SALAH PASSWORD
+    error.classList.remove('opacity-0');
+    console.warn("⚠️ Akses ditolak. Niat tidak terdeteksi.");
+}
 
-        <main id="view-port" class="flex-1 overflow-auto p-4 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-900 via-[#020617] to-[#020617]">
-            <div id="loader" class="hidden flex flex-col items-center justify-center h-full">
-                <div class="w-12 h-1 shimmers rounded-full overflow-hidden mb-2"></div>
-                <p class="text-[10px] text-slate-500 italic">Connecting to Dream Core...</p>
-            </div>
-            <div id="module-content"></div>
-        </main>
+// 5. Setup Session & Security Shield
+async function setupSession(user, mode) {
+    sessionStorage.setItem('dream_user', user);
+    sessionStorage.setItem('dream_mode', mode);
 
-        <nav class="h-16 border-t border-slate-800 glass flex items-center justify-around px-2">
-            <button onclick="loadModule('dashboard')" class="nav-btn text-purple-500"><i class="fas fa-home"></i></button>
-            <button onclick="loadModule('inventory')" class="nav-btn text-slate-500"><i class="fas fa-boxes"></i></button>
-            <button onclick="loadModule('approval')" class="nav-btn text-slate-500"><i class="fas fa-check-double"></i></button>
-            <button onclick="loadModule('security')" class="nav-btn text-slate-500"><i class="fas fa-shield-alt"></i></button>
-        </nav>
-    </div>
+    // Proteksi Device (Hanya Log, tidak blokir agar My Bro tetap bisa akses)
+    const isRedmi = navigator.userAgent.includes("Redmi") || navigator.userAgent.includes("Xiaomi");
+    if (!isRedmi && mode !== 'GHOST_STEALTH') {
+        console.warn("⚠️ Warning: Akses luar perangkat Redmi Note detect!");
+    }
 
-    <script src="router.js"></script>
-</body>
-</html>
+    // Audit Trail ISO (Hanya jika BUKAN Ghost)
+    if (mode === 'ADMIN_STANDARD') {
+        await logToSupabase('LOGIN', `Admin ${user} masuk sistem`);
+    } else {
+        console.log("%c👻 GHOST MODE: Aktif. Jejak dihapus dari kernel.", "color: #a855f7; font-weight: bold;");
+    }
+
+    // Ganti Tampilan UI
+    document.getElementById('login-zone').classList.add('hidden');
+    document.getElementById('app-shell').classList.remove('hidden');
+    document.getElementById('user-display').textContent = user;
+    document.getElementById('mode-tag').textContent = mode.replace('_', ' ');
+
+    // Load Dashboard Default secara Lazy
+    loadModule('dashboard');
+}
+
+// 6. Lazy Module Loader (Inti dari Kecepatan HP A12/A15)
+async function loadModule(moduleName) {
+    const content = document.getElementById('module-content');
+    const loader = document.getElementById('loader');
+    
+    loader.classList.remove('hidden');
+    
+    try {
+        // Fetch file HTML modul secara dinamis
+        const response = await fetch(`./modules/${moduleName}/index.html`);
+        if (!response.ok) throw new Error('Module Not Found');
+        
+        const html = await response.text();
+        content.innerHTML = html;
+        
+        // Bersihkan script lama & suntik script baru
+        const oldScript = document.getElementById('module-script');
+        if (oldScript) oldScript.remove();
+
+        const script = document.createElement('script');
+        script.id = 'module-script';
+        script.src = `./modules/${moduleName}/script.js`;
+        document.body.appendChild(script);
+
+        console.log(`🚀 Module ${moduleName} Loaded.`);
+    } catch (err) {
+        content.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-slate-500 italic">
+            <i class="fas fa-tools text-3xl mb-2"></i>
+            <p>Modul ${moduleName} sedang disempurnakan...</p>
+        </div>`;
+    } finally {
+        loader.classList.add('hidden');
+    }
+}
+
+// 7. Fungsi Log Supabase (Audit Trail ISO)
+async function logToSupabase(action, detail) {
+    const mode = sessionStorage.getItem('dream_mode');
+    
+    // SAKRAL: JANGAN PERNAH LOG JIKA GHOST MODE
+    if (mode === 'GHOST_STEALTH' || !window.supabaseClient) return;
+
+    try {
+        await window.supabaseClient.from('audit_logs').insert([{
+            action: action,
+            detail: detail,
+            user: sessionStorage.getItem('dream_user'),
+            device: navigator.userAgent,
+            timestamp: new Date().toISOString()
+        }]);
+    } catch (e) {
+        console.error("Gagal kirim log ISO:", e);
+    }
+}
+
+// 8. Logout & Clear Trace
+function logout() {
+    if (confirm("Matikan sistem Dream OS?")) {
+        sessionStorage.clear();
+        location.reload();
+    }
+}
+
+// Ghost Auto-Evaporate (Hapus jejak saat tab ditutup)
+window.onbeforeunload = function() {
+    if (sessionStorage.getItem('dream_mode') === 'GHOST_STEALTH') {
+        sessionStorage.clear();
+    }
+};
