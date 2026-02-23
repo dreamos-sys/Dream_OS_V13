@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DREAM OS v13.4 | GHOST ARCHITECT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@700;900&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #020617; --p: #a855f7; }
+        body { font-family: 'JetBrains+Mono', monospace; background: var(--bg); color: #f1f5f9; overflow-x: hidden; }
+        .font-arabic { font-family: 'Noto Sans Arabic', sans-serif; }
+        .glass { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
+        .glow-text { text-shadow: 0 0 15px rgba(168, 85, 247, 0.6); }
+        .icon-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .icon-card:active { transform: scale(0.9); brightness: 1.5; }
+        .slide-up { animation: slideUp 0.5s ease-out forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="p-4">
+
+    <header class="w-full glass rounded-[2.5rem] p-6 mb-6 text-center shadow-2xl relative overflow-hidden">
+        <div id="sakral-slider" class="h-16 flex flex-col justify-center items-center">
+            </div>
+        <div class="flex justify-between items-center mt-4 px-4 border-t border-white/5 pt-4">
+            <div class="flex items-center gap-3">
+                <img src="https://i.ibb.co/LzdYmYm/1001060755.png" class="w-10 h-10 drop-shadow-lg" alt="Logo">
+                <div class="text-left">
+                    <h1 class="text-xs font-black tracking-widest glow-text">DREAM OS <span class="text-purple-500">V13.4</span></h1>
+                    <p class="text-[7px] text-slate-500 font-bold uppercase tracking-widest">Ghost Mode Active [cite: 2026-01-18]</p>
+                </div>
+            </div>
+            <div id="clock" class="text-[10px] font-black bg-white/5 px-3 py-1 rounded-full">00:00:00</div>
+        </div>
+    </header>
+
+    <main class="grid grid-cols-3 gap-4 mb-32 slide-up">
+        
+        <div onclick="openMod('booking')" class="icon-card glass rounded-[2rem] p-4 flex flex-col items-center justify-center border-b-4 border-blue-500">
+            <i class="fas fa-calendar-check text-2xl text-blue-400 mb-2"></i>
+            <span class="text-[8px] font-black uppercase tracking-tighter text-center">Booking<br><span class="text-slate-500 font-normal">Sarana</span></span>
+        </div>
+        <div onclick="openMod('k3')" class="icon-card glass rounded-[2rem] p-4 flex flex-col items-center justify-center border-b-4 border-orange-500">
+            <i class="fas fa-triangle-exclamation text-2xl text-orange-400 mb-2"></i>
+            <span class="text-[8px] font-black uppercase tracking-tighter text-center">K3<br><span class="text-slate-500 font-normal">Laporan</span></span>
+        </div>
+        <div onclick="openMod('sekuriti')" class="icon-card glass rounded-[2rem] p-4 flex flex-col items-center justify-center border-b-4 border-green-500">
+            <i class="fas fa-shield-halved text-2xl text-green-400 mb-2"></i>
+            <span class="text-[8px] font-black uppercase tracking-tighter text-center">Sekuriti<br><span class="text-slate-500 font-normal">Laporan</span></span>
+        </div>
+
+        <div onclick="openMod('janitor-in')" class="icon-card glass rounded-[2rem] p-4 flex flex-col items-center justify-center border-b-4 border-cyan-500">
+            <i class="fas fa-broom text-2xl text-cyan-400 mb-2"></i>
+            <span class="text-[8px] font-black uppercase tracking-tighter text-center">Janitor<br><span class="text-slate-500 font-normal">Indoor</span></span>
+        </div>
+        <div onclick="openMod('janitor-out')" class="icon-card glass rounded-[2rem] p-4 flex flex-col items-center justify-center border-b-4 border-emerald-500">
+            <i class="fas fa-leaf text-2xl text-emerald-400 mb-2"></i>
+            <span class="text-[8px] font-black uppercase tracking-tighter text-center">Janitor<br><span class="text-slate-500 font-normal">Outdoor</span></span>
+        </div>
+        <div onclick="openMod('maintenance')" class="icon-card glass rounded-[2rem] p-4 flex flex-col items-center justify-center border-b-4 border-yellow-500">
+            <i class="fas fa-tools text-2xl text-yellow-400 mb-2"></i>
+            <span class="text-[8px] font-black uppercase tracking-tighter text-center">Maintenance<br><span class="text-slate-500 font-normal">Perbaikan</span></span>
+        </div>
+
+        <div onclick="openMod('stok')" class="icon-card glass rounded-[2rem] p-4 flex flex-col items-center justify-center border-b-4 border-purple-500">
+            <i class="fas fa-box-archive text-2xl text-purple-400 mb-2"></i>
+            <span class="text-[8px] font-black uppercase tracking-tighter text-center">Stok<br><span class="text-slate-500 font-normal">Alat & Gudang</span></span>
+        </div>
+        <div onclick="openMod('asset')" class="icon-card glass rounded-[2rem] p-4 flex flex-col items-center justify-center border-b-4 border-indigo-500">
+            <i class="fas fa-tags text-2xl text-indigo-400 mb-2"></i>
+            <span class="text-[8px] font-black uppercase tracking-tighter text-center">Asset<br><span class="text-slate-500 font-normal">Inventaris</span></span>
+        </div>
+        <div onclick="openMod('command')" class="icon-card glass rounded-[2rem] p-4 flex flex-col items-center justify-center border-b-4 border-pink-500">
+            <i class="fas fa-file-signature text-2xl text-pink-400 mb-2"></i>
+            <span class="text-[8px] font-black uppercase tracking-tighter text-center">Command<br><span class="text-slate-500 font-normal">Center / SPJ</span></span>
+        </div>
+    </main>
+
+    <footer class="fixed bottom-8 left-0 w-full px-6">
+        <button onclick="location.reload()" class="w-full bg-red-500/10 border border-red-500/20 text-red-500 font-black p-4 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all">
+            <i class="fas fa-power-off"></i> LOGOUT SYSTEM
+        </button>
+    </footer>
+
+    <script>
+        // 7 SLIDE SAKRAL CONFIG [cite: 2026-01-18]
+        const SLIDES = [
+            { ar: "بِسْمِ اللَّهِ بِإِذْنِ اللَّهِ", id: "Bismillah bi idznillah" },
+            { ar: "اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ", id: "Shalawat Sayyidina" },
+            { ar: "قُوَّةُ رُوحِ الصَّلَاوَةِ", id: "Power Soul of Shalawat" },
+            { ar: "فَرِيقُ الأَحْلَامِ", id: "The Dream Team" },
+            { ar: "خَارِجَ الصُّنْدُوقِ فِي الدَّاخِلِ", id: "Out of The Box Inside" },
+            { ar: "الحَمْدُ للهِ رَبِّ العَالَمِيْنَ", id: "Alhamdulillah" },
+            { ar: "حَسْبُنَا اللهُ وَنِعْمَ الوَكِيْلُ", id: "Hasbunallah Wanikmal Wakil" }
+        ];
+
+        let idx = 0;
+        function startSlider() {
+            const box = document.getElementById('sakral-slider');
+            const run = () => {
+                const s = SLIDES[idx];
+                box.innerHTML = `
+                    <div class="slide-up text-center">
+                        <p class="font-arabic text-xl text-purple-400 glow-text mb-1">${s.ar}</p>
+                        <p class="text-[7px] uppercase tracking-[0.3em] text-slate-500 font-bold">${s.id}</p>
+                    </div>`;
+                idx = (idx + 1) % SLIDES.length;
+            };
+            run(); setInterval(run, 4000);
+        }
+
+        function updateTime() {
+            document.getElementById('clock').textContent = new Date().toLocaleTimeString('id-ID');
+        }
+
+        function openMod(name) {
+            alert("Bismillah! Membuka Modul: " + name.toUpperCase() + " [cite: 2026-01-11]");
+        }
+
+        startSlider();
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>
