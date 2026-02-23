@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0e27">
+    <meta name="description" content="Dream OS v13.4 - Sistem Manajemen Terintegrasi SIF Al-Fikri">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Dream OS v13.4 – AI Core System</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" href="./icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="./icons/icon-192x192.png">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js (untuk analitik) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- FullCalendar (untuk kalender booking) -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+
+    <!-- jsPDF & autoTable (untuk ekspor laporan) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        /* ===== RESET & GLOBAL ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background 0.5s cubic-bezier(0.4,0,0.2,1), color 0.3s ease;
+            min-height: 100vh;
+            background: #f8fafc;
+            color: #1e293b;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .dark body {
+            background: linear-gradient(145deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            color: #e2e8f0;
+        }
+        .arabic { font-family: 'Amiri', serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* ===== GLASSMORPHISM ===== */
+        .glass-premium {
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.2), inset 0 0 30px rgba(255,255,255,0.2);
+        }
+        .dark .glass-premium {
+            background: rgba(15,23,42,0.5);
+            border-color: rgba(255,255,255,0.08);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5), inset 0 0 30px rgba(255,255,255,0.05);
+        }
+
+        /* ===== MENU CARDS ===== */
+        .menu-card {
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+            transform: translateY(0) scale(1);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            position: relative;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        .dark .menu-card {
+            background: rgba(30,41,59,0.6);
+            border-color: rgba(255,255,255,0.1);
+        }
+        .menu-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 25px 30px -10px rgba(0,0,0,0.3), 0 0 20px rgba(255,215,0,0.4);
+        }
+        .menu-card:active { transform: translateY(-4px) scale(0.98); }
+
+        /* ===== SLIDESHOW ===== */
+        #slideshow-container {
+            position: relative;
+            min-height: 200px;
+            overflow: hidden;
+            border-radius: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .slide {
+            transition: opacity 1.2s cubic-bezier(0.4,0,0.2,1);
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            text-align: center;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .slide.active {
+            z-index: 10;
+            pointer-events: auto;
+        }
+        .slide-dot {
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .slide-dot:hover { transform: scale(1.3); }
+
+        /* ===== SPINNER ===== */
+        .spinner {
+            border: 3px solid rgba(0,0,0,0.1);
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .dark .spinner { border-color: rgba(255,255,255,0.2); border-top-color: #fbbf24; }
+
+        /* ===== ANIMATIONS ===== */
+        .fade-in { animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
+        @keyframes pulseGlow { 0%,100% { box-shadow: 0 0 20px rgba(59,130,246,0.4); } 50% { box-shadow: 0 0 40px rgba(59,130,246,0.8); } }
+
+        /* ===== SPIRITUAL GLOW ===== */
+        .spiritual-glow {
+            background: linear-gradient(135deg, #b45309, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: spiritualPulse 3s ease-in-out infinite;
+        }
+        @keyframes spiritualPulse { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.2); } }
+        .dark .spiritual-glow {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
+        }
+
+        /* ===== THEME TOGGLE ===== */
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 100;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 0.5rem 1.2rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.3);
+            box-shadow: 0 0 20px rgba(255,215,0,0.4);
+            transform: scale(1.05);
+        }
+
+        /* ===== LOADING & MODULE LOADING ===== */
+        .module-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: #94a3b8;
+        }
+        .module-loading .spinner { width: 50px; height: 50px; border-width: 4px; margin-bottom: 20px; }
+
+        /* ===== CUSTOM SCROLLBAR ===== */
+        .scroll-custom::-webkit-scrollbar { width: 6px; height: 6px; }
+        .scroll-custom::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
+        .scroll-custom::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #8b5cf6, #f59e0b); border-radius: 10px; }
+
+        /* ===== BOTTOM SHEET ===== */
+        #sheet {
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-[#f8fafc] dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 transition-colors duration-300">
+
+    <!-- ===== DARK MODE TOGGLE ===== -->
+    <button id="darkModeToggle" class="theme-toggle text-sm">
+        <span class="dark:hidden">🌙 Dark</span>
+        <span class="hidden dark:inline">☀️ Light</span>
+    </button>
+
+    <!-- ===== PWA INSTALL BANNER ===== -->
+    <div id="pwa-install-banner" class="hidden fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-amber-600 to-yellow-600 text-white p-4 shadow-2xl">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="text-3xl">📱</div>
+                <div><p class="font-bold">Install Dream OS</p><p class="text-xs opacity-90">Akses lebih cepat seperti app native!</p></div>
+            </div>
+            <div class="flex gap-2">
+                <button id="pwa-install-btn" class="bg-white text-amber-600 px-6 py-2 rounded-xl font-bold">INSTALL</button>
+                <button onclick="document.getElementById('pwa-install-banner').classList.add('hidden')" class="bg-transparent border border-white px-4 py-2 rounded-xl">NANTI</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== LOADING SCREEN ===== -->
+    <div id="loading" style="position:fixed;inset:0;z:50;background:#0a0e27;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div class="spinner w-16 h-16 mb-4"></div>
+        <h1 class="text-2xl font-black">DREAM OS</h1>
+        <p class="text-xs text-blue-400 mt-2">v13.4 – AI Core Initializing...</p>
+        <p class="text-[8px] text-slate-600 mt-4">The Power Soul of Shalawat</p>
+    </div>
+
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div id="login" class="hidden fixed inset-0 z-40 bg-[#0a0e27] flex items-center justify-center p-6">
+        <div class="w-full max-w-md space-y-6">
+            <div class="text-center">
+                <p class="text-3xl arabic text-amber-400 mb-2">بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
+                <p class="text-sm arabic text-slate-500 mb-1">اَللهم صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ</p>
+                <h1 class="text-4xl font-black mt-2">DREAM <span class="text-blue-500">OS</span></h1>
+                <p class="text-[10px] text-slate-500 mt-1">Access Control – ISO 27001</p>
+            </div>
+            <div class="glass-premium p-8 rounded-3xl space-y-4">
+                <div class="relative">
+                    <input type="password" id="pass" placeholder="ACCESS CODE" class="w-full p-4 bg-black/40 border border-slate-700 rounded-2xl text-center text-white font-bold tracking-widest outline-none focus:border-blue-500">
+                    <button onclick="togglePassword()" id="eye" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">👁️</button>
+                </div>
+                <button onclick="doLogin()" id="btn" class="w-full py-4 bg-blue-600 rounded-2xl font-black hover:bg-blue-500 transition">🔓 UNLOCK</button>
+                <p id="err" class="hidden text-red-500 text-xs text-center font-bold"></p>
+            </div>
+            <p class="text-center text-[10px] text-slate-600">"The Power Soul of Shalawat"</p>
+        </div>
+    </div>
+
+    <!-- ===== MAIN APP SCREEN ===== -->
+    <div id="app" class="hidden flex-1 flex flex-col min-h-screen pb-20">
+        <header class="p-4 text-center">
+            <p class="text-lg arabic text-amber-400">بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
+            <p class="text-xs arabic text-slate-500">اَللهم صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ</p>
+            <h1 class="text-[10px] text-slate-400 mt-1">DREAM OS v13.4 – AI CORE</h1>
+        </header>
+
+        <!-- ===== SLIDESHOW (7 SLIDES) ===== -->
+        <section class="px-4">
+            <div id="slideshow-container" class="glass-premium h-40 rounded-3xl relative overflow-hidden">
+                <div id="slider" class="h-full">
+                    <div class="slide active">
+                        <p class="text-xl font-black text-amber-400">✨ Selamat Datang</p>
+                        <p class="text-xs text-slate-400 mt-1">Keluarga SIF Al-Fikri</p>
+                        <div class="flex gap-2 mt-2 text-[8px]">
+                            <span class="bg-emerald-600/80 px-2 py-0.5 rounded-full">ISO 27001</span>
+                            <span class="bg-blue-600/80 px-2 py-0.5 rounded-full">ACTIVE</span>
+                        </div>
+                    </div>
+                    <div class="slide"><p class="text-xs text-slate-500">📅 Booking</p><p class="text-4xl font-black text-blue-500 mt-2" id="s-booking">0</p></div>
+                    <div class="slide"><p class="text-xs text-slate-500">⚠️ K3</p><p class="text-4xl font-black text-orange-500 mt-2" id="s-k3">0</p></div>
+                    <div class="slide"><p class="text-xs text-slate-500">🌤️ Cuaca</p><p class="text-2xl font-black text-cyan-400 mt-2" id="s-weather">26°C</p></div>
+                    <div class="slide"><p class="text-xs text-slate-500">📢 Info</p><p class="text-sm text-slate-300 mt-2" id="s-admin">Sistem Siap</p></div>
+                    <div class="slide"><p class="text-xs text-slate-500">💡 AI</p><p class="text-sm text-slate-300 mt-2" id="s-ai">Aktif</p></div>
+                    <div class="slide"><p class="text-xs text-amber-400">🕌 Shalat</p><p class="text-sm text-slate-300 mt-2" id="s-prayer">-</p></div>
+                </div>
+                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                    <span class="slide-dot w-1.5 h-1.5 rounded-full bg-blue-500" data-slide="0"></span>
+                    <span class="slide-dot w-1.5 h-1.5 rounded-full bg-slate-600" data-slide="1"></span>
+                    <span class="slide-dot w-1.5 h-1.5 rounded-full bg-slate-600" data-slide="2"></span>
+                    <span class="slide-dot w-1.5 h-1.5 rounded-full bg-slate-600" data-slide="3"></span>
+                    <span class="slide-dot w-1.5 h-1.5 rounded-full bg-slate-600" data-slide="4"></span>
+                    <span class="slide-dot w-1.5 h-1.5 rounded-full bg-slate-600" data-slide="5"></span>
+                    <span class="slide-dot w-1.5 h-1.5 rounded-full bg-slate-600" data-slide="6"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 9 ICONS GRID ===== -->
+        <main class="flex-1 px-4 py-4 overflow-y-auto">
+            <div id="grid" class="grid grid-cols-3 gap-4"></div>
+        </main>
+
+        <!-- ===== BOTTOM NAVIGATION ===== -->
+        <nav class="glass-premium fixed bottom-0 left-0 right-0 mx-4 mb-4 rounded-2xl p-3 flex justify-around items-center">
+            <a href="#home" class="text-blue-500 text-xl">🏠</a>
+            <span class="text-slate-500 text-xl">🔍</span>
+            <button onclick="openAISheet()" class="w-12 h-12 bg-blue-600 rounded-full -mt-8 border-4 border-[#0a0e27] text-white text-2xl flex items-center justify-center">🤖</button>
+            <span class="text-slate-500 text-xl">📜</span>
+            <button onclick="doLogout()" class="text-slate-500 text-xl">🚪</button>
+        </nav>
+    </div>
+
+    <!-- ===== BOTTOM SHEET (untuk modul & AI) ===== -->
+    <div id="sheet" class="fixed inset-x-0 bottom-0 z-50 glass-premium rounded-t-3xl p-6 h-[85vh] overflow-hidden flex flex-col">
+        <div class="w-12 h-1 bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeSheet()"></div>
+        <div id="sheet-content" class="flex-1 overflow-y-auto scroll-custom"></div>
+    </div>
+
+    <!-- ===== SUPABASE CLIENT ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+
+    <!-- ===== INTEGRATION MODULES (GLOBAL) ===== -->
+    <script src="./modules/integration/camera-system.js"></script>
+    <script src="./modules/integration/print-system.js"></script>
+    <script src="./modules/integration/qr-system.js"></script>
+    <script src="./modules/integration/integration-loader.js"></script>
+
+    <!-- ===== MAIN APP SCRIPT ===== -->
+    <script>
+        // ========== KONFIGURASI GLOBAL ==========
+        const CONFIG = {
+            supabase: { url: 'https://rqpodzjexghrvcpyacyo.supabase.co', key: 'sb_publishable_U9MbSdPJOMSmaw3BsHJcVQ_PDiOy-UM' },
+            prayer: { lat: -6.4, lon: 106.8, method: 20 },
+            slides: { interval: 7000 },
+            data: { refreshInterval: 30000 },
+            debug: true
+        };
+
+        // ========== INISIALISASI SUPABASE ==========
+        window.supabase = supabase.createClient(CONFIG.supabase.url, CONFIG.supabase.key);
+
+        // ========== LOGGER ==========
+        const log = (msg, type = 'info') => {
+            if (!CONFIG.debug) return;
+            const t = new Date().toLocaleTimeString('id-ID');
+            console.log(`[${t}] ${msg}`);
+        };
+        log('🚀 Dream OS AI Core starting...');
+
+        // ========== DATA MODUL ==========
+        const modules = [
+            { id:'booking', name:'BOOKING', icon:'📅' },
+            { id:'k3', name:'K3', icon:'⚠️' },
+            { id:'sekuriti', name:'SECURITY', icon:'🛡️' },
+            { id:'janitor-indoor', name:'JANITOR IN', icon:'🧹' },
+            { id:'janitor-outdoor', name:'JANITOR OUT', icon:'🌿' },
+            { id:'maintenance', name:'MAINTENANCE', icon:'🔧' },
+            { id:'stok', name:'STOK', icon:'📦' },
+            { id:'asset', name:'ASSET', icon:'🏢' },
+            { id:'commandcenter', name:'COMMAND', icon:'📊' },
+            { id:'dana', name:'DANA', icon:'💰' },
+            { id:'spj', name:'SPJ', icon:'📋' },
+            { id:'reminder', name:'REMINDER', icon:'⏰' },
+            { id:'weather', name:'CUACA', icon:'🌤️' },
+            { id:'lalin', name:'LALIN', icon:'🚦' },
+            { id:'mitigasi', name:'MITIGASI', icon:'⚠️' },
+            { id:'ai-speak', name:'AI SPEAK', icon:'🤖' },
+            { id:'prediction', name:'PREDIKSI', icon:'📈' },
+            { id:'inventaris', name:'INVENTARIS', icon:'🏛️' },
+            { id:'gudang', name:'GUDANG', icon:'📦' }
+        ];
+
+        // ========== ACCESS CODES ==========
+        const codes = {
+            '012443410': ['all'],
+            'Mr.M_Architect_2025': ['all'],
+            '4dm1n_AF6969@00': ['all'],
+            'LHPSsec_AF2025': ['sekuriti'],
+            'CHCS_AF_@003': ['janitor-indoor','janitor-outdoor'],
+            'SACS_AF@004': ['stok'],
+            'M41n_4F@234': ['maintenance'],
+            '4dm1n_6969@01': ['asset'],
+            '4dm1n_9696@02': ['stok'],
+            '4553Tumum_AF@1112': ['asset'],
+            'user_@1234': ['booking'],
+            'user_@2345': ['k3']
+        };
+
+        // ========== THEME MANAGEMENT ==========
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme:dark)').matches))
+            document.documentElement.classList.add('dark');
+
+        document.getElementById('darkModeToggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        });
+
+        // ========== HIDE LOADING ==========
+        setTimeout(() => document.getElementById('loading').style.display = 'none', 3000);
+
+        // ========== SESSION CHECK ==========
+        function checkSession() {
+            const session = localStorage.getItem('dream_session');
+            const allowed = localStorage.getItem('allowed_modules');
+            if (session && allowed) {
+                document.getElementById('login').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                renderGrid(JSON.parse(allowed));
+                startSlideshow();
+                updateAllStats();
+                const hash = window.location.hash.slice(1);
+                if (hash && hash !== 'home') {
+                    const mod = modules.find(m => m.id === hash);
+                    if (mod) setTimeout(() => openModule(mod.id, mod.name), 500);
+                } else {
+                    window.location.hash = '#home';
+                }
+            } else {
+                document.getElementById('login').classList.remove('hidden');
+                document.getElementById('app').classList.add('hidden');
+            }
+        }
+        setTimeout(checkSession, 3100);
+
+        // ========== PASSWORD TOGGLE ==========
+        window.togglePassword = function() {
+            const inp = document.getElementById('pass');
+            const eye = document.getElementById('eye');
+            inp.type = inp.type === 'password' ? 'text' : 'password';
+            eye.textContent = inp.type === 'password' ? '👁️' : '🙈';
+        };
+
+        // ========== LOGIN ==========
+        window.doLogin = function() {
+            const pass = document.getElementById('pass').value.trim();
+            const btn = document.getElementById('btn');
+            const err = document.getElementById('err');
+
+            if (!pass) { err.textContent = '⚠️ MASUKKAN CODE!'; err.classList.remove('hidden'); return; }
+            btn.disabled = true; btn.textContent = '⏳...'; err.classList.add('hidden');
+
+            if (codes[pass]) {
+                localStorage.setItem('dream_session', pass);
+                localStorage.setItem('allowed_modules', JSON.stringify(codes[pass]));
+                window.location.hash = '#home';
+                location.reload();
+            } else {
+                err.textContent = '❌ ACCESS DENIED'; err.classList.remove('hidden');
+                btn.disabled = false; btn.textContent = '🔓 UNLOCK';
+            }
+        };
+
+        // ========== LOGOUT ==========
+        window.doLogout = function() {
+            if (confirm('⚠️ Logout?')) {
+                localStorage.removeItem('dream_session');
+                localStorage.removeItem('allowed_modules');
+                location.reload();
+            }
+        };
+
+        // ========== RENDER GRID ==========
+        function renderGrid(allowed) {
+            const grid = document.getElementById('grid');
+            if (!grid) return;
+            const hasAll = allowed.includes('all');
+            const accessible = modules.filter(m => hasAll || allowed.includes(m.id)).slice(0,9);
+            let html = '';
+            accessible.forEach(m => {
+                html += `<button onclick="openModule('${m.id}','${m.name}')" class="flex flex-col items-center gap-2 active:scale-95 transition">
+                    <div class="w-14 h-14 bg-blue-600/20 border border-blue-600/30 rounded-2xl flex items-center justify-center text-2xl">${m.icon}</div>
+                    <span class="text-[7px] font-bold text-slate-400">${m.name}</span>
+                </button>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        // ========== OPEN MODULE ==========
+        window.openModule = async function(id, name) {
+            const sheet = document.getElementById('sheet');
+            const content = document.getElementById('sheet-content');
+            content.innerHTML = `<div class="module-loading"><div class="spinner"></div><p class="text-sm">Memuat ${name}...</p></div>`;
+            sheet.style.transform = 'translateY(0)';
+            window.location.hash = `#${id}`;
+
+            try {
+                const res = await fetch(`./modules/${id}/index.html`);
+                if (!res.ok) throw new Error('Modul tidak ditemukan');
+                const html = await res.text();
+                content.innerHTML = html;
+
+                const oldScript = document.getElementById('module-script');
+                if (oldScript) oldScript.remove();
+
+                const script = document.createElement('script');
+                script.id = 'module-script';
+                script.src = `./modules/${id}/${id}.js?t=${Date.now()}`;
+                script.onerror = () => {
+                    content.innerHTML += `<p class="text-red-500 text-center">Gagal load script modul</p>`;
+                };
+                document.body.appendChild(script);
+            } catch (err) {
+                content.innerHTML = `<div class="p-8 text-center"><div class="text-5xl mb-4">😕</div><p class="text-red-500">${err.message}</p><button onclick="closeSheet()" class="mt-4 bg-blue-600 px-6 py-2 rounded-xl">Tutup</button></div>`;
+            }
+        };
+
+        // ========== AI SHEET ==========
+        window.openAISheet = function() {
+            openModule('ai-speak', 'AI SPEAK');
+        };
+
+        // ========== CLOSE SHEET ==========
+        window.closeSheet = function() {
+            document.getElementById('sheet').style.transform = 'translateY(100%)';
+            if (window.location.hash !== '#home') {
+                window.location.hash = '#home';
+            }
+        };
+
+        // ========== HANDLE HASH CHANGE ==========
+        window.addEventListener('hashchange', function() {
+            const hash = window.location.hash.slice(1);
+            if (hash === 'home') {
+                closeSheet();
+            } else if (hash) {
+                const mod = modules.find(m => m.id === hash);
+                if (mod) {
+                    const allowed = localStorage.getItem('allowed_modules');
+                    if (allowed) {
+                        openModule(mod.id, mod.name);
+                    } else {
+                        window.location.hash = '#home';
+                    }
+                }
+            }
+        });
+
+        // ========== SLIDESHOW ==========
+        let slideIdx = 0;
+        function startSlideshow() {
+            setInterval(() => {
+                const slides = document.querySelectorAll('.slide');
+                slides.forEach(s => s.classList.remove('active'));
+                slideIdx = (slideIdx + 1) % slides.length;
+                slides[slideIdx].classList.add('active');
+            }, CONFIG.slides.interval);
+        }
+
+        // ========== UPDATE STATS ==========
+        async function updateAllStats() {
+            try {
+                const { count: bookingCount } = await supabase.from('bookings').select('*', {count:'exact',head:true}).eq('status','pending');
+                document.getElementById('s-booking').textContent = bookingCount || 0;
+
+                const { count: k3Count } = await supabase.from('k3_reports').select('*', {count:'exact',head:true}).eq('status','pending');
+                document.getElementById('s-k3').textContent = k3Count || 0;
+
+                document.getElementById('s-weather').textContent = '26°C';
+                document.getElementById('s-ai').textContent = 'Aktif';
+                document.getElementById('s-prayer').textContent = 'Maghrib';
+            } catch (e) { console.warn(e); }
+        }
+        setInterval(updateAllStats, CONFIG.data.refreshInterval);
+
+        // ========== PWA INSTALL ==========
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', e => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('pwa-install-banner').classList.remove('hidden');
+        });
+        document.getElementById('pwa-install-btn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt = null;
+                document.getElementById('pwa-install-banner').classList.add('hidden');
+            }
+        });
+
+        // ========== SERVICE WORKER ==========
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => log('SW registered'))
+                    .catch(err => log('SW error: ' + err));
+            });
+        }
+
+        log('✅ AI Core Ready');
+    </script>
+</body>
+</html>
