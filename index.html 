@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#10b981">
+    <title>Dream OS v13.4 - Zen Edition</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dream: #F8FAFC;
+            --zen-green: #10B981;
+            --sage-dark: #064E3B;
+            --mint-soft: #ECFDF5;
+            --gold-nur: #D97706;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-dream);
+            color: var(--sage-dark);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .arabic { font-family: 'Amiri', serif; }
+
+        /* HEADER SPIRITUAL GLOW */
+        .spiritual-glow {
+            background: linear-gradient(135deg, var(--sage-dark), var(--zen-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 20px rgba(16, 185, 129, 0.1);
+        }
+
+        /* GIOK ICON STYLE (Sweet & Iconic) */
+        .giok-icon {
+            background: white;
+            border: 1.5px solid rgba(16, 185, 129, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 
+                        inset 0 4px 6px rgba(16, 185, 129, 0.05);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .giok-icon:active {
+            transform: scale(0.92);
+            background: var(--mint-soft);
+            border-color: var(--zen-green);
+        }
+
+        .icon-container {
+            width: 55px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            margin-bottom: 8px;
+            background: var(--mint-soft);
+            color: var(--zen-green);
+            font-size: 1.5rem;
+        }
+
+        /* SLIDE CUSTOMIZATION */
+        .glass-premium {
+            background: white;
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        .slide { transition: opacity 0.8s ease; position: absolute; inset: 0; display: none; }
+        .slide.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+        /* HIDE SCROLLBAR */
+        ::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+
+    <div class="fixed top-4 right-4 z-[100]">
+        <button onclick="document.body.classList.toggle('dark')" class="p-3 bg-white/80 backdrop-blur shadow-lg rounded-full">
+            🌙
+        </button>
+    </div>
+
+    <header class="text-center py-8">
+        <p class="text-2xl md:text-3xl arabic spiritual-glow font-bold mb-1">بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
+        <p class="text-[10px] md:text-xs arabic text-slate-400 tracking-widest uppercase">اَللهم صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ وَعَلَى آلِ سَيِّدِنَا مُحَمَّدٍ</p>
+        
+        <h1 class="text-3xl font-black tracking-tighter mt-6 uppercase flex items-center justify-center gap-2">
+            DREAM <span class="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">OS</span> 
+            <span class="text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded border border-slate-200">v13.4</span>
+        </h1>
+        <p class="text-[9px] font-bold text-emerald-600 uppercase tracking-[0.3em] mt-2">ISO 27001 • Sovereign System</p>
+    </header>
+
+    <div id="slideshow-container" class="glass-premium relative h-48 rounded-[2.5rem] mb-10 overflow-hidden">
+        <div class="slide active">
+            <p class="text-xs font-bold text-emerald-500 uppercase tracking-widest">Marhaban,</p>
+            <p class="text-2xl font-black text-slate-800">Admin SIF Al-Fikri</p>
+        </div>
+        <div class="slide">
+            <p class="text-xs font-bold text-blue-500 uppercase">Booking Stats</p>
+            <p class="text-4xl font-black text-slate-800"><span id="slide2-count">0</span> <span class="text-sm">Pending</span></p>
+        </div>
+        </div>
+
+    <main class="grid grid-cols-3 gap-5">
+        
+        <button onclick="window.location.hash='#booking'" class="giok-icon p-4 flex flex-col items-center">
+            <div class="icon-container"><i class="fa-solid fa-calendar-check"></i></div>
+            <span class="text-[9px] font-black uppercase tracking-tighter">Booking</span>
+        </button>
+
+        <button onclick="window.location.hash='#k3-officer'" class="giok-icon p-4 flex flex-col items-center">
+            <div class="icon-container" style="color: #f59e0b; background: #fffbeb;"><i class="fa-solid fa-helmet-safety"></i></div>
+            <span class="text-[9px] font-black uppercase tracking-tighter">K3 Officer</span>
+        </button>
+
+        <button onclick="window.location.hash='#sekuriti'" class="giok-icon p-4 flex flex-col items-center">
+            <div class="icon-container" style="color: #3b82f6; background: #eff6ff;"><i class="fa-solid fa-shield-halved"></i></div>
+            <span class="text-[9px] font-black uppercase tracking-tighter">Security</span>
+        </button>
+
+        <button onclick="window.location.hash='#asset'" class="giok-icon p-4 flex flex-col items-center">
+            <div class="icon-container" style="color: #8b5cf6; background: #f5f3ff;"><i class="fa-solid fa-boxes-stacked"></i></div>
+            <span class="text-[9px] font-black uppercase tracking-tighter">Aset ISO</span>
+        </button>
+
+        <button onclick="window.location.hash='#commandcenter'" class="giok-icon p-4 flex flex-col items-center">
+            <div class="icon-container" style="color: #ef4444; background: #fef2f2;"><i class="fa-solid fa-tower-broadcast"></i></div>
+            <span class="text-[9px] font-black uppercase tracking-tighter">Commander</span>
+        </button>
+
+        <button onclick="window.location.hash='#spj'" class="giok-icon p-4 flex flex-col items-center">
+            <div class="icon-container" style="color: #10b981; background: #ecfdf5;"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+            <span class="text-[9px] font-black uppercase tracking-tighter">Laporan SPJ</span>
+        </button>
+
+        <button onclick="window.location.hash='#stok'" class="giok-icon p-4 flex flex-col items-center">
+            <div class="icon-container" style="color: #64748b; background: #f1f5f9;"><i class="fa-solid fa-warehouse"></i></div>
+            <span class="text-[9px] font-black uppercase tracking-tighter">Gudang</span>
+        </button>
+
+        <button onclick="window.location.hash='#prediction'" class="giok-icon p-4 flex flex-col items-center">
+            <div class="icon-container" style="color: #ec4899; background: #fdf2f8;"><i class="fa-solid fa-brain"></i></div>
+            <span class="text-[9px] font-black uppercase tracking-tighter">AI Predict</span>
+        </button>
+
+        <button onclick="window.location.hash='#home'" class="giok-icon p-4 flex flex-col items-center">
+            <div class="icon-container" style="color: #10b981; background: #ecfdf5;"><i class="fa-solid fa-house-chimney"></i></div>
+            <span class="text-[9px] font-black uppercase tracking-tighter">Dream Team</span>
+        </button>
+
+    </main>
+
+    <footer class="py-12 text-center">
+        <p class="text-[8px] font-black text-slate-400 uppercase tracking-[0.5em]">The Power Soul of Shalawat</p>
+        <p class="text-[8px] text-slate-300 mt-2 uppercase italic">© 2026 SIF Al-Fikri Sovereign Edition</p>
+    </footer>
+
+    <script>
+        // SLIDESHOW SIMPLE ENGINE
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        setInterval(nextSlide, 7000);
+    </script>
+</body>
+</html>
