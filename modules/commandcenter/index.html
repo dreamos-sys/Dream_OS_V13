@@ -511,14 +511,17 @@
 </div>
 
 <script>
-    // Inisialisasi supabase
-    (function() {
-        const { createClient } = supabase;
-        window.supabase = createClient(
-            'https://rqpodzjexghrvcpyacyo.supabase.co',
-            'sb_publishable_U9MbSdPJOMSmaw3BsHJcVQ_PDiOy-UM'
-        );
-        console.log('Supabase client initialized');
+    (function initSupabase() {
+        if (typeof supabase !== 'undefined' && supabase.createClient) {
+            window.supabase = supabase.createClient(
+                'https://rqpodzjexghrvcpyacyo.supabase.co',
+                'sb_publishable_U9MbSdPJOMSmaw3BsHJcVQ_PDiOy-UM'
+            );
+            console.log('✅ Supabase client initialized');
+        } else {
+            console.warn('⏳ Supabase library belum siap, mencoba lagi...');
+            setTimeout(initSupabase, 100);
+        }
     })();
 </script>
 
