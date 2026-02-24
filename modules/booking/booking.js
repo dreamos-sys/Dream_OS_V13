@@ -1,0 +1,333 @@
+/**
+ * 🚀 DREAM OS v13.4 - BOOKING MODULE
+ * Smart Booking Engine with Auto-Approval
+ * Approver: Pak Hanung Budianto, S.E.
+ */
+
+(function() {
+    'use strict';
+
+    // ===== CONFIGURATION =====
+    const CONFIG = {
+        weather: {
+            lat: -6.4,
+            lon: 106.8,
+            apiKey: 'f7890d7569950ffa34a5827880e8442f',
+            refreshInterval: 300000 // 5 minutes
+        },
+        slider: {
+            interval: 5000
+        }
+    };
+
+    // ===== DATA LISTS =====
+    const SARANA_LIST = [
+        "Aula SMP", "Aula SMA", "Saung Besar", "Saung Kecil","Masjid (Maintenance)", " Mushalla SMA", "Serbaguna", "Lapangan Basket", "Lapangan Volly", "Lapangan Tanah", "Lapangan SMA", " Kantin SMP", "Kantin SMA", " Labkom SD", "Labkom SMP", " Labkom SMA", Perpustakaan SD", "Perpustakaan SMP", " Perpustakaan SMA", "Area Taman Depan Masjid", " Area Parkir Depan Dapur", "Area Parkir Loby SMA", 
+    ];
+
+    const ALAT_LIST = [
+        "Sound Portable", "Projector", "Standing Mic",
+        "Meja Panjang", "Kursi Futura", "Taplak Meja", "TV", " Layar Projektor", 
+    ];
+
+    // ===== DOM ELEMENTS =====
+    const elements = {};
+
+    // ===== INITIALIZATION =====
+    function initApp() {
+        console.log('📅 Booking Module Loaded - Dream OS v13.4');
+
+        // Cache DOM elements
+        cacheElements();
+
+        // Initialize UI
+        initSaranaDropdown();
+        initAlatCheckboxes();
+        initDatePickers();
+
+        // Start weather
+        getDepokWeather();        setInterval(getDepokWeather, CONFIG.weather.refreshInterval);
+
+        // Start slider
+        startWeatherSlider();
+
+        // Attach form handler
+        attachFormHandler();
+
+        console.log('✅ Booking Module Initialized');
+    }
+
+    // ===== CACHE DOM ELEMENTS =====
+    function cacheElements() {
+        elements.sarana = document.getElementById('sarana');
+        elements.alatContainer = document.getElementById('alat-container');
+        elements.weatherSlider = document.getElementById('weather-slider');
+        elements.sliderDots = document.querySelectorAll('.slider-dot');
+        elements.bookingForm = document.getElementById('bookingForm');
+        elements.formResult = document.getElementById('form-result');
+        elements.submitBtn = document.getElementById('submitBtn');
+
+        // Weather elements
+        elements.weather = {
+            icon: document.getElementById('weather-icon'),
+            temp: document.getElementById('current-temp'),
+            desc: document.getElementById('weather-desc'),
+            humidity: document.getElementById('humidity'),
+            wind: document.getElementById('wind'),
+            time: document.getElementById('update-time')
+        };
+    }
+
+    // ===== INIT SARANA DROPDOWN =====
+    function initSaranaDropdown() {
+        if (!elements.sarana) return;
+
+        elements.sarana.innerHTML = SARANA_LIST.map(s => 
+            `<option value="${s}">${s}</option>`
+        ).join('');
+
+        console.log('📍 Sarana options loaded:', SARANA_LIST.length);
+    }
+
+    // ===== INIT ALAT CHECKBOXES =====
+    function initAlatCheckboxes() {
+        if (!elements.alatContainer) return;
+
+        elements.alatContainer.innerHTML = ALAT_LIST.map((a, i) => `
+            <div class="flex items-center gap-2">
+                <input type="checkbox" id="alat-${i}" value="${a}" class="w-4 h-4 accent-purple-500">                <label for="alat-${i}" class="text-[11px] text-slate-300 select-none cursor-pointer">${a}</label>
+            </div>
+        `).join('');
+
+        console.log('🔧 Alat options loaded:', ALAT_LIST.length);
+    }
+
+    // ===== INIT DATE PICKERS =====
+    function initDatePickers() {
+        const tglInput = document.getElementById('tgl_mulai');
+        if (!tglInput) return;
+
+        // Set min date to today
+        const today = new Date().toISOString().split('T')[0];
+        tglInput.setAttribute('min', today);
+
+        // Auto-set jam based on time of day
+        const now = new Date();
+        const hour = now.getHours();
+
+        if (hour < 12) {
+            document.getElementById('jam_mulai').value = '07:30';
+            document.getElementById('jam_selesai').value = '12:00';
+        } else if (hour < 15) {
+            document.getElementById('jam_mulai').value = '12:00';
+            document.getElementById('jam_selesai').value = '16:00';
+        } else {
+            document.getElementById('jam_mulai').value = '07:30';
+            document.getElementById('jam_selesai').value = '16:00';
+        }
+    }
+
+    // ===== WEATHER SLIDER =====
+    let currentSlide = 0;
+
+    function startWeatherSlider() {
+        setInterval(() => {
+            currentSlide = currentSlide === 0 ? 1 : 0;
+
+            if (elements.weatherSlider) {
+                elements.weatherSlider.style.transform = `translateX(-${currentSlide * 100}%)`;
+            }
+
+            elements.sliderDots.forEach((d, i) => {
+                d.classList.toggle('active', i === currentSlide);
+            });
+        }, CONFIG.slider.interval);
+
+        console.log('🌤️ Weather slider started');
+    }
+    // ===== WEATHER DATA (DEPOK) =====
+    async function getDepokWeather() {
+        try {
+            const res = await fetch(
+                `https://api.openweathermap.org/data/2.5/weather?lat=${CONFIG.weather.lat}&lon=${CONFIG.weather.lon}&appid=${CONFIG.weather.apiKey}&units=metric`
+            );
+
+            if (!res.ok) throw new Error('Weather API error');
+
+            const data = await res.json();
+
+            // Update UI
+            if (elements.weather.temp) {
+                elements.weather.temp.innerText = Math.round(data.main.temp) + "°C";
+            }
+            if (elements.weather.desc) {
+                elements.weather.desc.innerText = data.weather[0].description.toUpperCase();
+            }
+            if (elements.weather.humidity) {
+                elements.weather.humidity.innerText = data.main.humidity + "%";
+            }
+            if (elements.weather.wind) {
+                elements.weather.wind.innerText = Math.round(data.wind.speed * 3.6) + " km/h";
+            }
+            if (elements.weather.time) {
+                elements.weather.time.innerText = new Date().toLocaleTimeString('id-ID');
+            }
+
+            // Weather icon mapping
+            const iconMap = {
+                'Clear': '☀️',
+                'Clouds': '☁️',
+                'Rain': '🌧️',
+                'Drizzle': '🌦️',
+                'Thunderstorm': '⛈️',
+                'Snow': '❄️',
+                'Mist': '🌫️',
+                'Fog': '🌫️'
+            };
+
+            if (elements.weather.icon) {
+                elements.weather.icon.innerText = iconMap[data.weather[0].main] || '🌤️';
+            }
+
+            console.log('🌤️ Weather updated:', data.main.temp + '°C');
+
+        } catch (e) {
+            console.warn('⚠️ Weather offline:', e.message);
+            if (elements.weather.desc) {                elements.weather.desc.innerText = "OFFLINE";
+            }
+        }
+    }
+
+    // ===== FORM SUBMISSION =====
+    function attachFormHandler() {
+        if (!elements.bookingForm) return;
+
+        elements.bookingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await handleBookingSubmit(e.target);
+        });
+
+        console.log('📋 Form handler attached');
+    }
+
+    async function handleBookingSubmit(form) {
+        const resDiv = elements.formResult;
+        const btn = elements.submitBtn;
+
+        if (!resDiv || !btn) return;
+
+        // Get selected alat
+        const alatTerpilih = [];
+        ALAT_LIST.forEach((a, i) => {
+            const checkbox = document.getElementById(`alat-${i}`);
+            if (checkbox && checkbox.checked) {
+                alatTerpilih.push(a);
+            }
+        });
+
+        // Build payload
+        const payload = {
+            nama: form.nama.value.trim(),
+            divisi: form.divisi.value,
+            sarana: form.sarana.value,
+            tgl: form.tgl_mulai.value,
+            jamM: form.jam_mulai.value,
+            jamS: form.jam_selesai.value,
+            alat: alatTerpilih.join(', ')
+        };
+
+        // Validate
+        if (!payload.nama || !payload.sarana || !payload.tgl) {
+            resDiv.innerHTML = "<span class='text-red-500'>⚠️ Lengkapi data wajib!</span>";
+            return;
+        }
+
+        // UI Loading state        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+        resDiv.innerHTML = "🔍 Checking ketersediaan...";
+
+        try {
+            // Check for overlapping bookings
+            const { data: existing, error: fetchError } = await window.supabase
+                .from('bookings')
+                .select('jam_mulai, jam_selesai')
+                .eq('sarana', payload.sarana)
+                .eq('tanggal_mulai', payload.tgl)
+                .eq('status', 'approved');
+
+            if (fetchError) throw fetchError;
+
+            // Check time overlap
+            let isBentrok = false;
+            if (existing && existing.length > 0) {
+                existing.forEach(b => {
+                    // Overlap logic: start1 < end2 AND end1 > start2
+                    if (payload.jamM < b.jam_selesai && payload.jamS > b.jam_mulai) {
+                        isBentrok = true;
+                    }
+                });
+            }
+
+            // Determine status
+            const statusFinal = isBentrok ? 'pending' : 'approved';
+
+            // Insert booking
+            const { error: insertError } = await window.supabase
+                .from('bookings')
+                .insert([{
+                    nama_peminjam: payload.nama,
+                    divisi: payload.divisi,
+                    ruang: payload.sarana,
+                    tanggal: payload.tgl,
+                    jam_mulai: payload.jamM,
+                    jam_selesai: payload.jamS,
+                    peralatan: payload.alat,
+                    status: statusFinal,
+                    notes: isBentrok ? 'Conflict - Waiting approval' : 'Auto-Approved - No conflict',
+                    created_at: new Date()
+                }]);
+
+            if (insertError) throw insertError;
+
+            // Success message
+            if (statusFinal === 'approved') {
+                resDiv.innerHTML = `                    <span class='text-emerald-400 text-lg'>
+                        ✅ AUTO-APPROVED!<br>
+                        <span class='text-sm text-slate-400'>Jadwal Berhasil Dikunci.</span>
+                    </span>
+                `;
+                form.reset();
+            } else {
+                resDiv.innerHTML = `
+                    <span class='text-amber-400 text-lg'>
+                        📋 PENDING<br>
+                        <span class='text-sm text-slate-400'>Ada bentrok, menunggu Pak Hanung.</span>
+                    </span>
+                `;
+            }
+
+            console.log('✅ Booking submitted:', statusFinal);
+
+        } catch (err) {
+            console.error('❌ Booking error:', err);
+            resDiv.innerHTML = `
+                <span class='text-red-500 text-lg'>
+                    ❌ Error: ${err.message}<br>
+                    <span class='text-sm text-slate-400'>Coba lagi atau hubungi admin.</span>
+                </span>
+            `;
+        } finally {
+            // Reset button
+            btn.disabled = false;
+            btn.innerHTML = 'SUBMIT BOOKING';
+        }
+    }
+
+    // ===== AUTO-INITIALIZE =====
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+        initApp();
+    }
+
+})();
