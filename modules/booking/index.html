@@ -1,12 +1,285 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Booking Module</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DREAM OS v13.4 - SMART BOOKING</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: white; overflow-x: hidden; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        input, select, textarea { background: #1e293b !important; color: white !important; border: 1px solid #334155 !important; }
+    </style>
 </head>
-<body style="background:#0f172a; color:white; padding:20px;">
-    <h1>✅ Halaman Booking Berhasil Dimuat</h1>
-    <p>Jika ini muncul, berarti file sudah benar.</p>
-    <button onclick="window.closeModule()" style="background:#3b82f6; color:white; padding:10px; border-radius:8px;">Kembali ke Dashboard</button>
+<body class="p-4 md:p-8">
+
+<div class="max-w-3xl mx-auto space-y-6">
+    <div class="text-center space-y-1">
+        <h1 class="text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500 uppercase">
+            Dream Booking Engine v13.4
+        </h1>
+        <p class="text-[10px] text-slate-500 font-mono tracking-widest">APPROVER: PAK HANUNG BUDIANTO S. E</p>
+    </div>
+
+    <div class="glass-card rounded-[2.5rem] p-6 md:p-10 shadow-2xl border-b-4 border-purple-600">
+        <form id="bookingForm" class="space-y-6">
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase text-slate-400 ml-2">Nama Pemohon</label>
+                    <input type="text" id="nama" name="nama" placeholder="Erwinsyah" class="w-full p-4 rounded-2xl outline-none" required>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase text-slate-400 ml-2">Nomor HP</label>
+                    <input type="tel" id="no_hp" name="no_hp" placeholder="0812xxxxxxx" class="w-full p-4 rounded-2xl outline-none" required>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase text-slate-400 ml-2">Divisi</label>
+                    <select id="divisi" name="divisi" class="w-full p-4 rounded-2xl">
+                        <option value="SD">Unit SD</option>
+                        <option value="SMP">Unit SMP</option>
+                        <option value="SMA">Unit SMA</option>
+                        <option value="Umum">Bagian Umum</option>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase text-slate-400 ml-2">Pilih Sarana</label>
+                    <select id="sarana" name="sarana" class="w-full p-4 rounded-2xl text-purple-400 font-bold" required></select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase text-slate-400 ml-2">Tanggal</label>
+                    <input type="date" id="tgl_mulai" name="tgl_mulai" class="w-full p-4 rounded-2xl" required>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase text-slate-400 ml-2">Jam Mulai</label>
+                    <input type="time" id="jam_mulai" name="jam_mulai" value="07:30" class="w-full p-4 rounded-2xl" required>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase text-slate-400 ml-2">Jam Selesai</label>
+                    <input type="time" id="jam_selesai" name="jam_selesai" value="16:00" class="w-full p-4 rounded-2xl" required>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <label class="text-[10px] font-bold uppercase text-slate-400 ml-2">Peminjaman Alat (Opsional)</label>
+                <div id="alat-container" class="grid grid-cols-2 md:grid-cols-3 gap-3 bg-slate-900/50 p-5 rounded-3xl border border-slate-700"></div>
+            </div>
+
+            <div id="form-result" class="text-center text-sm font-bold min-h-[30px]"></div>
+
+            <button type="submit" id="submitBtn" class="w-full py-5 bg-gradient-to-r from-purple-600 to-blue-600 rounded-3xl font-black text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
+                SUBMIT BOOKING
+            </button>
+        </form>
+    </div>
+
+    <footer class="text-center space-y-1 pb-10">
+        <p class="text-[10px] text-slate-600 font-mono tracking-tighter uppercase">Bismillah bi idznillah - Dream OS Security Standards</p>
+        <p class="text-[9px] text-slate-700">The Power Soul Of Shalawat</p>
+    </footer>
+</div>
+
+<script>
+    (function() {
+        'use strict';
+
+        // ===== DATA LISTS =====
+        const SARANA_LIST = [
+            "Aula SMP", "Aula SMA", "Saung Besar", "Saung Kecil",
+            "Masjid (Maintenance)", "Mushalla SMA", "Serbaguna",
+            "Lapangan Basket", "Lapangan Volly", "Lapangan Tanah",
+            "Lapangan SMA", "Kantin SMP", "Kantin SMA",
+            "Labkom SD", "Labkom SMP", "Labkom SMA",
+            "Perpustakaan SD", "Perpustakaan SMP", "Perpustakaan SMA",
+            "Area Taman Depan Masjid", "Area Parkir Depan Dapur",
+            "Area Parkir Loby SMA"
+        ];
+
+        const ALAT_LIST = [
+            "Sound Portable", "Projector", "Standing Mic",
+            "Meja Panjang", "Kursi Futura", "Taplak Meja",
+            "TV", "Layar Projektor"
+        ];
+
+        // ===== TUNGGU SUPABASE SIAP =====
+        async function waitForSupabase() {
+            return new Promise(resolve => {
+                if (window.supabase) {
+                    resolve();
+                } else {
+                    const interval = setInterval(() => {
+                        if (window.supabase) {
+                            clearInterval(interval);
+                            resolve();
+                        }
+                    }, 100);
+                }
+            });
+        }
+
+        // ===== INISIALISASI =====
+        async function init() {
+            console.log('📅 Booking Module initializing...');
+            await waitForSupabase();
+            console.log('✅ Supabase ready');
+
+            // Isi dropdown sarana
+            const saranaSelect = document.getElementById('sarana');
+            if (saranaSelect) {
+                saranaSelect.innerHTML = SARANA_LIST.map(s => `<option value="${s}">${s}</option>`).join('');
+            } else {
+                console.error('❌ Elemen #sarana tidak ditemukan');
+            }
+
+            // Isi checkbox alat
+            const alatContainer = document.getElementById('alat-container');
+            if (alatContainer) {
+                alatContainer.innerHTML = ALAT_LIST.map((a, i) => `
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="alat-${i}" value="${a}" class="w-4 h-4 accent-purple-500">
+                        <label for="alat-${i}" class="text-[11px] text-slate-300 select-none cursor-pointer">${a}</label>
+                    </div>
+                `).join('');
+            } else {
+                console.error('❌ Elemen #alat-container tidak ditemukan');
+            }
+
+            // Set tanggal minimal hari ini
+            const tglInput = document.getElementById('tgl_mulai');
+            if (tglInput) {
+                tglInput.setAttribute('min', new Date().toISOString().split('T')[0]);
+            }
+
+            // Auto-set jam (opsional)
+            const jamMulai = document.getElementById('jam_mulai');
+            const jamSelesai = document.getElementById('jam_selesai');
+            if (jamMulai && jamSelesai) {
+                const hour = new Date().getHours();
+                if (hour < 12) {
+                    jamMulai.value = '07:30';
+                    jamSelesai.value = '12:00';
+                } else if (hour < 15) {
+                    jamMulai.value = '12:00';
+                    jamSelesai.value = '16:00';
+                } else {
+                    jamMulai.value = '07:30';
+                    jamSelesai.value = '16:00';
+                }
+            }
+
+            // ===== HANDLE SUBMIT =====
+            const form = document.getElementById('bookingForm');
+            const resultDiv = document.getElementById('form-result');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    // Kumpulkan alat yang dipilih
+                    const alatTerpilih = [];
+                    ALAT_LIST.forEach((_, i) => {
+                        const cb = document.getElementById(`alat-${i}`);
+                        if (cb && cb.checked) alatTerpilih.push(ALAT_LIST[i]);
+                    });
+
+                    const payload = {
+                        nama: document.getElementById('nama').value.trim(),
+                        no_hp: document.getElementById('no_hp').value.trim(),
+                        divisi: document.getElementById('divisi').value,
+                        sarana: document.getElementById('sarana').value,
+                        tgl: document.getElementById('tgl_mulai').value,
+                        jamM: document.getElementById('jam_mulai').value,
+                        jamS: document.getElementById('jam_selesai').value,
+                        alat: alatTerpilih.join(', ')
+                    };
+
+                    // Validasi
+                    if (!payload.nama || !payload.no_hp || !payload.sarana || !payload.tgl) {
+                        resultDiv.innerHTML = '<span class="text-red-500">⚠️ Nama, No HP, Sarana, dan Tanggal wajib diisi!</span>';
+                        return;
+                    }
+                    if (!/^[0-9]{10,15}$/.test(payload.no_hp.replace(/\D/g, ''))) {
+                        resultDiv.innerHTML = '<span class="text-red-500">⚠️ Nomor HP tidak valid (minimal 10 angka)!</span>';
+                        return;
+                    }
+
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+                    resultDiv.innerHTML = '🔍 Checking ketersediaan...';
+
+                    try {
+                        // Cek bentrok
+                        const { data: existing, error: fetchError } = await window.supabase
+                            .from('bookings')
+                            .select('jam_mulai, jam_selesai')
+                            .eq('ruang', payload.sarana)
+                            .eq('tanggal', payload.tgl)
+                            .eq('status', 'approved');
+
+                        if (fetchError) throw fetchError;
+
+                        let isBentrok = false;
+                        if (existing) {
+                            existing.forEach(b => {
+                                if (payload.jamM < b.jam_selesai && payload.jamS > b.jam_mulai) {
+                                    isBentrok = true;
+                                }
+                            });
+                        }
+
+                        const statusFinal = isBentrok ? 'pending' : 'approved';
+
+                        // Insert
+                        const { error: insertError } = await window.supabase
+                            .from('bookings')
+                            .insert([{
+                                nama_peminjam: payload.nama,
+                                no_hp: payload.no_hp,
+                                divisi: payload.divisi,
+                                ruang: payload.sarana,
+                                tanggal: payload.tgl,
+                                jam_mulai: payload.jamM,
+                                jam_selesai: payload.jamS,
+                                peralatan: payload.alat,
+                                status: statusFinal,
+                                notes: isBentrok ? 'Conflict - Waiting approval' : 'Auto-Approved - No conflict',
+                                created_at: new Date().toISOString()
+                            }]);
+
+                        if (insertError) throw insertError;
+
+                        if (statusFinal === 'approved') {
+                            resultDiv.innerHTML = '<span class="text-emerald-400 text-lg">✅ AUTO-APPROVED!<br><span class="text-sm">Jadwal Berhasil Dikunci.</span></span>';
+                            form.reset();
+                        } else {
+                            resultDiv.innerHTML = '<span class="text-amber-400 text-lg">📋 PENDING<br><span class="text-sm">Ada bentrok, menunggu Pak Hanung.</span></span>';
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        resultDiv.innerHTML = `<span class="text-red-500 text-lg">❌ Error: ${err.message}<br><span class="text-sm">Coba lagi atau hubungi admin.</span></span>`;
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = 'SUBMIT BOOKING';
+                    }
+                });
+            }
+        }
+
+        // Jalankan setelah DOM siap
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+</script>
 </body>
 </html>
