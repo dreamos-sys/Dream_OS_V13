@@ -134,8 +134,14 @@ const SUPABASE_URL = "https://rqpodzjejexghrvcpyacyo.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJxcG9kempleGdocnZjcHlhY3lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNzQyMTMsImV4cCI6MjA4Njk1MDIxM30.elXwh437xIqITUH7ZwiNqOXB2clTWd9_OlS51O-lNxw";
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const SARANA_LIST = ["Aula SMP", "Aula SMA", "Saung Besar", "Saung Kecil", "Masjid (Maintenance)", "Serbaguna", "Labkom SMA", "Lapangan Basket"];
-const ALAT_LIST = ["Sound Portable", "Projector", "Standing Mic", "Meja Panjang", "Kursi Futura", "Taplak Meja"];
+    const SARANA_LIST = [
+        "Aula SMP", "Aula SMA", "Saung Besar", "Saung Kecil","Masjid (Maintenance)", " Mushalla SMA", "Serbaguna", "Lapangan Basket", "Lapangan Volly", "Lapangan Tanah", "Lapangan SMA", " Kantin SMP", "Kantin SMA", " Labkom SD", "Labkom SMP", " Labkom SMA", Perpustakaan SD", "Perpustakaan SMP", " Perpustakaan SMA", "Area Taman Depan Masjid", " Area Parkir Depan Dapur", "Area Parkir Loby SMA", 
+    ];
+
+    const ALAT_LIST = [
+        "Sound Portable", "Projector", "Standing Mic",
+        "Meja Panjang", "Kursi Futura", "Taplak Meja", "TV", " Layar Projektor", 
+    ];
 
 // 1. INIT UI
 function initApp() {
