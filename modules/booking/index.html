@@ -1,0 +1,241 @@
+/**
+ * 🚀 DREAM OS v13.4 - BOOKING MODULE
+ * Smart Booking Engine with Auto-Approval
+ * Approver: Pak Hanung Budianto, S.E.
+ */
+
+(function() {
+    'use strict';
+
+    // ===== CONFIGURATION =====
+    const CONFIG = {
+        // Tidak ada cuaca di sini, sudah dipindah ke header utama
+    };
+
+    // ===== DATA LISTS (sudah diperbaiki) =====
+    const SARANA_LIST = [
+        "Aula SMP", "Aula SMA", "Saung Besar", "Saung Kecil",
+        "Masjid (Maintenance)", "Mushalla SMA", "Serbaguna",
+        "Lapangan Basket", "Lapangan Volly", "Lapangan Tanah",
+        "Lapangan SMA", "Kantin SMP", "Kantin SMA",
+        "Labkom SD", "Labkom SMP", "Labkom SMA",
+        "Perpustakaan SD", "Perpustakaan SMP", "Perpustakaan SMA",
+        "Area Taman Depan Masjid", "Area Parkir Depan Dapur",
+        "Area Parkir Loby SMA"
+    ];
+
+    const ALAT_LIST = [
+        "Sound Portable", "Projector", "Standing Mic",
+        "Meja Panjang", "Kursi Futura", "Taplak Meja",
+        "TV", "Layar Projektor"
+    ];
+
+    // ===== DOM ELEMENTS =====
+    const elements = {};
+
+    // ===== INITIALIZATION =====
+    function initApp() {
+        console.log('📅 Booking Module Loaded - Dream OS v13.4');
+
+        cacheElements();
+        initSaranaDropdown();
+        initAlatCheckboxes();
+        initDatePickers();
+        attachFormHandler();
+
+        console.log('✅ Booking Module Initialized');
+    }
+
+    // ===== CACHE DOM ELEMENTS =====
+    function cacheElements() {
+        elements.sarana = document.getElementById('sarana');
+        elements.alatContainer = document.getElementById('alat-container');
+        elements.bookingForm = document.getElementById('bookingForm');
+        elements.formResult = document.getElementById('form-result');
+        elements.submitBtn = document.getElementById('submitBtn');
+    }
+
+    // ===== INIT SARANA DROPDOWN =====
+    function initSaranaDropdown() {
+        if (!elements.sarana) return;
+        elements.sarana.innerHTML = SARANA_LIST.map(s => 
+            `<option value="${s.trim()}">${s.trim()}</option>`
+        ).join('');
+        console.log('📍 Sarana options loaded:', SARANA_LIST.length);
+    }
+
+    // ===== INIT ALAT CHECKBOXES =====
+    function initAlatCheckboxes() {
+        if (!elements.alatContainer) return;
+        elements.alatContainer.innerHTML = ALAT_LIST.map((a, i) => `
+            <div class="flex items-center gap-2">
+                <input type="checkbox" id="alat-${i}" value="${a.trim()}" class="w-4 h-4 accent-purple-500">
+                <label for="alat-${i}" class="text-[11px] text-slate-300 select-none cursor-pointer">${a.trim()}</label>
+            </div>
+        `).join('');
+        console.log('🔧 Alat options loaded:', ALAT_LIST.length);
+    }
+
+    // ===== INIT DATE PICKERS =====
+    function initDatePickers() {
+        const tglInput = document.getElementById('tgl_mulai');
+        if (!tglInput) return;
+
+        // Set min date to today
+        const today = new Date().toISOString().split('T')[0];
+        tglInput.setAttribute('min', today);
+
+        // Auto-set jam based on time of day (contoh sederhana)
+        const now = new Date();
+        const hour = now.getHours();
+        if (hour < 12) {
+            document.getElementById('jam_mulai').value = '07:30';
+            document.getElementById('jam_selesai').value = '12:00';
+        } else if (hour < 15) {
+            document.getElementById('jam_mulai').value = '12:00';
+            document.getElementById('jam_selesai').value = '16:00';
+        } else {
+            document.getElementById('jam_mulai').value = '07:30';
+            document.getElementById('jam_selesai').value = '16:00';
+        }
+    }
+
+    // ===== FORM SUBMISSION =====
+    function attachFormHandler() {
+        if (!elements.bookingForm) return;
+        elements.bookingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await handleBookingSubmit(e.target);
+        });
+        console.log('📋 Form handler attached');
+    }
+
+    async function handleBookingSubmit(form) {
+        const resDiv = elements.formResult;
+        const btn = elements.submitBtn;
+
+        if (!resDiv || !btn) return;
+
+        // Get selected alat
+        const alatTerpilih = [];
+        ALAT_LIST.forEach((a, i) => {
+            const checkbox = document.getElementById(`alat-${i}`);
+            if (checkbox && checkbox.checked) {
+                alatTerpilih.push(a.trim());
+            }
+        });
+
+        // Build payload (termasuk no_hp)
+        const payload = {
+            nama: form.nama.value.trim(),
+            no_hp: form.no_hp.value.trim(),   // field baru
+            divisi: form.divisi.value,
+            sarana: form.sarana.value.trim(),
+            tgl: form.tgl_mulai.value,
+            jamM: form.jam_mulai.value,
+            jamS: form.jam_selesai.value,
+            alat: alatTerpilih.join(', ')
+        };
+
+        // Validasi
+        if (!payload.nama || !payload.no_hp || !payload.sarana || !payload.tgl) {
+            resDiv.innerHTML = "<span class='text-red-500'>⚠️ Nama, No HP, Sarana, dan Tanggal wajib diisi!</span>";
+            return;
+        }
+
+        // Validasi format nomor HP sederhana (minimal 10 digit)
+        if (!/^[0-9]{10,15}$/.test(payload.no_hp.replace(/[^0-9]/g, ''))) {
+            resDiv.innerHTML = "<span class='text-red-500'>⚠️ Nomor HP tidak valid (minimal 10 angka)!</span>";
+            return;
+        }
+
+        // UI Loading state
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+        resDiv.innerHTML = "🔍 Checking ketersediaan...";
+
+        try {
+            // Check for overlapping bookings
+            const { data: existing, error: fetchError } = await window.supabase
+                .from('bookings')
+                .select('jam_mulai, jam_selesai')
+                .eq('ruang', payload.sarana)   // pakai 'ruang' sesuai kolom tabel
+                .eq('tanggal', payload.tgl)
+                .eq('status', 'approved');
+
+            if (fetchError) throw fetchError;
+
+            // Check time overlap
+            let isBentrok = false;
+            if (existing && existing.length > 0) {
+                existing.forEach(b => {
+                    if (payload.jamM < b.jam_selesai && payload.jamS > b.jam_mulai) {
+                        isBentrok = true;
+                    }
+                });
+            }
+
+            const statusFinal = isBentrok ? 'pending' : 'approved';
+
+            // Insert booking
+            const { error: insertError } = await window.supabase
+                .from('bookings')
+                .insert([{
+                    nama_peminjam: payload.nama,
+                    no_hp: payload.no_hp,                     // field baru
+                    divisi: payload.divisi,
+                    ruang: payload.sarana,
+                    tanggal: payload.tgl,
+                    jam_mulai: payload.jamM,
+                    jam_selesai: payload.jamS,
+                    peralatan: payload.alat,
+                    status: statusFinal,
+                    notes: isBentrok ? 'Conflict - Waiting approval' : 'Auto-Approved - No conflict',
+                    created_at: new Date().toISOString()
+                }]);
+
+            if (insertError) throw insertError;
+
+            // Success message
+            if (statusFinal === 'approved') {
+                resDiv.innerHTML = `
+                    <span class='text-emerald-400 text-lg'>
+                        ✅ AUTO-APPROVED!<br>
+                        <span class='text-sm text-slate-400'>Jadwal Berhasil Dikunci.</span>
+                    </span>
+                `;
+                form.reset();  // reset form setelah sukses
+            } else {
+                resDiv.innerHTML = `
+                    <span class='text-amber-400 text-lg'>
+                        📋 PENDING<br>
+                        <span class='text-sm text-slate-400'>Ada bentrok, menunggu Pak Hanung.</span>
+                    </span>
+                `;
+            }
+
+            console.log('✅ Booking submitted:', statusFinal);
+
+        } catch (err) {
+            console.error('❌ Booking error:', err);
+            resDiv.innerHTML = `
+                <span class='text-red-500 text-lg'>
+                    ❌ Error: ${err.message}<br>
+                    <span class='text-sm text-slate-400'>Coba lagi atau hubungi admin.</span>
+                </span>
+            `;
+        } finally {
+            // Reset button
+            btn.disabled = false;
+            btn.innerHTML = 'SUBMIT BOOKING';
+        }
+    }
+
+    // ===== AUTO-INITIALIZE =====
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+        initApp();
+    }
+
+})();
