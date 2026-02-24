@@ -105,19 +105,39 @@
     if (!LIBS.QRCode) log('⚠️ QRCode tidak ditemukan – Generate QR nonaktif');
     if (!LIBS.Tesseract) log('⚠️ Tesseract tidak ditemukan – OCR nonaktif');
 
-    // ========== CEK SUPABASE (TIDAK LANGSUNG RETURN, TAPI SET NULL) ==========
-    let supabase = window.supabase;
-    if (!supabase || typeof supabase.from !== 'function') {
-        log('❌ Supabase tidak tersedia. Fitur database akan dinonaktifkan.');
-        supabase = null;
-        // Tampilkan notifikasi di UI
-        const notice = document.createElement('div');
-        notice.className = 'bg-red-600 text-white p-2 text-center text-sm fixed top-0 left-0 w-full z-50';
-        notice.innerText = '⚠️ Koneksi database gagal. Periksa konfigurasi Supabase.';
-        document.body.prepend(notice);
+    // ========== INISIALISASI & CEK SUPABASE ==========
+let supabase = null;
+
+// Cek apakah window.supabase sudah ada (misal dari inisialisasi manual)
+if (window.supabase && typeof window.supabase.from === 'function') {
+    supabase = window.supabase;
+    log('✅ Supabase client ready (dari window.supabase)');
+} else {
+    // Cek apakah library supabase-js tersedia
+    if (typeof supabase !== 'undefined' && supabase.createClient) {
+        try {
+            window.supabase = supabase.createClient(CONFIG.supabase.url, CONFIG.supabase.key);
+            supabase = window.supabase;
+            log('✅ Supabase client berhasil dibuat dari fallback');
+        } catch (err) {
+            log('❌ Gagal membuat Supabase client: ' + err.message);
+            supabase = null;
+        }
     } else {
-        log('✅ Supabase client ready (storage: ' + (!!supabase.storage) + ')');
+        log('❌ Supabase library tidak tersedia. Pastikan CDN supabase-js dimuat.');
     }
+}
+
+if (!supabase) {
+    log('❌ Supabase tidak tersedia. Fitur database akan dinonaktifkan.');
+    // Tampilkan notifikasi di UI
+    const notice = document.createElement('div');
+    notice.className = 'bg-red-600 text-white p-2 text-center text-sm fixed top-0 left-0 w-full z-50';
+    notice.innerText = '⚠️ Koneksi database gagal. Periksa konfigurasi Supabase.';
+    document.body.prepend(notice);
+} else {
+    log('✅ Supabase client ready (storage: ' + (!!supabase.storage) + ')');
+}
 
     // ========== MANAJEMEN INTERVAL (CEGAH MEMORY LEAK) ==========
     const managedIntervals = [];
