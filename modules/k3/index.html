@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DREAM OS v13.4 – LAPORAN K3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: white; }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .field-section {
+            transition: all 0.3s ease;
+        }
+        .photo-preview {
+            border: 2px dashed #f97316;
+            border-radius: 12px;
+            padding: 10px;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Header -->
+        <div class="text-center">
+            <h1 class="text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">
+                ⚠️ LAPORAN K3
+            </h1>
+            <p class="text-xs text-slate-400 font-mono mt-1">ISO 45001 • Smart Evidence System</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Kolom Kiri: Form Laporan -->
+            <div class="glass-card p-6 rounded-3xl border border-orange-500/30">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    <i class="fas fa-pen-alt text-orange-500"></i> Form Laporan Baru
+                </h2>
+
+                <form id="k3Form" class="space-y-5">
+                    <!-- Baris Tanggal & Waktu -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-mono text-slate-400 uppercase">Tanggal Kejadian *</label>
+                            <input type="date" id="tanggal" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-orange-500">
+                        </div>
+                        <div>
+                            <label class="text-xs font-mono text-slate-400 uppercase">Waktu Kejadian</label>
+                            <input type="time" id="waktu" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-orange-500">
+                        </div>
+                    </div>
+
+                    <!-- Lokasi -->
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Lokasi *</label>
+                        <input type="text" id="lokasi" required placeholder="Contoh: Gedung A Lantai 2" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-orange-500">
+                    </div>
+
+                    <!-- Jenis Laporan -->
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Jenis Laporan *</label>
+                        <select id="jenis_laporan" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-orange-500">
+                            <option value="">Pilih Jenis</option>
+                            <option value="kerusakan">🔧 Kerusakan</option>
+                            <option value="kehilangan">🔒 Kehilangan</option>
+                            <option value="kebersihan">🧹 Kebersihan</option>
+                        </select>
+                    </div>
+
+                    <!-- Field Dinamis (bisa ditambahkan nanti) -->
+                    <div id="dynamic-fields"></div>
+
+                    <!-- Deskripsi -->
+                    <div>
+                        <label class="text-xs font-mono text-slate-400 uppercase">Deskripsi Kejadian *</label>
+                        <textarea id="deskripsi" required rows="3" placeholder="Jelaskan kronologi kejadian" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-orange-500"></textarea>
+                    </div>
+
+                    <!-- Korban & Tindakan -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-mono text-slate-400 uppercase">Korban</label>
+                            <input type="text" id="korban" placeholder="Nama korban atau 'Tidak ada'" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                        </div>
+                        <div>
+                            <label class="text-xs font-mono text-slate-400 uppercase">Tindakan Pertama</label>
+                            <textarea id="tindakan" rows="1" placeholder="Tindakan yang sudah dilakukan" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Pelapor & No HP -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-mono text-slate-400 uppercase">Nama Pelapor *</label>
+                            <input type="text" id="pelapor" required placeholder="Nama lengkap" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                        </div>
+                        <div>
+                            <label class="text-xs font-mono text-slate-400 uppercase">No. HP Pelapor</label>
+                            <input type="tel" id="no_hp" placeholder="08xxxxxxxxxx" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white">
+                        </div>
+                    </div>
+
+                    <!-- Foto Evidence dengan Kamera -->
+                    <div class="border-t border-slate-700 pt-4">
+                        <label class="text-xs font-mono text-orange-400 uppercase flex items-center gap-2">
+                            <i class="fas fa-camera-retro"></i> FOTO EVIDENCE
+                        </label>
+                        <div id="k3PhotoPreview" class="photo-preview mt-2">
+                            <span class="text-slate-400 text-sm">Belum ada foto</span>
+                        </div>
+                        <input type="hidden" id="k3PhotoData">
+                        <button type="button" onclick="openK3Camera()" class="mt-3 w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white p-3 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2">
+                            <i class="fas fa-camera"></i> AMBIL FOTO
+                        </button>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="w-full bg-gradient-to-r from-orange-600 to-yellow-600 hover:from-orange-500 hover:to-yellow-500 text-white p-4 rounded-xl font-black tracking-widest uppercase shadow-xl transition-all active:scale-95">
+                        <i class="fas fa-paper-plane mr-2"></i> KIRIM LAPORAN
+                    </button>
+                    <div id="form-result" class="text-center text-sm font-mono"></div>
+                </form>
+            </div>
+
+            <!-- Kolom Kanan: Riwayat Laporan -->
+            <div class="glass-card p-6 rounded-3xl border border-orange-500/30">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold flex items-center gap-2">
+                        <i class="fas fa-history text-orange-500"></i> Riwayat Laporan
+                    </h2>
+                    <button id="refresh-history" class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-3 py-1 rounded-full transition-colors border border-slate-600">
+                        <i class="fas fa-sync-alt mr-1"></i> Refresh
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto scroll-custom max-h-[600px]">
+                    <table class="min-w-full text-xs">
+                        <thead class="bg-slate-800 sticky top-0">
+                            <tr class="text-left text-slate-400">
+                                <th class="p-2">No</th>
+                                <th class="p-2">Tanggal</th>
+                                <th class="p-2">Lokasi</th>
+                                <th class="p-2">Jenis</th>
+                                <th class="p-2">Pelapor</th>
+                                <th class="p-2">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body">
+                            <tr><td colspan="6" class="text-center py-6 text-slate-500">Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Link Kembali -->
+        <div class="text-center">
+            <a href="#" onclick="window.closeModule(); return false;" class="text-blue-400 hover:text-blue-300 text-sm">
+                <i class="fas fa-arrow-left mr-1"></i> Kembali ke Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../integration/camera-system.js"></script>
+    <script>
+        (function() {
+            'use strict';
+
+            // Tunggu Supabase siap
+            async function waitForSupabase() {
+                if (window.supabase) return;
+                return new Promise(resolve => {
+                    const interval = setInterval(() => {
+                        if (window.supabase) {
+                            clearInterval(interval);
+                            resolve();
+                        }
+                    }, 100);
+                });
+            }
+
+            // Fungsi untuk membuka kamera (dari camera-system.js)
+            window.openK3Camera = function() {
+                if (typeof window.DreamOSCamera?.open === 'function') {
+                    window.DreamOSCamera.open('k3', (imageData) => {
+                        const preview = document.getElementById('k3PhotoPreview');
+                        const input = document.getElementById('k3PhotoData');
+                        if (preview) preview.innerHTML = `<img src="${imageData}" class="max-w-full max-h-32 rounded-lg">`;
+                        if (input) input.value = imageData;
+                    });
+                } else {
+                    alert('Sistem kamera tidak tersedia');
+                }
+            };
+
+            // Muat riwayat laporan
+            async function loadHistory() {
+                const tbody = document.getElementById('history-table-body');
+                if (!tbody) return;
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4"><div class="spinner mx-auto"></div></td></tr>';
+
+                try {
+                    const { data, error } = await window.supabase
+                        .from('k3_reports')
+                        .select('*')
+                        .order('created_at', { ascending: false })
+                        .limit(50);
+
+                    if (error) throw error;
+
+                    if (!data || data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-6 text-slate-500">Belum ada laporan</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = data.map((item, idx) => `
+                        <tr class="border-b border-slate-700 hover:bg-slate-800/50">
+                            <td class="p-2">${idx+1}</td>
+                            <td class="p-2">${item.tanggal || '-'}</td>
+                            <td class="p-2">${item.lokasi || '-'}</td>
+                            <td class="p-2">${item.jenis_laporan || '-'}</td>
+                            <td class="p-2">${item.pelapor || '-'}</td>
+                            <td class="p-2"><span class="${item.status === 'pending' ? 'text-yellow-500' : item.status === 'approved' ? 'text-green-500' : 'text-red-500'}">${item.status || '-'}</span></td>
+                        </tr>
+                    `).join('');
+                } catch (err) {
+                    console.error(err);
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-6 text-red-500">Gagal memuat data</td></tr>';
+                }
+            }
+
+            // Inisialisasi
+            async function init() {
+                console.log('📋 K3 Module initializing...');
+                await waitForSupabase();
+                console.log('✅ Supabase ready');
+
+                // Set tanggal default ke hari ini
+                const tglInput = document.getElementById('tanggal');
+                if (tglInput) {
+                    const today = new Date().toISOString().split('T')[0];
+                    tglInput.value = today;
+                }
+
+                // Muat riwayat
+                await loadHistory();
+
+                // Event refresh
+                document.getElementById('refresh-history')?.addEventListener('click', loadHistory);
+
+                // Handle submit form
+                const form = document.getElementById('k3Form');
+                const resultDiv = document.getElementById('form-result');
+                const submitBtn = form?.querySelector('button[type="submit"]');
+
+                form?.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    // Ambil data
+                    const payload = {
+                        tanggal: document.getElementById('tanggal').value,
+                        waktu: document.getElementById('waktu').value || null,
+                        lokasi: document.getElementById('lokasi').value.trim(),
+                        jenis_laporan: document.getElementById('jenis_laporan').value,
+                        deskripsi: document.getElementById('deskripsi').value.trim(),
+                        korban: document.getElementById('korban').value.trim() || null,
+                        tindakan: document.getElementById('tindakan').value.trim() || null,
+                        pelapor: document.getElementById('pelapor').value.trim(),
+                        no_hp: document.getElementById('no_hp').value.trim() || null,
+                        foto: document.getElementById('k3PhotoData').value || null,
+                        status: 'pending',
+                        created_at: new Date().toISOString()
+                    };
+
+                    // Validasi
+                    if (!payload.tanggal || !payload.lokasi || !payload.jenis_laporan || !payload.deskripsi || !payload.pelapor) {
+                        resultDiv.innerHTML = '<span class="text-red-500">⚠️ Harap isi semua field wajib!</span>';
+                        return;
+                    }
+
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+                    resultDiv.innerHTML = '⏳ Mengirim laporan...';
+
+                    try {
+                        const { error } = await window.supabase
+                            .from('k3_reports')
+                            .insert([payload]);
+
+                        if (error) throw error;
+
+                        resultDiv.innerHTML = '<span class="text-emerald-400">✅ Laporan berhasil dikirim!</span>';
+                        form.reset();
+                        document.getElementById('k3PhotoPreview').innerHTML = '<span class="text-slate-400 text-sm">Belum ada foto</span>';
+                        document.getElementById('k3PhotoData').value = '';
+                        loadHistory(); // refresh tabel
+                    } catch (err) {
+                        console.error(err);
+                        resultDiv.innerHTML = `<span class="text-red-500">❌ Gagal: ${err.message}</span>`;
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> KIRIM LAPORAN';
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+</body>
+</html>
