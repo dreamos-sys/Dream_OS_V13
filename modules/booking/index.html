@@ -1,0 +1,24 @@
+<script>
+    (function() {
+        console.log('📅 Debug: script dimulai');
+        const sarana = document.getElementById('sarana');
+        console.log('sarana element:', sarana);
+        if (sarana) {
+            sarana.innerHTML = '<option value="test">Test Option</option>';
+            console.log('sarana diisi');
+        } else {
+            console.error('❌ sarana tidak ditemukan');
+        }
+
+        const alat = document.getElementById('alat-container');
+        console.log('alat container:', alat);
+        if (alat) {
+            alat.innerHTML = '<div class="text-white">Test checkbox</div>';
+            console.log('alat diisi');
+        } else {
+            console.error('❌ alat-container tidak ditemukan');
+        }
+
+        console.log('window.supabase:', window.supabase);
+    })();
+</script>
