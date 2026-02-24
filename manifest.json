@@ -1,109 +1,92 @@
-{
-    "id": "booking",
-    "name": "Booking Sarana",
-    "icon": "📅",
-    "color": "bg-blue-500",
-    "route": "#booking",
-    "access": ["user", "admin"],
-    "description": "Modul peminjaman sarana",
-    "version": "1.0.0"
-}
-
-{
-    "id": "k3",
-    "name": "Laporan K3",
-    "icon": "⚠️",
-    "color": "bg-orange-500",
-    "route": "#k3",
-    "access": ["user", "admin"],
-    "description": "Laporan K3 (kerusakan, kehilangan, kebersihan)",
-    "version": "1.0.0"
-}
-
-{
-    "id": "sekuriti",
-    "name": "Laporan Sekuriti",
-    "icon": "🛡️",
-    "color": "bg-green-600",
-    "route": "#sekuriti",
-    "access": ["user", "admin"],
-    "description": "Laporan keamanan & patroli",
-    "version": "1.0.0"
-}
-
-{
-    "id": "janitor-indoor",
-    "name": "Janitor Indoor",
-    "icon": "🧹",
-    "color": "bg-teal-600",
-    "route": "#janitor-indoor",
-    "access": ["user", "admin"],
-    "description": "Ceklis kebersihan dalam gedung",
-    "version": "1.0.0"
-}
-
-{
-    "id": "janitor-outdoor",
-    "name": "Janitor Outdoor",
-    "icon": "🌿",
-    "color": "bg-cyan-600",
-    "route": "#janitor-outdoor",
-    "access": ["user", "admin"],
-    "description": "Ceklis kebersihan taman & area luar",
-    "version": "1.0.0"
-}
-
-{
-    "id": "stok",
-    "name": "Alat & Stok",
-    "icon": "📦",
-    "color": "bg-purple-600",
-    "route": "#stok",
-    "access": ["user", "admin"],
-    "description": "Manajemen inventaris alat",
-    "version": "1.0.0"
-}
-
-{
-    "id": "stok",
-    "name": "Alat & Stok",
-    "icon": "📦",
-    "color": "bg-purple-600",
-    "route": "#stok",
-    "access": ["user", "admin"],
-    "description": "Manajemen inventaris alat",
-    "version": "1.0.0"
-}
-
-{
-    "id": "maintenance",
-    "name": "Maintenance",
-    "icon": "🔧",
-    "color": "bg-yellow-600",
-    "route": "#maintenance",
-    "access": ["user", "admin"],
-    "description": "Request perbaikan & pemeliharaan",
-    "version": "1.0.0"
-}
-
-{
-    "id": "asset",
-    "name": "Asset",
-    "icon": "🏢",
-    "color": "bg-indigo-600",
-    "route": "#asset",
-    "access": ["user", "admin"],
-    "description": "Manajemen aset inventaris",
-    "version": "1.0.0"
-}
-
-{
-    "id": "commandcenter",
-    "name": "Command Center",
-    "icon": "📊",
-    "color": "bg-pink-600",
-    "route": "#commandcenter",
-    "access": ["admin"],
-    "description": "Panel admin & monitoring",
-    "version": "1.0.0"
-}
+[
+    {
+        "id": "booking",
+        "name": "Booking Sarana",
+        "icon": "📅",
+        "color": "bg-blue-500",
+        "route": "#booking",
+        "access": ["user", "admin"],
+        "description": "Modul peminjaman sarana",
+        "version": "1.0.0"
+    },
+    {
+        "id": "k3",
+        "name": "Laporan K3",
+        "icon": "⚠️",
+        "color": "bg-orange-500",
+        "route": "#k3",
+        "access": ["user", "admin"],
+        "description": "Laporan K3 (kerusakan, kehilangan, kebersihan)",
+        "version": "1.0.0"
+    },
+    {
+        "id": "sekuriti",
+        "name": "Laporan Sekuriti",
+        "icon": "🛡️",
+        "color": "bg-green-600",
+        "route": "#sekuriti",
+        "access": ["user", "admin"],
+        "description": "Laporan keamanan & patroli",
+        "version": "1.0.0"
+    },
+    {
+        "id": "janitor-indoor",
+        "name": "Janitor Indoor",
+        "icon": "🧹",
+        "color": "bg-teal-600",
+        "route": "#janitor-indoor",
+        "access": ["user", "admin"],
+        "description": "Ceklis kebersihan dalam gedung",
+        "version": "1.0.0"
+    },
+    {
+        "id": "janitor-outdoor",
+        "name": "Janitor Outdoor",
+        "icon": "🌿",
+        "color": "bg-cyan-600",
+        "route": "#janitor-outdoor",
+        "access": ["user", "admin"],
+        "description": "Ceklis kebersihan taman & area luar",
+        "version": "1.0.0"
+    },
+    {
+        "id": "stok",
+        "name": "Alat & Stok",
+        "icon": "📦",
+        "color": "bg-purple-600",
+        "route": "#stok",
+        "access": ["user", "admin"],
+        "description": "Manajemen inventaris alat",
+        "version": "1.0.0"
+    },
+    {
+        "id": "maintenance",
+        "name": "Maintenance",
+        "icon": "🔧",
+        "color": "bg-yellow-600",
+        "route": "#maintenance",
+        "access": ["user", "admin"],
+        "description": "Request perbaikan & pemeliharaan",
+        "version": "1.0.0"
+    },
+    {
+        "id": "asset",
+        "name": "Asset",
+        "icon": "🏢",
+        "color": "bg-indigo-600",
+        "route": "#asset",
+        "access": ["user", "admin"],
+        "description": "Manajemen aset inventaris",
+        "version": "1.0.0"
+    },
+    {
+        "id": "commandcenter",
+        "name": "Command Center",
+        "icon": "📊",
+        "color": "bg-pink-600",
+        "route": "#commandcenter",
+        "access": ["admin"],
+        "description": "Panel admin & monitoring",
+        "version": "1.0.0"
+    }
+]
