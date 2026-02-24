@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DREAM OS v13.4 — RUANG KERJA ADMIN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- FullCalendar -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <!-- jsPDF + autoTable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <!-- SheetJS (XLSX) -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <!-- QRCode.js -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <!-- Tesseract.js (OCR) optional -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: white; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .arabic { font-family: serif; }
+        .tab-content.hidden { display: none; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        #debug-console {
+            position: fixed; bottom: 10px; right: 10px; background: #111; color: #0f0; padding: 8px; border-radius: 8px;
+            font-size: 10px; font-family: monospace; z-index: 9999; max-width: 300px; max-height: 200px; overflow: auto;
+            border: 1px solid #0f0; opacity: 0.9;
+        }
+        #search-results {
+            animation: slideDown 0.2s ease-out;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #search-results .hover\:bg-slate-800\/80:hover {
+            background: linear-gradient(90deg, rgba(139,92,246,0.15), rgba(234,179,8,0.1)) !important;
+            border-left: 3px solid #fbbf24;
+            transform: translateX(4px);
+            transition: all 0.2s ease;
+        }
+        #global-search-input:focus {
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3), 0 0 20px rgba(234, 179, 8, 0.2);
+        }
+        /* Custom scroll */
+        .scroll-custom::-webkit-scrollbar { width: 6px; }
+        .scroll-custom::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
+        .scroll-custom::-webkit-scrollbar-thumb { background: #8b5cf6; border-radius: 10px; }
+        /* FullCalendar custom */
+        .fc { background: #1e293b; border-radius: 0.75rem; padding: 1rem; }
+        .fc .fc-toolbar-title { color: white; }
+        .fc .fc-button-primary { background: #8b5cf6; border-color: #8b5cf6; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+<!-- DEBUG CONSOLE -->
+<div id="debug-console">⏳ Memuat Command Center...</div>
+
+<!-- HOME BUTTON -->
+<a href="/Dream_OS_V13/index.html" class="fixed top-4 left-4 z-50 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-2xl text-sm font-bold shadow-lg flex items-center gap-2" onclick="window.log('🏠 Home clicked')">
+    🏠 HOME
+</a>
+
+<div class="max-w-6xl mx-auto p-4 fade-in space-y-6">
+    <!-- HEADER -->
+    <div class="flex items-center justify-between bg-slate-900 text-white p-6 rounded-[2.5rem] shadow-2xl border-b-4 border-yellow-500 relative overflow-hidden">
+        <div class="z-10">
+            <h2 class="text-xs font-black tracking-[0.3em] uppercase text-yellow-500 mb-1">Mission Control</h2>
+            <h1 class="text-2xl font-bold tracking-tight">RUANG KERJA <span class="text-blue-400">ADMIN</span></h1>
+            <p class="text-[10px] opacity-60 mt-2 font-mono">ID: DREAM-OS-CC-V13</p>
+        </div>
+        <div class="text-right z-10 flex items-center gap-4">
+            <div>
+                <div id="clock" class="text-2xl font-mono font-bold">00:00:00</div>
+                <div class="text-[10px] uppercase tracking-widest text-green-400 font-bold animate-pulse">● System Active</div>
+            </div>
+            <button id="mic-button" class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white text-xl shadow-lg hover:scale-110 transition-transform active:bg-red-700">
+                🎤
+            </button>
+        </div>
+        <div class="absolute -right-5 -bottom-10 text-9xl opacity-10 arabic">ﷻ</div>
+    </div>
+
+    <!-- STATS CARDS -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <p class="text-[10px] font-bold text-slate-400 uppercase">Booking</p>
+            <p id="stat-booking" class="text-xl font-black text-blue-500">0</p>
+        </div>
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <p class="text-[10px] font-bold text-slate-400 uppercase">K3</p>
+            <p id="stat-k3" class="text-xl font-black text-orange-500">0</p>
+        </div>
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <p class="text-[10px] font-bold text-slate-400 uppercase">Pengajuan</p>
+            <p id="stat-pengajuan" class="text-xl font-black text-purple-500">0</p>
+        </div>
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <p class="text-[10px] font-bold text-slate-400 uppercase">Reminder</p>
+            <p id="stat-reminder" class="text-xl font-black text-yellow-500">0</p>
+        </div>
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <p class="text-[10px] font-bold text-slate-400 uppercase">Security</p>
+            <p id="stat-security" class="text-xl font-black text-emerald-500">SAFE</p>
+        </div>
+    </div>
+
+    <!-- GLOBAL SEARCH -->
+    <div class="mb-4 relative px-4">
+        <input type="text" id="global-search-input" 
+               placeholder="🔍 Cari booking, aset, K3, SPJ, maintenance..." 
+               class="w-full p-4 bg-slate-800/80 border border-slate-600 rounded-2xl 
+                      text-white placeholder-slate-400 focus:outline-none 
+                      focus:ring-2 focus:ring-purple-500 transition-all">
+        <div id="search-results" 
+             class="absolute z-50 mt-2 w-full bg-slate-900/95 border border-slate-700 
+                    rounded-2xl shadow-2xl max-h-96 overflow-y-auto hidden 
+                    backdrop-blur-sm">
+        </div>
+    </div>
+
+    <!-- TAB NAVIGASI -->
+    <div class="flex space-x-2 mb-2 border-b flex-wrap overflow-x-auto pb-2">
+        <button class="tab-btn active px-4 py-2 text-xs font-semibold text-purple-500 border-b-2 border-purple-500" data-tab="dashboard">📊 Dashboard</button>
+        <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="ruangkerja">🏢 R. Kerja</button>
+        <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="dana">💰 Dana</button>
+        <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="analytics">📈 Analytics</button>
+        <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="ai">🤖 AI</button>
+        <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="approval">✅ Approval</button>
+        <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="pengajuan">📋 Pengajuan</button>
+        <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="slides">🖼️ Slide</button>
+        <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="qr">📱 QR</button>
+        <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="laporan">📄 Laporan</button>
+        <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="files">📁 Files</button>
+        <button class="tab-btn px-4 py-2 text-xs font-semibold text-gray-400" data-tab="backup">💾 Backup</button>
+    </div>
+
+    <!-- Semua konten tab tetap seperti sebelumnya (saya potong agar tidak terlalu panjang, tapi di file asli lo tetap sama) -->
+    <!-- ... (semua div tab-content) ... -->
+</div>
+
+<!-- Modal Tambah Reminder -->
+<div id="reminder-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden z-50">
+    <!-- ... -->
+</div>
+
+<!-- Modal Detail Booking -->
+<div id="booking-detail-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center hidden z-50">
+    <!-- ... -->
+</div>
+
+<!-- Tidak ada inisialisasi Supabase di sini! Semua dikelola di commandcenter.js -->
+<script src="modules/commandcenter/commandcenter.js"></script>
+</body>
+</html>
