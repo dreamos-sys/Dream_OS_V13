@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Management - Dream OS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: white; }
+        .glass-card { background: rgba(30,41,59,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        .tab-btn.active { background: #6366f1; color: white; box-shadow: 0 0 15px rgba(99,102,241,0.5); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 10px; }
+        .spinner { border: 3px solid rgba(0,0,0,0.1); border-top-color: #6366f1; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="glass-card rounded-3xl p-6 mb-6 flex justify-between items-center border-b-4 border-indigo-500">
+        <div>
+            <h1 class="text-3xl font-black text-indigo-400">ASSET & INVENTORY</h1>
+            <p class="text-xs text-slate-400 font-mono">ISO 55001 • Lifecycle Management</p>
+        </div>
+        <div class="flex gap-2">
+            <button id="btn-export-asset" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-xl text-xs font-bold transition">
+                <i class="fas fa-file-csv mr-1"></i> Export CSV
+            </button>
+            <button id="btn-print-all-qr" class="bg-purple-600 hover:bg-purple-500 px-4 py-2 rounded-xl text-xs font-bold transition">
+                <i class="fas fa-qrcode mr-1"></i> Print All QR
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+        <div class="glass-card p-4 rounded-xl border-l-4 border-indigo-500">
+            <p class="text-[10px] uppercase text-slate-400">Total Asset</p>
+            <p id="stat-total-asset" class="text-2xl font-black text-indigo-400">0</p>
+        </div>
+        <div class="glass-card p-4 rounded-xl border-l-4 border-green-500">
+            <p class="text-[10px] uppercase text-slate-400">Nilai Asset</p>
+            <p id="stat-total-value" class="text-xl font-black text-green-400">Rp 0</p>
+        </div>
+        <div class="glass-card p-4 rounded-xl border-l-4 border-yellow-500">
+            <p class="text-[10px] uppercase text-slate-400">Maintenance</p>
+            <p id="stat-asset-repair" class="text-2xl font-black text-yellow-400">0</p>
+        </div>
+        <div class="glass-card p-4 rounded-xl border-l-4 border-red-500">
+            <p class="text-[10px] uppercase text-slate-400">Rusak Berat</p>
+            <p id="stat-asset-damaged" class="text-2xl font-black text-red-400">0</p>
+        </div>
+        <div class="glass-card p-4 rounded-xl border-l-4 border-cyan-500">
+            <p class="text-[10px] uppercase text-slate-400">Stok Menipis</p>
+            <p id="stat-stock-low" class="text-2xl font-black text-cyan-400">0</p>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="flex flex-wrap gap-2 mb-6 bg-slate-800/50 p-1 rounded-2xl w-fit">
+        <button class="tab-btn active px-5 py-2 rounded-xl text-sm font-bold transition" data-tab="dashboard">📊 Dashboard</button>
+        <button class="tab-btn px-5 py-2 rounded-xl text-sm font-bold transition" data-tab="assets">📦 Daftar Asset</button>
+        <button class="tab-btn px-5 py-2 rounded-xl text-sm font-bold transition" data-tab="inventory">📋 Inventory</button>
+        <button class="tab-btn px-5 py-2 rounded-xl text-sm font-bold transition" data-tab="requests">🧹 Permintaan Janitor</button>
+        <button class="tab-btn px-5 py-2 rounded-xl text-sm font-bold transition" data-tab="maintenance">🔧 Maintenance</button>
+    </div>
+
+    <!-- ==================== TAB DASHBOARD ==================== -->
+    <div id="tab-dashboard" class="tab-content">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Chart Ringkasan Kategori -->
+            <div class="glass-card p-6 rounded-3xl">
+                <h3 class="text-lg font-bold mb-4">📊 Kategori Asset</h3>
+                <canvas id="categoryChart" height="200"></canvas>
+            </div>
+            <!-- Aktivitas Terbaru -->
+            <div class="glass-card p-6 rounded-3xl">
+                <h3 class="text-lg font-bold mb-4 flex justify-between">
+                    <span>🕒 Aktivitas Terbaru</span>
+                    <span class="text-xs text-slate-400">24 jam</span>
+                </h3>
+                <div id="recent-activities" class="space-y-2 max-h-64 overflow-y-auto custom-scrollbar">
+                    <p class="text-slate-400 text-center py-4">Memuat...</p>
+                </div>
+            </div>
+            <!-- Ringkasan Stok -->
+            <div class="glass-card p-6 rounded-3xl lg:col-span-2">
+                <h3 class="text-lg font-bold mb-4">⚠️ Stok Menipis</h3>
+                <div id="low-stock-list" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <p class="text-slate-400 col-span-full text-center py-4">Memuat...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TAB DAFTAR ASSET ==================== -->
+    <div id="tab-assets" class="tab-content hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Form Tambah Asset -->
+            <div class="lg:col-span-5 glass-card p-6 rounded-3xl">
+                <h3 class="text-lg font-bold mb-4 text-indigo-400">🆕 Registrasi Asset Baru</h3>
+                <form id="assetForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400">NAMA ASSET *</label>
+                        <input type="text" id="nama_asset" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400">KATEGORI</label>
+                            <select id="kategori" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                                <option value="elektronik">🔌 Elektronik</option>
+                                <option value="elektrik">⚡ Elektrik</option>
+                                <option value="mesin">⚙️ Mesin</option>
+                                <option value="bangunan">🏢 Bangunan</option>
+                                <option value="kimia">🧪 Kimia</option>
+                                <option value="pewangi">🌸 Pewangi</option>
+                                <option value="janitor_indoor">🧹 Janitor Indoor</option>
+                                <option value="janitor_outdoor">🌿 Janitor Outdoor</option>
+                                <option value="maintenance">🔧 Maintenance Tools</option>
+                                <option value="kendaraan">🚗 Kendaraan</option>
+                                <option value="furniture">🪑 Furniture</option>
+                                <option value="atk">📚 ATK</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400">LOKASI</label>
+                            <input type="text" id="lokasi" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400">KONDISI</label>
+                            <select id="kondisi" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                                <option value="baik">✅ Baik</option>
+                                <option value="rusak_ringan">⚠️ Rusak Ringan</option>
+                                <option value="rusak_berat">🚫 Rusak Berat</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400">HARGA (Rp)</label>
+                            <input type="number" id="harga" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400">TANGGAL BELI</label>
+                            <input type="date" id="tanggal_beli" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400">MASA GARANSI (thn)</label>
+                            <input type="number" id="garansi" value="1" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                        </div>
+                    </div>
+                    <div class="bg-indigo-900/30 p-3 rounded-xl">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="generate_qr" checked class="w-4 h-4 accent-indigo-500">
+                            <span class="text-xs">Generate QR Code Asset</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 p-4 rounded-xl font-bold">💾 SIMPAN ASSET</button>
+                    <div id="form-result" class="text-center text-sm"></div>
+                </form>
+            </div>
+
+            <!-- Tabel Daftar Asset -->
+            <div class="lg:col-span-7 glass-card p-6 rounded-3xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold">📋 Daftar Asset</h3>
+                    <div class="relative">
+                        <input type="text" id="searchAsset" placeholder="Cari asset..." class="pl-8 pr-4 py-2 rounded-full bg-slate-800 border border-slate-700 text-sm">
+                        <i class="fas fa-search absolute left-3 top-3 text-slate-400 text-xs"></i>
+                    </div>
+                </div>
+                <div class="overflow-x-auto max-h-96 custom-scrollbar">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-800 sticky top-0">
+                            <tr class="text-left text-slate-400">
+                                <th class="p-2">Asset</th>
+                                <th class="p-2">Lokasi</th>
+                                <th class="p-2">Kondisi</th>
+                                <th class="p-2">Nilai</th>
+                                <th class="p-2">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="asset-list" class="divide-y divide-slate-700"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TAB INVENTORY (STOK) ==================== -->
+    <div id="tab-inventory" class="tab-content hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Form Tambah Stok -->
+            <div class="lg:col-span-5 glass-card p-6 rounded-3xl">
+                <h3 class="text-lg font-bold mb-4 text-cyan-400">📦 Tambah Stok (Consumable)</h3>
+                <form id="stokForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400">NAMA BARANG *</label>
+                        <input type="text" id="stok_nama" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400">KATEGORI</label>
+                            <select id="stok_kategori" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                                <option value="janitor_indoor">🧹 Janitor Indoor</option>
+                                <option value="janitor_outdoor">🌿 Janitor Outdoor</option>
+                                <option value="maintenance">🔧 Maintenance</option>
+                                <option value="kimia">🧪 Kimia</option>
+                                <option value="pewangi">🌸 Pewangi</option>
+                                <option value="atk">📚 ATK</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400">LOKASI RAK</label>
+                            <input type="text" id="stok_lokasi" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400">JUMLAH *</label>
+                            <input type="number" id="stok_jumlah" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400">SATUAN</label>
+                            <input type="text" id="stok_satuan" placeholder="pcs/liter/kg" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400">MINIMAL STOK</label>
+                            <input type="number" id="stok_minimal" value="0" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400">MAKSIMAL</label>
+                            <input type="number" id="stok_maksimal" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-cyan-600 hover:bg-cyan-500 p-4 rounded-xl font-bold">💾 TAMBAH STOK</button>
+                    <div id="stok-result" class="text-center text-sm"></div>
+                </form>
+            </div>
+
+            <!-- Daftar Stok -->
+            <div class="lg:col-span-7 glass-card p-6 rounded-3xl">
+                <h3 class="text-lg font-bold mb-4">📋 Inventaris Stok</h3>
+                <div id="stok-list" class="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
+                    <p class="text-slate-400 text-center py-4">Memuat...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TAB PERMINTAAN JANITOR ==================== -->
+    <div id="tab-requests" class="tab-content hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Form Permintaan -->
+            <div class="lg:col-span-5 glass-card p-6 rounded-3xl">
+                <h3 class="text-lg font-bold mb-4 text-emerald-400">🧹 Form Permintaan Alat Janitor</h3>
+                <form id="requestForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400">NAMA PEMOHON *</label>
+                        <input type="text" id="requestor" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400">AREA</label>
+                            <select id="area" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                                <option value="indoor">Indoor (Gedung)</option>
+                                <option value="outdoor">Outdoor (Taman)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400">SHIFT</label>
+                            <select id="shift" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                                <option value="pagi">Pagi</option>
+                                <option value="siang">Siang</option>
+                                <option value="malam">Malam</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400">TANGGAL BUTUH *</label>
+                        <input type="date" id="tgl_butuh" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400">DAFTAR ALAT</label>
+                        <div id="items-container" class="space-y-2">
+                            <div class="item-row flex gap-2">
+                                <select class="item-select flex-1 p-2 rounded bg-slate-700 border border-slate-600 text-sm">
+                                    <option value="">Pilih Alat</option>
+                                </select>
+                                <input type="number" class="item-qty w-20 p-2 rounded bg-slate-700 border border-slate-600 text-sm" placeholder="Jml">
+                                <button type="button" class="remove-item text-red-400 hover:text-red-300">✖</button>
+                            </div>
+                        </div>
+                        <button type="button" id="add-item" class="mt-2 text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded-full">+ Tambah Alat</button>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400">CATATAN</label>
+                        <textarea id="catatan" rows="2" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 p-4 rounded-xl font-bold">📨 AJUKAN PERMINTAAN</button>
+                    <div id="request-result" class="text-center text-sm"></div>
+                </form>
+            </div>
+
+            <!-- Daftar Permintaan -->
+            <div class="lg:col-span-7 glass-card p-6 rounded-3xl">
+                <h3 class="text-lg font-bold mb-4 flex justify-between">
+                    <span>📋 Daftar Permintaan</span>
+                    <button id="refresh-requests" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded-full">
+                        <i class="fas fa-sync-alt mr-1"></i> Refresh
+                    </button>
+                </h3>
+                <div id="requests-list" class="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
+                    <p class="text-slate-400 text-center py-4">Memuat...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TAB MAINTENANCE ==================== -->
+    <div id="tab-maintenance" class="tab-content hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Form Work Order -->
+            <div class="lg:col-span-5 glass-card p-6 rounded-3xl">
+                <h3 class="text-lg font-bold mb-4 text-yellow-400">🔧 Work Order Maintenance</h3>
+                <form id="maintenanceForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400">NAMA ASSET *</label>
+                        <select id="wo_asset" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400">JENIS KERUSAKAN *</label>
+                        <textarea id="wo_kerusakan" required rows="2" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700"></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400">PRIORITAS</label>
+                            <select id="wo_prioritas" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                                <option value="rendah">Rendah</option>
+                                <option value="sedang">Sedang</option>
+                                <option value="tinggi">Tinggi</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono text-slate-400">TANGGAL</label>
+                            <input type="date" id="wo_tanggal" required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400">DITUGASKAN KE</label>
+                        <input type="text" id="wo_teknisi" placeholder="Nama teknisi" class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700">
+                    </div>
+                    <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-500 p-4 rounded-xl font-bold">📋 BUAT WORK ORDER</button>
+                    <div id="wo-result" class="text-center text-sm"></div>
+                </form>
+            </div>
+
+            <!-- Daftar Work Order -->
+            <div class="lg:col-span-7 glass-card p-6 rounded-3xl">
+                <h3 class="text-lg font-bold mb-4 flex justify-between">
+                    <span>📋 Work Order Aktif</span>
+                    <button id="refresh-wo" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded-full">
+                        <i class="fas fa-sync-alt mr-1"></i> Refresh
+                    </button>
+                </h3>
+                <div id="wo-list" class="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
+                    <p class="text-slate-400 text-center py-4">Memuat...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link Kembali -->
+    <div class="mt-8 text-center">
+        <a href="#" onclick="window.closeModule(); return false;" class="text-blue-400 hover:text-blue-300 text-sm">
+            <i class="fas fa-arrow-left mr-1"></i> Kembali ke Dashboard
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+(function() {
+    'use strict';
+
+    const supabase = window.supabase;
+    if (!supabase) {
+        alert('❌ Supabase tidak tersedia');
+        return;
+    }
+
+    // ========== UTILITY ==========
+    const formatIDR = (val) => new Intl.NumberFormat('id-ID', {
+        style: 'currency', currency: 'IDR', minimumFractionDigits: 0
+    }).format(val || 0);
+
+    function calculateBookValue(harga, tanggalBeli) {
+        if (!harga || !tanggalBeli) return 0;
+        const thnBeli = new Date(tanggalBeli).getFullYear();
+        const thnSekarang = new Date().getFullYear();
+        const umur = thnSekarang - thnBeli;
+        const masaManfaat = 5;
+        return harga - (harga * (Math.min(umur, masaManfaat) / masaManfaat));
+    }
+
+    // ========== STATE ==========
+    let currentAssets = [];
+
+    // ========== LOAD ASSETS ==========
+    async function loadAssets() {
+        const tbody = document.getElementById('asset-list');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center"><div class="spinner mx-auto"></div></td></tr>';
+
+        try {
+            const { data, error } = await supabase
+                .from('assets')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            currentAssets = data || [];
+
+            // Update statistik
+            const total = currentAssets.length;
+            const value = currentAssets.reduce((acc, curr) => acc + (curr.harga || 0), 0);
+            const damaged = currentAssets.filter(a => a.kondisi === 'rusak_berat').length;
+            const repair = currentAssets.filter(a => a.kondisi === 'rusak_ringan').length;
+
+            document.getElementById('stat-total-asset').textContent = total;
+            document.getElementById('stat-total-value').textContent = formatIDR(value);
+            document.getElementById('stat-asset-repair').textContent = repair;
+            document.getElementById('stat-asset-damaged').textContent = damaged;
+
+            document.getElementById('total-investasi').textContent = formatIDR(value);
+            const totalBookValue = currentAssets.reduce((acc, curr) => 
+                acc + calculateBookValue(curr.harga, curr.tanggal_beli), 0);
+            document.getElementById('current-book-value').textContent = formatIDR(totalBookValue);
+
+            renderAssetTable(currentAssets);
+        } catch (err) {
+            console.error(err);
+            if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-500">Gagal memuat</td></tr>';
+        }
+    }
+
+    function renderAssetTable(items) {
+        const tbody = document.getElementById('asset-list');
+        if (!tbody) return;
+        if (items.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center opacity-50">Belum ada asset</td></tr>';
+            return;
+        }
+        tbody.innerHTML = items.map(item => {
+            let badgeColor = 'bg-green-100 text-green-700';
+            if (item.kondisi === 'rusak_ringan') badgeColor = 'bg-yellow-100 text-yellow-700';
+            if (item.kondisi === 'rusak_berat') badgeColor = 'bg-red-100 text-red-700';
+            return `
+                <tr class="hover:bg-slate-700/50">
+                    <td class="p-2">
+                        <div class="font-bold">${item.nama_asset}</div>
+                        <div class="text-[10px] text-slate-400">${item.kategori}</div>
+                    </td>
+                    <td class="p-2">${item.lokasi}</td>
+                    <td class="p-2"><span class="px-2 py-1 rounded-full text-[10px] font-black ${badgeColor}">${item.kondisi.replace('_', ' ')}</span></td>
+                    <td class="p-2 font-mono">${formatIDR(item.harga)}</td>
+                    <td class="p-2">
+                        <button class="text-xs bg-slate-700 hover:bg-indigo-600 px-2 py-1 rounded transition">🔍</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    // ========== LOAD STOK ==========
+    async function loadStok() {
+        const container = document.getElementById('stok-list');
+        if (!container) return;
+        container.innerHTML = '<p class="text-center py-4"><div class="spinner mx-auto"></div></p>';
+
+        try {
+            const { data, error } = await supabase
+                .from('inventory')
+                .select('*')
+                .order('nama_barang', { ascending: true });
+
+            if (error) throw error;
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p class="text-center py-4 opacity-50">Belum ada data stok</p>';
+                return;
+            }
+
+            let html = '<div class="space-y-2">';
+            let lowStockCount = 0;
+            data.forEach(item => {
+                const isLow = item.jumlah <= item.minimal_stok;
+                if (isLow) lowStockCount++;
+                const warning = isLow ? 'text-red-500 font-bold' : '';
+                html += `
+                    <div class="bg-slate-800/50 p-3 rounded-xl border-l-4 ${isLow ? 'border-red-500' : 'border-emerald-500'}">
+                        <div class="flex justify-between">
+                            <span class="font-semibold">${item.nama_barang}</span>
+                            <span class="${warning}">${item.jumlah} ${item.satuan || ''}</span>
+                        </div>
+                        <div class="text-xs opacity-60">${item.kategori || '-'} | Lokasi: ${item.lokasi_rak || '-'}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+            document.getElementById('stat-stock-low').textContent = lowStockCount;
+        } catch (err) {
+            console.error(err);
+            container.innerHTML = '<p class="text-center py-4 text-red-500">Gagal memuat</p>';
+        }
+    }
+
+    // ========== LOAD PERMINTAAN ==========
+    async function loadRequests() {
+        const container = document.getElementById('requests-list');
+        if (!container) return;
+        container.innerHTML = '<p class="text-center py-4"><div class="spinner mx-auto"></div></p>';
+
+        try {
+            const { data, error } = await supabase
+                .from('janitor_requests')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(20);
+
+            if (error) throw error;
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p class="text-center py-4 opacity-50">Belum ada permintaan</p>';
+                return;
+            }
+
+            let html = '';
+            data.forEach(r => {
+                const statusColor = {
+                    pending: 'text-yellow-500',
+                    approved: 'text-green-500',
+                    rejected: 'text-red-500',
+                    fulfilled: 'text-blue-500'
+                }[r.status] || 'text-slate-400';
+
+                html += `
+                    <div class="bg-slate-800/50 p-3 rounded-xl border-l-4 border-emerald-500">
+                        <div class="flex justify-between text-xs">
+                            <span class="font-bold">${r.requestor}</span>
+                            <span class="${statusColor}">${r.status}</span>
+                        </div>
+                        <div class="text-[10px] opacity-60">${r.area} | ${r.shift} | ${r.tgl_butuh}</div>
+                        <div class="text-xs mt-1">${JSON.parse(r.items).map(i => `${i.nama} (${i.jumlah})`).join(', ')}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        } catch (err) {
+            console.error(err);
+            container.innerHTML = '<p class="text-center py-4 text-red-500">Gagal memuat</p>';
+        }
+    }
+
+    // ========== LOAD MAINTENANCE ==========
+    async function loadMaintenance() {
+        const container = document.getElementById('wo-list');
+        if (!container) return;
+        container.innerHTML = '<p class="text-center py-4"><div class="spinner mx-auto"></div></p>';
+
+        try {
+            const { data, error } = await supabase
+                .from('maintenance_orders')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(20);
+
+            if (error) throw error;
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p class="text-center py-4 opacity-50">Belum ada work order</p>';
+                return;
+            }
+
+            let html = '';
+            data.forEach(wo => {
+                const priorityColor = {
+                    rendah: 'bg-slate-600',
+                    sedang: 'bg-yellow-600',
+                    tinggi: 'bg-red-600'
+                }[wo.prioritas] || 'bg-slate-600';
+
+                html += `
+                    <div class="bg-slate-800/50 p-3 rounded-xl border-l-4 border-yellow-500">
+                        <div class="flex justify-between text-xs">
+                            <span class="font-bold">${wo.asset_name}</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] ${priorityColor}">${wo.prioritas}</span>
+                        </div>
+                        <div class="text-[10px] opacity-60">Teknisi: ${wo.teknisi || '-'}</div>
+                        <div class="text-xs mt-1">${wo.kerusakan}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        } catch (err) {
+            console.error(err);
+            container.innerHTML = '<p class="text-center py-4 text-red-500">Gagal memuat</p>';
+        }
+    }
+
+    // ========== EVENT LISTENERS ==========
+    document.getElementById('searchAsset')?.addEventListener('input', (e) => {
+        const keyword = e.target.value.toLowerCase();
+        const filtered = currentAssets.filter(a => 
+            a.nama_asset.toLowerCase().includes(keyword) || 
+            a.lokasi.toLowerCase().includes(keyword)
+        );
+        renderAssetTable(filtered);
+    });
+
+    document.getElementById('assetForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳ Menyimpan...</span>';
+
+        const formData = {
+            nama_asset: document.getElementById('nama_asset').value,
+            kategori: document.getElementById('kategori').value,
+            lokasi: document.getElementById('lokasi').value,
+            kondisi: document.getElementById('kondisi').value,
+            harga: parseFloat(document.getElementById('harga').value),
+            tanggal_beli: document.getElementById('tanggal_beli').value,
+            garansi: parseInt(document.getElementById('garansi').value) || 0,
+            created_at: new Date().toISOString()
+        };
+
+        const { error } = await supabase.from('assets').insert([formData]);
+        const resDiv = document.getElementById('form-result');
+        if (error) {
+            resDiv.innerHTML = `<span class="text-red-500">❌ ${error.message}</span>`;
+        } else {
+            resDiv.innerHTML = '<span class="text-green-500">✅ Asset berhasil ditambahkan!</span>';
+            e.target.reset();
+            loadAssets();
+            setTimeout(() => resDiv.innerHTML = '', 3000);
+        }
+        btn.disabled = false;
+        btn.innerHTML = '💾 SIMPAN ASSET';
+    });
+
+    document.getElementById('stokForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nama = document.getElementById('stok_nama').value.trim();
+        const jumlah = parseInt(document.getElementById('stok_jumlah').value);
+        if (!nama || !jumlah) {
+            document.getElementById('stok-result').innerHTML = '<span class="text-red-500">Nama dan jumlah wajib!</span>';
+            return;
+        }
+
+        const data = {
+            nama_barang: nama,
+            kategori: document.getElementById('stok_kategori').value,
+            lokasi_rak: document.getElementById('stok_lokasi').value,
+            jumlah,
+            satuan: document.getElementById('stok_satuan').value,
+            minimal_stok: parseInt(document.getElementById('stok_minimal').value) || 0,
+            maksimal_stok: parseInt(document.getElementById('stok_maksimal').value) || null
+        };
+
+        const { error } = await supabase.from('inventory').insert([data]);
+        const resDiv = document.getElementById('stok-result');
+        if (error) {
+            resDiv.innerHTML = `<span class="text-red-500">❌ ${error.message}</span>`;
+        } else {
+            resDiv.innerHTML = '<span class="text-green-500">✅ Stok ditambahkan!</span>';
+            e.target.reset();
+            loadStok();
+            setTimeout(() => resDiv.innerHTML = '', 3000);
+        }
+    });
+
+    // ========== TAB NAVIGATION ==========
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
+            const target = document.getElementById(`tab-${this.dataset.tab}`);
+            if (target) target.classList.remove('hidden');
+
+            // Load data sesuai tab
+            if (this.dataset.tab === 'inventory') loadStok();
+            if (this.dataset.tab === 'requests') {
+                loadRequests();
+                loadInventoryDropdown();
+            }
+            if (this.dataset.tab === 'maintenance') {
+                loadMaintenance();
+                loadAssetDropdown();
+            }
+        });
+    });
+
+    // ========== DROPDOWN ALAT UNTUK PERMINTAAN ==========
+    async function loadInventoryDropdown() {
+        const { data } = await supabase.from('inventory').select('nama_barang, id');
+        const selects = document.querySelectorAll('.item-select');
+        selects.forEach(sel => {
+            sel.innerHTML = '<option value="">Pilih Alat</option>' + 
+                (data || []).map(i => `<option value="${i.id}">${i.nama_barang}</option>`).join('');
+        });
+    }
+
+    // ========== DROPDOWN ASSET UNTUK MAINTENANCE ==========
+    async function loadAssetDropdown() {
+        const { data } = await supabase.from('assets').select('id, nama_asset');
+        const select = document.getElementById('wo_asset');
+        if (select) {
+            select.innerHTML = '<option value="">Pilih Asset</option>' + 
+                (data || []).map(a => `<option value="${a.id}">${a.nama_asset}</option>`).join('');
+        }
+    }
+
+    // ========== DYNAMIC ITEMS ==========
+    document.getElementById('add-item')?.addEventListener('click', () => {
+        const container = document.getElementById('items-container');
+        const newRow = document.createElement('div');
+        newRow.className = 'item-row flex gap-2';
+        newRow.innerHTML = `
+            <select class="item-select flex-1 p-2 rounded bg-slate-700 border border-slate-600 text-sm"></select>
+            <input type="number" class="item-qty w-20 p-2 rounded bg-slate-700 border border-slate-600 text-sm" placeholder="Jml">
+            <button type="button" class="remove-item text-red-400 hover:text-red-300">✖</button>
+        `;
+        container.appendChild(newRow);
+        loadInventoryDropdown(); // refresh semua dropdown
+    });
+
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-item')) {
+            e.target.closest('.item-row').remove();
+        }
+    });
+
+    // ========== SUBMIT PERMINTAAN ==========
+    document.getElementById('requestForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const rows = document.querySelectorAll('.item-row');
+        const items = [];
+        for (let row of rows) {
+            const select = row.querySelector('.item-select');
+            const qty = row.querySelector('.item-qty')?.value;
+            if (select.value && qty) {
+                items.push({ id: select.value, nama: select.options[select.selectedIndex]?.text, jumlah: parseInt(qty) });
+            }
+        }
+        if (items.length === 0) {
+            document.getElementById('request-result').innerHTML = '<span class="text-red-500">Minimal satu alat harus dipilih!</span>';
+            return;
+        }
+
+        const data = {
+            requestor: document.getElementById('requestor').value,
+            area: document.getElementById('area').value,
+            shift: document.getElementById('shift').value,
+            tgl_butuh: document.getElementById('tgl_butuh').value,
+            items: JSON.stringify(items),
+            catatan: document.getElementById('catatan').value,
+            status: 'pending',
+            created_at: new Date().toISOString()
+        };
+
+        const { error } = await supabase.from('janitor_requests').insert([data]);
+        const resDiv = document.getElementById('request-result');
+        if (error) {
+            resDiv.innerHTML = `<span class="text-red-500">❌ ${error.message}</span>`;
+        } else {
+            resDiv.innerHTML = '<span class="text-green-500">✅ Permintaan diajukan!</span>';
+            e.target.reset();
+            document.getElementById('items-container').innerHTML = `
+                <div class="item-row flex gap-2">
+                    <select class="item-select flex-1 p-2 rounded bg-slate-700 border border-slate-600 text-sm"></select>
+                    <input type="number" class="item-qty w-20 p-2 rounded bg-slate-700 border border-slate-600 text-sm" placeholder="Jml">
+                    <button type="button" class="remove-item text-red-400 hover:text-red-300">✖</button>
+                </div>
+            `;
+            loadInventoryDropdown();
+            loadRequests();
+            setTimeout(() => resDiv.innerHTML = '', 3000);
+        }
+    });
+
+    // ========== SUBMIT MAINTENANCE ==========
+    document.getElementById('maintenanceForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const assetId = document.getElementById('wo_asset').value;
+        const assetName = document.getElementById('wo_asset').options[document.getElementById('wo_asset').selectedIndex]?.text;
+
+        const data = {
+            asset_id: assetId,
+            asset_name: assetName,
+            kerusakan: document.getElementById('wo_kerusakan').value,
+            prioritas: document.getElementById('wo_prioritas').value,
+            tanggal: document.getElementById('wo_tanggal').value,
+            teknisi: document.getElementById('wo_teknisi').value,
+            status: 'open',
+            created_at: new Date().toISOString()
+        };
+
+        const { error } = await supabase.from('maintenance_orders').insert([data]);
+        const resDiv = document.getElementById('wo-result');
+        if (error) {
+            resDiv.innerHTML = `<span class="text-red-500">❌ ${error.message}</span>`;
+        } else {
+            resDiv.innerHTML = '<span class="text-green-500">✅ Work Order dibuat!</span>';
+            e.target.reset();
+            loadMaintenance();
+            setTimeout(() => resDiv.innerHTML = '', 3000);
+        }
+    });
+
+    // ========== REFRESH BUTTONS ==========
+    document.getElementById('refresh-requests')?.addEventListener('click', loadRequests);
+    document.getElementById('refresh-wo')?.addEventListener('click', loadMaintenance);
+
+    // ========== EXPORT CSV ==========
+    document.getElementById('btn-export-asset')?.addEventListener('click', () => {
+        let csv = 'Nama Asset,Kategori,Lokasi,Kondisi,Harga,Tanggal Beli\n';
+        currentAssets.forEach(a => {
+            csv += `${a.nama_asset},${a.kategori},${a.lokasi},${a.kondisi},${a.harga},${a.tanggal_beli}\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'assets_dreamos.csv';
+        a.click();
+        window.URL.revokeObjectURL(url);
+    });
+
+    // ========== PRINT QR ==========
+    document.getElementById('btn-print-all-qr')?.addEventListener('click', () => {
+        if (!currentAssets.length) return alert('Data asset kosong!');
+        const printWin = window.open('', '_blank');
+        printWin.document.write(`
+            <html>
+            <head><title>Cetak QR Asset</title>
+            <style>
+                body { font-family: monospace; display: flex; flex-wrap: wrap; gap: 20px; padding: 20px; }
+                .card { border: 1px solid #000; padding: 10px; width: 200px; text-align: center; }
+                .qr { width: 120px; height: 120px; margin: 5px auto; }
+            </style>
+            </head>
+            <body>
+                <div style="width:100%; text-align:center; margin-bottom:20px;">
+                    <button onclick="window.print()">🖨️ Print</button>
+                </div>
+        `);
+        currentAssets.forEach(a => {
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=ASSET-${a.id}`;
+            printWin.document.write(`
+                <div class="card">
+                    <div>ID: ${a.id}</div>
+                    <img src="${qrUrl}" class="qr">
+                    <div><strong>${a.nama_asset}</strong></div>
+                    <div style="font-size:10px;">${a.lokasi}</div>
+                </div>
+            `);
+        });
+        printWin.document.write('</body></html>');
+        printWin.document.close();
+    });
+
+    // ========== INIT ==========
+    (async function init() {
+        await loadAssets();
+        await loadStok();
+        await loadRequests();
+        await loadMaintenance();
+        await loadInventoryDropdown();
+        await loadAssetDropdown();
+
+        // Chart Dashboard (sederhana)
+        if (document.getElementById('categoryChart')) {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Elektronik', 'Furnitur', 'Kendaraan', 'Bangunan', 'ATK'],
+                    datasets: [{
+                        data: [12, 19, 3, 5, 2],
+                        backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
+                    }]
+                }
+            });
+        }
+    })();
+
+})();
+</script>
+</body>
+</html>
