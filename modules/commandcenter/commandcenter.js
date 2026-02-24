@@ -108,24 +108,25 @@
     // ========== INISIALISASI & CEK SUPABASE ==========
 let supabase = null;
 
-// Cek apakah window.supabase sudah ada (misal dari inisialisasi manual)
+// Cek apakah window.supabase sudah ada dan merupakan client yang valid
 if (window.supabase && typeof window.supabase.from === 'function') {
     supabase = window.supabase;
     log('✅ Supabase client ready (dari window.supabase)');
-} else {
-    // Cek apakah library supabase-js tersedia
-    if (typeof supabase !== 'undefined' && supabase.createClient) {
-        try {
-            window.supabase = supabase.createClient(CONFIG.supabase.url, CONFIG.supabase.key);
-            supabase = window.supabase;
-            log('✅ Supabase client berhasil dibuat dari fallback');
-        } catch (err) {
-            log('❌ Gagal membuat Supabase client: ' + err.message);
-            supabase = null;
-        }
-    } else {
-        log('❌ Supabase library tidak tersedia. Pastikan CDN supabase-js dimuat.');
+}
+// Jika belum, coba buat client dari library supabase di window
+else if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+    try {
+        supabase = window.supabase.createClient(CONFIG.supabase.url, CONFIG.supabase.key);
+        window.supabase = supabase; // simpan kembali untuk keperluan lain
+        log('✅ Supabase client berhasil dibuat dari window.supabase.createClient');
+    } catch (err) {
+        log('❌ Gagal membuat Supabase client: ' + err.message);
+        supabase = null;
     }
+}
+// Jika library tidak ada, beri pesan error
+else {
+    log('❌ Supabase library tidak tersedia. Pastikan CDN supabase-js dimuat.');
 }
 
 if (!supabase) {
